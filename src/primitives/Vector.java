@@ -1,6 +1,7 @@
 package primitives;
 
 public class Vector extends Point{
+
     public Vector(Double3 xyz) {
         super(xyz);
         if(_xyz.equals(Double3.ZERO))
@@ -20,18 +21,24 @@ public class Vector extends Point{
 
     public double lengthSquared() {
 
-    double u1= _xyz._d1;
-    double u2= _xyz._d2;
-    double u3= _xyz._d3;
+        double u1= _xyz._d1;
+        double u2= _xyz._d2;
+        double u3= _xyz._d3;
 
-    return u1*u1+u1*u1+u3*u3;
+        return u1*u1 + u2*u2 + u3*u3;
     }
+
+
+    public Vector add(Vector vector){ return new Vector(_xyz.add(vector._xyz));}
+
+    public Vector scale(double rhs){ return new Vector(_xyz.scale(rhs));}
 
     public double length(){
         return Math.sqrt(lengthSquared());
     }
 
     public double dotProduct(Vector vector) {
+
         double v1= vector._xyz._d1;
         double v2= vector._xyz._d2;
         double v3= vector._xyz._d3;
@@ -40,7 +47,7 @@ public class Vector extends Point{
         double u2= _xyz._d2;
         double u3= _xyz._d3;
 
-        return (v1*u1+v2*u2+v3*u3);
+        return v1*u1 + v2*u2 + v3*u3;
     }
 
     public Vector crossProduct(Vector vector) {
@@ -57,7 +64,7 @@ public class Vector extends Point{
     }
 
     public Vector normalize() {
-        double length=length();
+         double length=length();
          return new Vector(_xyz.reduce(length));
     }
 }

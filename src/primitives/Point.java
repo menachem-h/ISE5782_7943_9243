@@ -2,8 +2,9 @@ package primitives;
 
 import java.util.Objects;
 
-public class Point {
-    final Double3 _xyz;
+public class Point{
+
+    Double3 _xyz;
 
 
     public Point(Double3 xyz) {
@@ -32,16 +33,27 @@ public class Point {
         return "Point " + _xyz ;
     }
 
+    public double distanceSquared(Point point) {
+
+        double u1= _xyz._d1 - point._xyz._d1;
+        double u2= _xyz._d2 - point._xyz._d2;
+        double u3= _xyz._d3 - point._xyz._d3;
+
+        return u1*u1 + u2*u2 + u3*u3;
+    }
+
+    public double distance(Point point){ return Math.sqrt(distanceSquared(point));
+    }
 
     public Point add(Vector vector) {
         return new Point(_xyz.add(vector._xyz));
     }
 
     public Vector subtract(Point point) {
+
         Double3 result=_xyz.subtract(point._xyz);
-        if(result.equals(Double3.ZERO)){
+        if(result.equals(Double3.ZERO))
             throw new IllegalArgumentException(("resulting of subtract: vector (0,0,0) not allowed"));
-        }
         return new Vector(result);
     }
 }
