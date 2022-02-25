@@ -8,6 +8,7 @@ public class Vector extends Point{
             throw new IllegalArgumentException("Vector (0,0,0) not valid");
     }
 
+
     public Vector(double x, double y, double z) {
         super(x, y, z);
         if(_xyz.equals(Double3.ZERO))

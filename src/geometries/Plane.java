@@ -6,8 +6,8 @@ import primitives.Vector;
 
 public class Plane implements Geometry {
 
-    final Point _q0;
-    final Vector _normal;
+    final private Point _q0;
+    final private Vector _normal;
 
     public Plane(Point p1, Point p2, Point p3) {
 
@@ -18,8 +18,15 @@ public class Plane implements Geometry {
 
         Vector U= p2.subtract(p1);
         Vector V = p3.subtract(p1);
+        Vector N;
+        try {
+            N = U.crossProduct(V);
+        }
+        catch (Exception e)
+        {
 
-        Vector N = U.crossProduct(V);
+            throw new IllegalArgumentException("The three points are on same line, can not represent a Plane");
+        }
          _normal =N.normalize();
     }
 
@@ -37,8 +44,12 @@ public class Plane implements Geometry {
     }
 
 
-
-
+    @Override
+    public String toString() {
+        return "Plane: " +
+                "_q0=" + _q0 +
+                ", _normal=" + _normal;
+    }
 
     @Override
     public Vector getNormal(Point point) {

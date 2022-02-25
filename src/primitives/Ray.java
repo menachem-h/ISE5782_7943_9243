@@ -10,6 +10,8 @@ public class Ray {
     public Ray(Point p0, Vector dir) {
 
         this.p0 = p0;
+        if(dir._xyz.equals(Double3.ZERO))
+            throw new IllegalArgumentException("Vector (0,0,0) not valid");
         this.dir = dir.normalize();
     }
 
