@@ -4,11 +4,27 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+/**
+ * Tube class represents a three-dimensional tube in  3D Cartesian coordinate
+ * system
+ */
 public class Tube implements Geometry{
 
+    /**
+     * ray originating from base of tube
+     */
     final protected Ray _axisRay;
+    /**
+     * radius of tube
+     */
     final protected double _radius;
 
+    /**
+     * tube constructor based on a radius and a ray from base of tube
+     * @param axisRay ray originating from base of tube
+     * @param radius radius of tube
+     * @throws IllegalArgumentException <p>if radius sent as parameter is not a positive value</p>
+     */
     public Tube(Ray axisRay, double radius) {
         _axisRay = axisRay;
         if (radius <=0)
