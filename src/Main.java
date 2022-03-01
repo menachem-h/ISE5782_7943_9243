@@ -1,3 +1,9 @@
+/**
+ * Bezalel Jacober 312033236 mybj20@gmail.com
+ * Menachem Heller 305567943 h0527126@gmail.com
+ */
+
+
 import geometries.Plane;
 import primitives.*;
 import static java.lang.System.out;
