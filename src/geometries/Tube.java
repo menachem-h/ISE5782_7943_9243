@@ -13,11 +13,11 @@ public class Tube implements Geometry{
     /**
      * ray originating from base of tube
      */
-    final protected Ray _axisRay;
+    protected final Ray _axisRay;
     /**
      * radius of tube
      */
-    final protected double _radius;
+    protected final double _radius;
 
     /**
      * tube constructor based on a radius and a ray from base of tube

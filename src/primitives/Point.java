@@ -17,7 +17,7 @@ public class Point{
      * Point constructor to initialize a point based on  a double3 class object
      * @param xyz Double3 object containing value of (x,y,z) coordinates
      */
-    public Point(Double3 xyz) {
+    protected Point(Double3 xyz) {
         _xyz = xyz;
     }
 

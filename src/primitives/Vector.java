@@ -1,5 +1,5 @@
 package primitives;
-
+import static primitives.Util.*;
 /**
  * Vector class represents two-dimensional vector  in 3D Cartesian coordinate
  * system
@@ -25,9 +25,7 @@ public class Vector extends Point{
      * @throws IllegalArgumentException <p>if  vector (0,0,0) is trying to be constructed</p>
      */
     public Vector(double x, double y, double z) {
-        super(x, y, z);
-        if(_xyz.equals(Double3.ZERO))
-            throw new IllegalArgumentException("Vector (0,0,0) not valid");
+        this(new Double3(x,y,z));
     }
 
     @Override
@@ -66,12 +64,24 @@ public class Vector extends Point{
 
 
     /**
+     *
+     */
+    public Vector subtract(Vector vector){
+            return new Vector(_xyz.subtract(vector._xyz));
+    }
+
+    /**
      * scale a vector length with a scalar value.
      * aV = (ax,ay,az)
      * @param scalar scalar value to scale vector with
      * @return new vector with value (ax,ay,az)
      */
-    public Vector scale(double scalar){ return new Vector(_xyz.scale(scalar));}
+    public Vector scale(double scalar){
+        if (isZero(scalar))
+            throw new IllegalArgumentException("scaling factor == 0");
+
+        return new Vector(_xyz.scale(scalar));
+    }
 
 
     /**
@@ -118,6 +128,8 @@ public class Vector extends Point{
      */
     public Vector normalize() {
          double length=length();
+         if(isZero(length))
+             throw new IllegalArgumentException("length cannot be zero");
          return new Vector(_xyz.reduce(length));
     }
 }
