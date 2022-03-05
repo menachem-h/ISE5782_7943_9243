@@ -9,7 +9,7 @@ class PointTest {
     Point p1 = new Point(1, 2, 3);
 
     /**
-     * testing method {@link Point#distanceSquared(Point)}
+     * testing method {@link primitives.Point#distanceSquared(Point)}
      */
 
     @Test
@@ -39,7 +39,7 @@ class PointTest {
     }
 
     /**
-     * testing method {@link Point#subtract(Point)}
+     * testing method {@link  primitives.Point#subtract(Point)}
      */
     @Test
     void testSubtractEP() {
@@ -49,7 +49,7 @@ class PointTest {
     }
 
     /**
-     * testing method {@link Point#subtract(Point)}
+     * testing method {@link primitives.Point#subtract(Point)}
      */
     @Test
     void testSubtractBVE() {
