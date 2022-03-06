@@ -5,11 +5,25 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static primitives.Util.*;
 
+
 class VectorTest {
 
     Vector v1 = new Vector(1, 2, 3);
     Vector v2 = new Vector(-2, -4, -6);
     Vector v3 = new Vector(0, 3, -2);
+
+    /**
+     * testing constructor {@link primitives.Vector#Vector(double, double, double)}
+     */
+
+    @Test
+    void testConstructor(){
+
+        assertThrows(IllegalArgumentException.class,
+                ()->new Vector(Double3.ZERO),
+                "should have throw Exception");
+
+    }
 
     /**
      * testing method {@link Vector}
@@ -133,6 +147,8 @@ class VectorTest {
                 "crossProduct() wrong result length");
         assertTrue(isZero(vn.dotProduct(v1)),"crossProduct() orthogonal vector");
         assertTrue(isZero(vn.dotProduct(v3)),"crossProduct() orthogonal vector");
+        assertEquals(vn,new Vector(-13,2,3),
+                "crossProduct() wrong result ");
 
     }
 

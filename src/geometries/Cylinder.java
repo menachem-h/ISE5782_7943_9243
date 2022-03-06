@@ -1,6 +1,10 @@
 package geometries;
 
+import primitives.Point;
 import primitives.Ray;
+import primitives.Vector;
+
+import static primitives.Util.isZero;
 
 public class Cylinder extends Tube{
 
@@ -33,5 +37,18 @@ public class Cylinder extends Tube{
                 "height = " + height +
                 ", axisRay = " + _axisRay +
                 ", radius=" + _radius ;
+    }
+
+    @Override
+    public Vector getNormal(Point point){
+        Vector direction = _axisRay.getDir();
+        Point P0 = _axisRay.getP0();
+        if(point.equals(P0)||point.equals(P0.add(direction.scale(height))))
+            return direction.normalize();
+        if(isZero(point.subtract(P0).dotProduct(direction)))
+            return direction.normalize();
+        if (isZero(point.subtract(P0.add(direction.scale(height))).dotProduct(direction)))
+            return direction.normalize();
+        return super.getNormal(point);
     }
 }

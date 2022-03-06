@@ -20,7 +20,7 @@ class PointTest {
     }
 
     /**
-     * testing method {@link Point#distance(Point)}
+     * testing method {@link primitives.Point#distance(Point)}
      */
 
     @Test
@@ -30,7 +30,7 @@ class PointTest {
     }
 
     /**
-     * testing method {@link Point#add(Vector)}
+     * testing method {@link primitives.Point#add(Vector)}
      */
     @Test
     void testAdd() {

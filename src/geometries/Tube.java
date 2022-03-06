@@ -1,8 +1,7 @@
 package geometries;
 
-import primitives.Point;
-import primitives.Ray;
-import primitives.Vector;
+import primitives.*;
+import static primitives.Util.*;
 
 /**
  * Tube class represents a three-dimensional tube in  3D Cartesian coordinate
@@ -49,6 +48,15 @@ public class Tube implements Geometry{
 
     @Override
     public Vector getNormal(Point point) {
-        return null;
+        Vector direction = _axisRay.getDir();
+        Point P0 = _axisRay.getP0();
+        double t = (direction.dotProduct(point.subtract(P0)));
+        Point O = P0.add(direction.scale(t));
+        if (point.equals(O))
+            throw new IllegalArgumentException("point cannot be on the axis ray");
+        if (isZero(t))
+            return point.subtract(P0).normalize();
+        else
+            return point.subtract(O).normalize();
     }
 }
