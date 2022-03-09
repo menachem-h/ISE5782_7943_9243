@@ -35,19 +35,26 @@ public class Plane implements Geometry {
      */
     public Plane(Point p1, Point p2, Point p3) {
 
+        // check that all three points are different
         if (p1.equals(p2) || p1.equals(p3) || p2.equals(p3))
             throw new IllegalArgumentException("points must be different");
 
         _q0 = p1;
 
+        // generate two vectors from the three points
         Vector U = p2.subtract(p1);
         Vector V = p3.subtract(p1);
         Vector N;
+
+        // attempt to get cross product vector of the above vectors
+        // if exception is thrown all three points are
+        // on same line and cannot represent a plane
         try {
             N = U.crossProduct(V);
         } catch (Exception e) {
             throw new IllegalArgumentException("The three points are on same line, can not represent a Plane");
         }
+        // set plane's normal vector to normalized result of cross product vector
         _normal = N.normalize();
     }
 
@@ -77,6 +84,11 @@ public class Plane implements Geometry {
                 ", _normal=" + _normal;
     }
 
+    /**
+     * given a point on the plane calculate normal vector to plane at the point
+     * @param point point on plane to get normal vector at
+     * @return normal vector (normalized)
+     */
     @Override
     public Vector getNormal(Point point) {
         return _normal;

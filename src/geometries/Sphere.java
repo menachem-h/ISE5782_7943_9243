@@ -47,6 +47,11 @@ public class Sphere implements Geometry{
                 ", radius = " + radius;
     }
 
+    /**
+     * given a point on the sphere's circumference - calculate normal vector at the point
+     * @param point point on sphere  to get normal vector at
+     * @return normal vector (normalized) at given point
+     */
     @Override
     public Vector getNormal(Point point) {
         return point.subtract(center).normalize();

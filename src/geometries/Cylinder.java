@@ -43,10 +43,11 @@ public class Cylinder extends Tube{
     public Vector getNormal(Point point){
         Vector direction = _axisRay.getDir();
         Point P0 = _axisRay.getP0();
-        if(point.equals(P0)||isZero(point.subtract(P0).dotProduct(direction)))
-            return direction.scale(-1).normalize();
-        if (point.equals(P0.add(direction.scale(height)))||
-                isZero(point.subtract(P0.add(direction.scale(height))).dotProduct(direction)))
+        if(point.equals(P0)||point.equals(P0.add(direction.scale(height))))
+            return direction.normalize();
+        if(isZero(point.subtract(P0).dotProduct(direction)))
+            return direction.normalize();
+        if (isZero(point.subtract(P0.add(direction.scale(height))).dotProduct(direction)))
             return direction.normalize();
         return super.getNormal(point);
     }
