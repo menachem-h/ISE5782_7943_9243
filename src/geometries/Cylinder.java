@@ -44,16 +44,14 @@ public class Cylinder extends Tube{
         Vector direction = _axisRay.getDir();
         Point P0 = _axisRay.getP0();
 
-        //given point is on direction vector - equal to p0 or same spot on top base of cylinder
-        if(point.equals(P0)||point.equals(P0.add(direction.scale(height))))
-            return direction.normalize();
+        //given point is on base of cylinder
+        if(point.equals(P0)||isZero(point.subtract(P0).dotProduct(direction)))
+            return direction.normalize().scale(-1);
 
-        // given point is on the base of the cylinder
-        if(isZero(point.subtract(P0).dotProduct(direction)))
-            return direction.normalize();
 
         // given point is on top base of the cylinder
-        if (isZero(point.subtract(P0.add(direction.scale(height))).dotProduct(direction)))
+        if (isZero(point.subtract(P0.add(direction.scale(height))).dotProduct(direction))||
+                point.equals(P0.add(direction.scale(height))))
             return direction.normalize();
 
         // given point is on the circumference of cylinder
