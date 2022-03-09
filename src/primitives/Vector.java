@@ -110,6 +110,13 @@ public class Vector extends Point{
      * with a direction given by the right-hand rule
      */
     public Vector crossProduct(Vector vector) {
+
+        //  | i   j   k  |
+        //  | a1  a2  a3 |
+        //  | b1  b2  b3 |
+        // cross product vector =
+        // new vector(a2*b3-b2*a3 , -(a1*b3-b1*a3) , a1*b2-b1*b2)
+
         double v1= vector._xyz._d1;
         double v2= vector._xyz._d2;
         double v3= vector._xyz._d3;

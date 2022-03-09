@@ -50,10 +50,14 @@ public class Tube implements Geometry{
     public Vector getNormal(Point point) {
         Vector direction = _axisRay.getDir();
         Point P0 = _axisRay.getP0();
+
         double t = (direction.dotProduct(point.subtract(P0)));
         Point O = P0.add(direction.scale(t));
+
+        //given point is on axis ray
         if (point.equals(O))
             throw new IllegalArgumentException("point cannot be on the axis ray");
+
         if (isZero(t))
             return point.subtract(P0).normalize();
         else

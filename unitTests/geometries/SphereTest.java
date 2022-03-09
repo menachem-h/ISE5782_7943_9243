@@ -15,7 +15,7 @@ class SphereTest {
         Sphere sph=new Sphere(new Point(0,0,2),1);
         assertEquals(new Vector(0,0,1),
                 sph.getNormal(new Point(0,0,3)),
-                "normal vector for sphere does not work correctly");
+                "normal vector returned is incorrect");
 
     }
 }

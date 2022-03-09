@@ -13,12 +13,12 @@ class VectorTest {
     Vector v3 = new Vector(0, 3, -2);
 
     /**
-     * testing constructor {@link primitives.Vector#Vector(double, double, double)}
+     * testing constructor {@link primitives.Vector#Vector(Double3)}
      */
-
     @Test
-    void testConstructor(){
+    void testConstructorBVE01(){
 
+        // =============== Boundary Values Tests ==================
         assertThrows(IllegalArgumentException.class,
                 ()->new Vector(Double3.ZERO),
                 "should have throw Exception");
@@ -26,26 +26,29 @@ class VectorTest {
     }
 
     /**
-     * testing method {@link Vector}
+     * testing constructor {@link primitives.Vector#Vector(double, double, double)}
      */
     @Test
-    void testZeroVector(){
+    void testConstructorBVE02(){
+
+        // =============== Boundary Values Tests ==================
         assertThrows(IllegalArgumentException.class,
                 ()->new Vector(0,0,0),
                 "should have throw Exception");
     }
 
     /**
-     * testing method {@link Vector#lengthSquared()}
+     * testing method {@link primitives.Vector#lengthSquared()}
      */
     @Test
     void testLengthSquared() {
+
         assertTrue(isZero(new Vector(1,2,3).lengthSquared()-14),
                 "Length Squared does not work correctly");
     }
 
     /**
-     * testing method {@link Vector#length()}
+     * testing method {@link primitives.Vector#length()}
      */
     @Test
     void testLength() {
@@ -54,7 +57,7 @@ class VectorTest {
     }
 
     /**
-     * testing method {@link Vector#add(Vector)}
+     * testing method {@link primitives.Vector#add(Vector)}
      */
     @Test
     void testAddEP() {
@@ -65,7 +68,7 @@ class VectorTest {
     }
 
     /**
-     *
+     * testing method {@link primitives.Vector#add(Vector)}
      */
     @Test
     void testAddBVE(){
@@ -77,7 +80,7 @@ class VectorTest {
     }
 
     /**
-     * testing method {@link Vector#subtract(Vector)}
+     * testing method {@link primitives.Vector#subtract(Vector)}
      */
     @Test
     void testSubtractEP(){
@@ -87,7 +90,7 @@ class VectorTest {
     }
 
     /**
-     * testing method {@link Vector#subtract(Vector)}
+     * testing method {@link primitives.Vector#subtract(Vector)}
      */
     @Test
     void testSubtractBVE(){
@@ -97,7 +100,7 @@ class VectorTest {
 
     }
     /**
-     * testing method {@link Vector#scale(double)}
+     * testing method {@link primitives.Vector#scale(double)}
      */
     @Test
     void testScaleEP() {
@@ -106,6 +109,9 @@ class VectorTest {
                 "Scale vector does not work correctly");
     }
 
+    /**
+     * testing method {@link primitives.Vector#scale(double)}
+     */
     @Test
     void testScaleBVA(){
         // =============== Boundary Values Tests ==================
@@ -115,7 +121,7 @@ class VectorTest {
     }
 
     /**
-     * testing method {@link Vector#dotProduct(Vector)}
+     * testing method {@link primitives.Vector#dotProduct(Vector)}
      */
     @Test
     void testDotProductEP() {
@@ -126,7 +132,7 @@ class VectorTest {
     }
 
     /**
-     *
+     * testing method {@link primitives.Vector#dotProduct(Vector)}
      */
     @Test
     void testDotProductBVE(){
@@ -137,7 +143,7 @@ class VectorTest {
     }
 
     /**
-     * testing methode {@link Vector#crossProduct(Vector)}
+     * testing methode {@link primitives.Vector#crossProduct(Vector)}
      */
     @Test
     void testCrossProductEP() {
@@ -147,13 +153,13 @@ class VectorTest {
                 "crossProduct() wrong result length");
         assertTrue(isZero(vn.dotProduct(v1)),"crossProduct() orthogonal vector");
         assertTrue(isZero(vn.dotProduct(v3)),"crossProduct() orthogonal vector");
-        assertEquals(vn,new Vector(-13,2,3),
+        assertEquals(new Vector(-13,2,3),vn,
                 "crossProduct() wrong result ");
 
     }
 
     /**
-     *  testing methode {@link Vector#crossProduct(Vector)}
+     *  testing methode {@link primitives.Vector#crossProduct(Vector)}
      */
     @Test
     void testCrossProductBVE(){
@@ -164,7 +170,7 @@ class VectorTest {
     }
 
     /**
-     * testing method {@link Vector#normalize()}
+     * testing method {@link primitives.Vector#normalize()}
      */
     @Test
     void testNormalizeEP1() {
@@ -175,7 +181,7 @@ class VectorTest {
     }
 
     /**
-     * testing method {@link Vector#normalize()}
+     * testing method {@link primitives.Vector#normalize()}
      */
     @Test
     void testNormalizeEP2(){

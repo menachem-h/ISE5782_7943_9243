@@ -11,7 +11,6 @@ class PointTest {
     /**
      * testing method {@link primitives.Point#distanceSquared(Point)}
      */
-
     @Test
     void testDistanceSquared() {
         assertTrue(isZero(p1.distanceSquared(new Point(3,5,6))-22),
@@ -22,7 +21,6 @@ class PointTest {
     /**
      * testing method {@link primitives.Point#distance(Point)}
      */
-
     @Test
     void testDistance() {
         assertTrue(isZero(new Point(5,5,3).distance(p1)-5) ,
