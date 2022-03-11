@@ -101,6 +101,9 @@ public class Plane implements Geometry {
        Vector v = ray.getDir();
        Vector n = _normal;
 
+       if(_q0.equals(P0))
+           throw new IllegalArgumentException("ray can't originate from Plane's Q0 point\n");
+
         double nv = n.dotProduct(v);
 
         // ray direction cannot be parallel to plane orientation

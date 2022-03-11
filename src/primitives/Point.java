@@ -21,6 +21,17 @@ public class Point{
         _xyz = xyz;
     }
 
+    public double getX() {
+        return _xyz._d1;
+    }
+    public double getY() {
+        return _xyz._d2;
+    }
+    public double getZ() {
+        return _xyz._d3;
+    }
+
+
     /**
      * Point constructor to initialize point based on three coordinates
      * @param x  x coordinate value
