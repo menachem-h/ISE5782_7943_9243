@@ -6,7 +6,7 @@ import primitives.Vector;
 /**
  * Geometry Interface represnts Geometric shapes in 3D Cartesian coordinate system
  */
-public interface Geometry {
+public interface Geometry  extends  Intersectable{
     /**
      * calculate the normal vector at a given point of a geometry
      * @param point point to get normal vector at

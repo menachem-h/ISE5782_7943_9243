@@ -18,4 +18,8 @@ class SphereTest {
                 "normal vector returned is incorrect");
 
     }
+
+    @Test
+    void findIntersections() {
+    }
 }

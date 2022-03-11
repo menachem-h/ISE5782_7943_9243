@@ -39,6 +39,12 @@ public class Cylinder extends Tube{
                 ", radius=" + _radius ;
     }
 
+    /**
+     * implementation {@link Geometry#getNormal(Point)}
+     *
+     * @param point point to calculate normal from/to
+     * @return normal
+     */
     @Override
     public Vector getNormal(Point point){
         Vector direction = _axisRay.getDir();

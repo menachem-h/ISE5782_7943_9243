@@ -1,6 +1,9 @@
 package geometries;
 
 import primitives.*;
+
+import java.util.List;
+
 import static primitives.Util.*;
 
 /**
@@ -62,5 +65,10 @@ public class Tube implements Geometry{
             return point.subtract(P0).normalize();
         else
             return point.subtract(O).normalize();
+    }
+
+    @Override
+    public List<Point> findIntersections(Ray ray) {
+        return null;
     }
 }

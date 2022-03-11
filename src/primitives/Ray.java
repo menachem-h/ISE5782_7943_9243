@@ -2,6 +2,8 @@ package primitives;
 
 import java.util.Objects;
 
+import static primitives.Util.isZero;
+
 /**
  * Ray class represents a two-dimensional ray in 3D Cartesian coordinate
  * system
@@ -62,5 +64,15 @@ public class Ray {
         return Objects.hash(p0, dir);
     }
 
-
+    /**
+     * creating a {@link Point} at a specific distance in the ray direction
+     * @param t distance
+     * @return new {@link Point}
+     */
+    public Point getPoint(double t) {
+        if(isZero(t)){
+            throw  new IllegalArgumentException("t should not be ZERO");
+        }
+        return p0.add(dir.scale(t));
+    }
 }

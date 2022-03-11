@@ -1,8 +1,9 @@
 package geometries;
 
-import primitives.Double3;
-import primitives.Point;
-import primitives.Vector;
+import java.util.List;
+
+import primitives.*;
+import static primitives.Util.*;
 
 /**
  * Plane class represents a two-dimensional plane in 3D Cartesian coordinate
@@ -92,5 +93,34 @@ public class Plane implements Geometry {
     @Override
     public Vector getNormal(Point point) {
         return _normal;
+    }
+
+    @Override
+    public List<Point> findIntersections(Ray ray) {
+       Point P0 = ray.getP0();
+       Vector v = ray.getDir();
+       Vector n = _normal;
+
+        double nv = n.dotProduct(v);
+
+        // ray direction cannot be parallel to plane orientation
+        if (isZero(nv)){
+            return null;
+        }
+
+        Vector Q_P0 = _q0.subtract(P0);
+
+        double nQMinusP0 = alignZero(n.dotProduct(Q_P0));
+
+        //t should not be equal to 0
+        if( isZero(nQMinusP0)){
+            return null;
+        }
+        double t = alignZero(nQMinusP0 / nv);
+        if (t > 0){
+            //return immutable List
+            return List.of(ray.getPoint(t));
+        }
+        return null;
     }
 }
