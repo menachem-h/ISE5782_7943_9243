@@ -111,12 +111,16 @@ public class Tube implements Geometry {
                 c = deltaMinusVt.lengthSquared() - (_radius * _radius);
             }
             catch (IllegalArgumentException ex) {
-                if(isZero(vvt))
-                    b = 0;
-                else
-                    b= b = 2 * (vMinusVt.dotProduct(delta));
-                c = delta.lengthSquared()-(_radius * _radius);
-            }
+                if(delta.equals(vt.scale(delta.dotProduct(vt)))){
+                    b=0;
+                    c = -(_radius * _radius);
+                }
+                // scaling factor==0
+                else {
+                    b = 2 * v.dotProduct(delta);
+                    c = delta.lengthSquared() - (_radius * _radius);
+                }
+           }
         }
 
 
