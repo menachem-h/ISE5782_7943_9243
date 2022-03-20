@@ -10,7 +10,7 @@ import static primitives.Util.*;
  * Tube class represents a three-dimensional tube in  3D Cartesian coordinate
  * system
  */
-public class Tube implements Geometry{
+public class Tube implements Geometry {
 
     /**
      * ray originating from base of tube
@@ -23,13 +23,14 @@ public class Tube implements Geometry{
 
     /**
      * tube constructor based on a radius and a ray from base of tube
+     *
      * @param axisRay ray originating from base of tube
-     * @param radius radius of tube
+     * @param radius  radius of tube
      * @throws IllegalArgumentException <p>if radius sent as parameter is not a positive value</p>
      */
     public Tube(Ray axisRay, double radius) {
         _axisRay = axisRay;
-        if (radius <=0)
+        if (radius <= 0)
             throw new IllegalArgumentException("radius must be positive value");
         _radius = radius;
     }
@@ -69,6 +70,55 @@ public class Tube implements Geometry{
 
     @Override
     public List<Point> findIntersections(Ray ray) {
+
+        Vector v = ray.getDir();
+        Vector vt = _axisRay.getDir();
+        Point pa = _axisRay.getP0();
+        Point p0 = ray.getP0();
+
+        if (v.equals(vt))
+            return null;
+
+
+        double vvt, a, b, c;
+        vvt = v.dotProduct(vt);
+
+        Vector vMinusVt = v.subtract(vt.scale(vvt));
+        Vector delta = null;
+
+        if (p0.equals(pa) && isZero(vvt))
+            a = v.lengthSquared();
+
+        else {
+            a = vMinusVt.lengthSquared();
+            delta = p0.subtract(pa);
+        }
+
+        try {
+            Vector deltaMinusVt = delta.subtract(vt.scale(delta.dotProduct(vt)));
+            b = 2 * (vMinusVt.dotProduct(deltaMinusVt));
+            c = delta.subtract(deltaMinusVt).lengthSquared() - (_radius * _radius);
+        } catch (IllegalArgumentException ex) {
+            b = 0;
+            c = -(_radius * _radius);
+        }
+
+
+        double discriminant = alignZero(b * b - 4 * a * c);
+        if (discriminant <= 0)
+            return null;
+        else {
+            double t1 = (-b + Math.sqrt(discriminant)) / 2 * a;
+            double t2 = (-b - Math.sqrt(discriminant)) / 2 * a;
+
+            if (t1 > 0 && t2 > 0)
+                return List.of(ray.getPoint(t2), ray.getPoint(t1));
+            if (t1 > 0)
+                return List.of(ray.getPoint(t1));
+            if (t2 > 0)
+                return List.of(ray.getPoint(t2));
+        }
+
         return null;
     }
 }
