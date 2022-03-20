@@ -83,24 +83,40 @@ public class Tube implements Geometry {
         double vvt, a, b, c;
         vvt = v.dotProduct(vt);
 
-        Vector vMinusVt = v.subtract(vt.scale(vvt));
+        Vector vMinusVt =null;
         Vector delta = null;
 
-        if (p0.equals(pa) && isZero(vvt))
+        if (isZero(vvt))
             a = v.lengthSquared();
-
         else {
+            vMinusVt = v.subtract(vt.scale(vvt));
             a = vMinusVt.lengthSquared();
-            delta = p0.subtract(pa);
         }
 
-        try {
-            Vector deltaMinusVt = delta.subtract(vt.scale(delta.dotProduct(vt)));
-            b = 2 * (vMinusVt.dotProduct(deltaMinusVt));
-            c = delta.subtract(deltaMinusVt).lengthSquared() - (_radius * _radius);
-        } catch (IllegalArgumentException ex) {
+        if(p0.equals(pa))
+        {
             b = 0;
             c = -(_radius * _radius);
+        }
+        else {
+
+            delta = p0.subtract(pa);
+
+            try {
+                Vector deltaMinusVt = delta.subtract(vt.scale(delta.dotProduct(vt)));
+                if(isZero(vvt))
+                    b= 2*v.dotProduct(deltaMinusVt);
+                else
+                    b = 2 * (vMinusVt.dotProduct(deltaMinusVt));
+                c = deltaMinusVt.lengthSquared() - (_radius * _radius);
+            }
+            catch (IllegalArgumentException ex) {
+                if(isZero(vvt))
+                    b = 0;
+                else
+                    b= b = 2 * (vMinusVt.dotProduct(delta));
+                c = delta.lengthSquared()-(_radius * _radius);
+            }
         }
 
 
@@ -108,8 +124,8 @@ public class Tube implements Geometry {
         if (discriminant <= 0)
             return null;
         else {
-            double t1 = (-b + Math.sqrt(discriminant)) / 2 * a;
-            double t2 = (-b - Math.sqrt(discriminant)) / 2 * a;
+            double t1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+            double t2 = (-b - Math.sqrt(discriminant)) / (2 * a);
 
             if (t1 > 0 && t2 > 0)
                 return List.of(ray.getPoint(t2), ray.getPoint(t1));
