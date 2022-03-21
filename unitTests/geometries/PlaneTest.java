@@ -62,10 +62,12 @@ class PlaneTest {
 
 
 
-
+    //region ======================= Equivalence Partitions Tests =========================================================
+    /**
+     * Test method for {@link geometries.Plane#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsEP1() {
-        // ============ Equivalence Partitions Tests ==============
         // TC01: Ray into plane
         assertEquals(
                 List.of(new Point(0.5, 0.5, 0)),
@@ -73,23 +75,33 @@ class PlaneTest {
                 "Bad plane intersection");
     }
 
+    /**
+     * Test method for {@link geometries.Plane#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsEP2() {
         // TC02: Ray out of plane
         assertNull(pl.findIntersections(new Ray(new Point(4, 0, 0), new Vector(0, 2, 0))),
                 "Must not be plane intersection");
-
-
     }
+    //endregion
 
+    //region ======================= Boundary Values Tests ==================================================================
+
+    /**
+     * Test method for {@link geometries.Plane#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsBVA1() {
-        // =============== Boundary Values Tests ==================
+
         // TC11: Ray parallel to plane
         assertNull(pl.findIntersections(new Ray(new Point(2, 2, 2), new Vector(0, -1, 1))),
                 "Must not be plane intersection");
     }
 
+    /**
+     * Test method for {@link geometries.Plane#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsBVA2() {
         // TC12: Ray in plane
@@ -97,6 +109,9 @@ class PlaneTest {
                 "Must not be plane intersection");
     }
 
+    /**
+     * Test method for {@link geometries.Plane#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsBVA3() {
         // TC13: Orthogonal ray into plane
@@ -105,6 +120,9 @@ class PlaneTest {
                 "Bad plane intersection");
     }
 
+    /**
+     * Test method for {@link geometries.Plane#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsBVA4() {
         // TC14: Orthogonal ray out of plane
@@ -113,7 +131,9 @@ class PlaneTest {
     }
 
 
-
+    /**
+     * Test method for {@link geometries.Plane#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsBVA5() {
         // TC16: Orthogonal ray from plane
@@ -121,6 +141,9 @@ class PlaneTest {
                 "Must not be plane intersection");
     }
 
+    /**
+     * Test method for {@link geometries.Plane#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsBVA6() {
         // TC17: Ray from plane
@@ -128,6 +151,9 @@ class PlaneTest {
                 "Must not be plane intersection");
     }
 
+    /**
+     * Test method for {@link geometries.Plane#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsBVA8() {
         // TC18: Ray from plane's Q point
@@ -136,5 +162,6 @@ class PlaneTest {
                 () -> pl.findIntersections(new Ray(new Point(0, 0, 1), new Vector(1, 1, 0))),
                 "Must not be plane intersection");
     }
+    //endregion
 
 }

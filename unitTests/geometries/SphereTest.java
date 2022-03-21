@@ -21,18 +21,24 @@ class SphereTest {
 
     }
 
+    // Tests for method findIntersection(Ray)
     Sphere sphere = new Sphere( new Point (2, 0, 0),2d);
+
+
+    //region  ============ Equivalence Partitions Tests ==============
+    /**
+     * Test method for {@link geometries.Sphere#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsEP01() {
-
-
-        // ============ Equivalence Partitions Tests ==============
-
         // TC01: Ray's line is outside the sphere (0 points)
         assertNull(sphere.findIntersections(new Ray(new Point(0, 0, 4), new Vector(0, 1, 0))),
                 "Ray's line out of sphere");
     }
 
+    /**
+     * Test method for {@link geometries.Sphere#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsEP02() {
 
@@ -47,6 +53,9 @@ class SphereTest {
         assertEquals(List.of(p1, p2), result, "Ray crosses sphere");
     }
 
+    /**
+     * Test method for {@link geometries.Sphere#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsEP03() {
 
@@ -58,6 +67,9 @@ class SphereTest {
         assertEquals(List.of(p1), result, "Ray crosses sphere");
     }
 
+    /**
+     * Test method for {@link geometries.Sphere#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsEP04() {
 
@@ -65,11 +77,15 @@ class SphereTest {
         assertNull(sphere.findIntersections(new Ray(new Point(5, 8, 9), new Vector(6, 1, 1))),
                 "Ray's line out of sphere");
     }
+    //endregion
 
 
-    // =============== Boundary Values Tests ==================
+    //region ============================== Boundary Values Tests ========================================================
 
-    // **** Group: Ray's line crosses the sphere (but not the center)
+    //region **** Group: Ray's line crosses the sphere (but not the center)
+    /**
+     * Test method for {@link geometries.Sphere#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsBVA01() {
 
@@ -80,6 +96,9 @@ class SphereTest {
         assertEquals(1, result.size(), "Wrong number of points");
         assertEquals(List.of(p1), result, "Ray crosses sphere");
     }
+    /**
+     * Test method for {@link geometries.Sphere#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsBVA02() {
 
@@ -87,9 +106,12 @@ class SphereTest {
         assertNull(sphere.findIntersections(new Ray(new Point(3, 0, 1.732050807568877), new Vector(0, 1, 1))),
                 "Ray's line out of sphere");
     }
+    //endregion
 
-    // **** Group: Ray's line goes through the center
-
+    //region **** Group: Ray's line goes through the center
+    /**
+     * Test method for {@link geometries.Sphere#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsBVA03() {
 
@@ -104,6 +126,9 @@ class SphereTest {
         assertEquals(List.of(p1, p2), result, "Ray crosses sphere");
     }
 
+    /**
+     * Test method for {@link geometries.Sphere#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsBVA05() {
         // TC14: Ray starts at sphere and goes inside (1 points)
@@ -114,6 +139,9 @@ class SphereTest {
         assertEquals(List.of(p1), result, "Ray crosses sphere");
     }
 
+    /**
+     * Test method for {@link geometries.Sphere#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsBVA06() {
         // TC15: Ray starts inside (1 points)
@@ -124,6 +152,9 @@ class SphereTest {
         assertEquals(List.of(p1), result, "Ray crosses sphere");
     }
 
+    /**
+     * Test method for {@link geometries.Sphere#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsBVA07() {
         // TC16: Ray starts at the center (1 points)
@@ -134,6 +165,9 @@ class SphereTest {
         assertEquals(List.of(p1), result, "Ray crosses sphere");
     }
 
+    /**
+     * Test method for {@link geometries.Sphere#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsBVA08() {
         // TC17: Ray starts at sphere and goes outside (0 points)
@@ -141,14 +175,21 @@ class SphereTest {
                 "Ray's line out of sphere");
     }
 
+    /**
+     * Test method for {@link geometries.Sphere#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsBVA09() {
         // TC18: Ray starts after sphere (0 points)
         assertNull(sphere.findIntersections(new Ray(new Point(6, 0, 0), new Vector(1, 0, 0))),
                 "Ray's line out of sphere");
     }
+    //endregion
 
-    // **** Group: Ray's line is tangent to the sphere (all tests 0 points)
+    //region  **** Group: Ray's line is tangent to the sphere (all tests 0 points)
+    /**
+     * Test method for {@link geometries.Sphere#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsBVA10() {
         // TC19: Ray starts before the tangent point(0 points)
@@ -156,6 +197,9 @@ class SphereTest {
                 "Ray's line out of sphere");
     }
 
+    /**
+     * Test method for {@link geometries.Sphere#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsBVA11() {
         // TC20: Ray starts at the tangent point
@@ -163,6 +207,9 @@ class SphereTest {
                 "Ray's line out of sphere");
     }
 
+    /**
+     * Test method for {@link geometries.Sphere#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsBVA12() {
         // TC21: Ray starts after the tangent point
@@ -170,12 +217,16 @@ class SphereTest {
                 "Ray's line out of sphere");
     }
 
-
+    /**
+     * Test method for {@link geometries.Sphere#findIntersections(primitives.Ray)}
+     */
     @Test
     void findIntersectionsBVA13() {
         // TC19: Ray's line is outside, ray is orthogonal to ray start to sphere's center line
         assertNull(sphere.findIntersections(new Ray(new Point(5, 0, -5), new Vector(0, 0, 1))),
                 "Ray's line out of sphere");
     }
+    //endregion
+    //endregion
 
     }
