@@ -4,6 +4,7 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import static primitives.Util.isZero;
@@ -68,6 +69,53 @@ public class Cylinder extends Tube{
 
     @Override
     public List<Point> findIntersections(Ray ray) {
+
+        Point basePoint=_axisRay.getP0();
+        Point topPoint =_axisRay.getPoint(height);
+        Vector vC=_axisRay.getDir();
+
+        List<Point> result= new LinkedList<>();
+        Plane basePlane= new Plane(basePoint,vC);
+        List<Point> intersectionsBase=basePlane.findIntersections(ray);
+
+        if(intersectionsBase!=null){
+            for (Point p:intersectionsBase) {
+                if(p.equals(basePoint))
+                   result.add(basePoint);
+                else if(p.subtract(basePoint).dotProduct(p.subtract(basePoint))<_radius*_radius)
+                    result.add(p);
+            }
+        }
+
+        Plane topPlane= new Plane(topPoint,vC);
+        List<Point> intersectionsTop=basePlane.findIntersections(ray);
+        if(intersectionsTop!=null){
+            for (Point p:intersectionsTop) {
+                if(p.equals(topPoint))
+                    result.add(topPoint);
+                else if(p.subtract(topPoint).dotProduct(p.subtract(topPoint))<_radius*_radius)
+                    result.add(p);
+            }
+        }
+
+        List<Point> intersectionsTube=super.findIntersections(ray);
+
+
+        if(intersectionsTube!=null){
+            for (Point p:intersectionsTube){
+                if(vC.dotProduct(p.subtract(basePoint))>0 && vC.dotProduct(p.subtract(topPoint))<0)
+                    result.add(0,p);
+            }
+        }
+
+        if(result.size()<2){
+
+
+
+
+
+        }
+
         return super.findIntersections(ray);
     }
 }
