@@ -24,8 +24,6 @@ class TriangleTest {
         assertEquals(new Vector(0,-1,0), tri.getNormal(new Point(1, 0, 0.5)), "Bad normal to triangle");
     }
 
-
-
     //region ==================== Equivalence Partitions Tests =====================================================
     /**
      * Test method for {@link geometries.Triangle#findIntersections(primitives.Ray)}

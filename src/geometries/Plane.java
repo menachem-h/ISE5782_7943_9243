@@ -95,15 +95,30 @@ public class Plane implements Geometry {
         return _normal;
     }
 
+    /**
+     * find intersection between ray and plane
+     * @param ray ray towards the plane
+     * @return list with one intersection point
+     * @throws IllegalArgumentException if ray is constructed at
+     * plane's representing point
+     */
     @Override
     public List<Point> findIntersections(Ray ray) {
        Point P0 = ray.getP0();
        Vector v = ray.getDir();
        Vector n = _normal;
 
+        // ray constructed at plane's origin point
        if(_q0.equals(P0))
            throw new IllegalArgumentException("ray can't originate from Plane's Q0 point\n");
 
+       // ray points -> P = p0 + t*v_ (v_ = direction vector)
+        // points on plane  if normal vector dot product with vector from
+        // origin point to proposed point == 0
+        // glossary:  (n,v) = dot product between vectors n,v
+        // isolating t ,( scaling factor for ray's direction vector ) ->
+        // t = (normal vector, vector from origin to point)/ (normal vector, ray vector)
+        // if t is positive ray intersects plane
         double nv = n.dotProduct(v);
 
         // ray direction cannot be parallel to plane orientation
@@ -111,6 +126,7 @@ public class Plane implements Geometry {
             return null;
         }
 
+        // vector from origin to point
         Vector Q_P0 = _q0.subtract(P0);
 
         double nQMinusP0 = alignZero(n.dotProduct(Q_P0));
@@ -119,11 +135,14 @@ public class Plane implements Geometry {
         if( isZero(nQMinusP0)){
             return null;
         }
+        // scaling factor for ray , if value is positive
+        // ray intersects plane
         double t = alignZero(nQMinusP0 / nv);
         if (t > 0){
             //return immutable List
             return List.of(ray.getPoint(t));
         }
+        // no intersection point  - ray and plane in opposite  direction
         return null;
     }
 }

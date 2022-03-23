@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface Intersectable {
     /**
-     * find all intersection {@link Point}s to the specific object
+     * find all intersection {@link Point}s between ray and an object (geometry)
      * @param ray ray towards the object
      * @return immutable list of intersection points
      */

@@ -14,27 +14,45 @@ public class Geometries  implements Intersectable{
 
     private List<Intersectable>  _intersectables;
 
+    /**
+     * constructor
+     */
     public Geometries() {
         _intersectables = new LinkedList<Intersectable>();
     }
 
+    /**
+     * constructor with parameter
+     * @param intersectables list of {@link  Geometries} to add to geometry composite
+     */
     public Geometries(Intersectable... intersectables) {
         _intersectables = new LinkedList<Intersectable>();
          Collections.addAll(_intersectables, intersectables);
     }
 
+    /**
+     * add list of {@link  Geometries} geometry composite
+     * @param intersectables
+     */
     public void  add( Intersectable... intersectables){
         Collections.addAll(_intersectables, intersectables);
     }
 
+    /**
+     * find intersection between ray and all geometries in the geometry composite
+     * @param ray ray towards the composite of geometries
+     * @return list of intersection points
+     */
     @Override
     public List<Point> findIntersections(Ray ray) {
         List<Point> result = null;
-        //TODO comment here
+        //for each geometry in composite check intersection points
         for (var item: _intersectables ) {
 
+            // get intersection point for a specific geometry in composite
             List<Point> itemList = item.findIntersections(ray);
 
+            // points were found , add to composite's total intersection points list
             if(itemList != null) {
                 if(result==null){
                     result= new LinkedList<>();
@@ -42,6 +60,7 @@ public class Geometries  implements Intersectable{
                 result.addAll(itemList);
             }
         }
+        // return list of points - null if no intersection points were found
         return result;
     }
 }
