@@ -88,7 +88,7 @@ public class Cylinder extends Tube{
         }
 
         Plane topPlane= new Plane(topPoint,vC);
-        List<Point> intersectionsTop=basePlane.findIntersections(ray);
+        List<Point> intersectionsTop=topPlane.findIntersections(ray);
         if(intersectionsTop!=null){
             for (Point p:intersectionsTop) {
                 if(p.equals(topPoint))
@@ -98,24 +98,28 @@ public class Cylinder extends Tube{
             }
         }
 
+        if (result.size()==2)
+            return List.of(result.get(0),result.get(1));
+
         List<Point> intersectionsTube=super.findIntersections(ray);
 
 
         if(intersectionsTube!=null){
             for (Point p:intersectionsTube){
                 if(vC.dotProduct(p.subtract(basePoint))>0 && vC.dotProduct(p.subtract(topPoint))<0)
-                    result.add(0,p);
+                    result.add(p);
             }
         }
 
-        if(result.size()<2){
+        int len = result.size();
+        if(len>0)
+            if (len ==1)
+                return List.of(result.get(0));
+            else
+                return List.of(result.get(0), result.get(1));
 
+        // no intersections
+        return null;
 
-
-
-
-        }
-
-        return super.findIntersections(ray);
     }
 }
