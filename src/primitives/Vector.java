@@ -33,6 +33,9 @@ public class Vector extends Point{
         return "Vector " + _xyz ;
     }
 
+
+
+
     /**
      * calculate x² + y² + z² expression from the 3D vector length formula:
      *<p> |V| = √(x² + y² + z²) </p>

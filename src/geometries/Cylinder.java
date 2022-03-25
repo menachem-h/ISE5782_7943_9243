@@ -55,12 +55,11 @@ public class Cylinder extends Tube{
 
         //given point is on base of cylinder
         if(point.equals(P0)||isZero(point.subtract(P0).dotProduct(direction)))
-            return direction.normalize().scale(-1);
+            return direction.normalize();
 
 
         // given point is on top base of the cylinder
-        if (isZero(point.subtract(P0.add(direction.scale(height))).dotProduct(direction))||
-                point.equals(P0.add(direction.scale(height))))
+        if (point.equals(P0.add(direction.scale(height)))||isZero(point.subtract(P0.add(direction.scale(height))).dotProduct(direction)))
             return direction.normalize();
 
         // given point is on the circumference of cylinder
@@ -70,6 +69,7 @@ public class Cylinder extends Tube{
 
     @Override
     public List<Point> findIntersections(Ray ray) {
+
 
         Point basePoint=_axisRay.getP0();
         Point topPoint =_axisRay.getPoint(height);
@@ -123,4 +123,6 @@ public class Cylinder extends Tube{
         return null;
 
     }
+
+
 }
