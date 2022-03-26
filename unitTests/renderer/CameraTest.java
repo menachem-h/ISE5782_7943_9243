@@ -29,7 +29,7 @@ class CameraTest {
         assertEquals(new Ray(ZERO_POINT, new Vector(1, -1, -10)),
                 camera1.constructRay(4, 4, 1, 1), badRay);
     }
-        // =============== Boundary Values Tests ==================
+    // =============== Boundary Values Tests ==================
 
     /**
      * Test method for
