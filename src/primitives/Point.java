@@ -62,7 +62,7 @@ public class Point{
 
     /**
      * calculate (x_2-x_1)²+(y_2-y_1)² expression
-     * from  the d=√((x_2-x_1)²+(y_2-y_1)²) formula of distance between two points.
+     * from  the d= sqrt((x_2-x_1)²+(y_2-y_1)²) formula of distance between two points.
      * @param point second point
      * @return expressions value in double format
      */
@@ -77,7 +77,7 @@ public class Point{
 
     /**
      * calculate distance between two points.
-     * implements the formula : d=√((x_2-x_1)²+(y_2-y_1)²)
+     * implements the formula : d=sqrt((x_2-x_1)²+(y_2-y_1)²)
      * @param point second point to calculate distance from
      * @return distance between points in double format
      */

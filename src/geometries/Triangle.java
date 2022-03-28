@@ -4,6 +4,7 @@ import primitives.*;
 import static primitives.Util.*;
 import java.util.List;
 
+
 public class Triangle extends Polygon {
 
     /**

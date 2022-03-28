@@ -157,10 +157,7 @@ class PlaneTest {
     @Test
     void findIntersectionsBVA8() {
         // TC18: Ray from plane's Q point
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> pl.findIntersections(new Ray(new Point(0, 0, 1), new Vector(1, 1, 0))),
-                "Must not be plane intersection");
+        assertNull(pl.findIntersections(new Ray(new Point(0, 0, 1), new Vector(1, 1, 0))), "Must not be plane intersection");
     }
     //endregion
 

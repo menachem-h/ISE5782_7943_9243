@@ -70,10 +70,15 @@ public class Plane implements Geometry {
         _normal = vector.normalize();
     }
 
+
     public Point getQ0() {
         return _q0;
     }
 
+    /**
+     * getter for normal field
+     * @return normal vector to the plane
+     */
     public Vector getNormal() {
         return _normal;
     }
@@ -108,9 +113,9 @@ public class Plane implements Geometry {
        Vector v = ray.getDir();
        Vector n = _normal;
 
-        // ray constructed at plane's origin point
+        // ray cannot start at plane's origin point
        if(_q0.equals(P0))
-           throw new IllegalArgumentException("ray can't originate from Plane's Q0 point\n");
+           return null;
 
        // ray points -> P = p0 + t*v_ (v_ = direction vector)
         // points on plane  if normal vector dot product with vector from

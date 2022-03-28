@@ -4,27 +4,36 @@ import primitives.*;
 
 import static primitives.Util.isZero;
 
-
+/**
+ * camera in 3D space  with view plane
+ */
 public class Camera {
 
-    private  Point _p0;
-    private  Vector _vTo;
-    private  Vector _vUp;
-    private  Vector _vRight;
 
-    private double _distance;
+    private Point _p0;         // camera's position point in 3D space
+    private Vector _vTo;       // vector pointing towards view plane (-Z axis)
+    private Vector _vUp;       // vector pointing up ( Y axis)
+    private Vector _vRight;    // vector pointing right ( X axis)
 
-    private int _width;
-    private int _height;
+    private double _distance;   // distance between view plane from camera
 
+    private int _width;         // width of view plane "Physical" size
+    private int _height;        // height of view plane "Physical" size
+
+    /**
+     * constructor
+     *
+     * @param camBuilder internal class based on Builder pattern
+     */
     private Camera(CameraBuilder camBuilder) {
+
         _p0 = camBuilder._p0;
-        _vTo=camBuilder._vTo;
-        _vUp=camBuilder._vUp;
-        _vRight=camBuilder._vRight;
-        _distance=camBuilder._distance;
-        _width=camBuilder._width;
-        _height=camBuilder._height;
+        _vTo = camBuilder._vTo;
+        _vUp = camBuilder._vUp;
+        _vRight = camBuilder._vRight;
+        _distance = camBuilder._distance;
+        _width = camBuilder._width;
+        _height = camBuilder._height;
 
     }
 
@@ -56,23 +65,23 @@ public class Camera {
         return _height;
     }
 
-    public static class CameraBuilder{
-        private  Point _p0;
-        private  Vector _vTo;
-        private  Vector _vUp;
-        private  Vector _vRight;
+    public static class CameraBuilder {
+        private Point _p0;
+        private Vector _vTo;
+        private Vector _vUp;
+        private Vector _vRight;
 
-        private  double _distance;
+        private double _distance;
 
         private int _width;
         private int _height;
 
-        public CameraBuilder(Point p0, Vector vTo,  Vector vUp){
+        public CameraBuilder(Point p0, Vector vTo, Vector vUp) {
 
             _p0 = p0;
 
             //vto and vup mus be orthogonal
-            if(!isZero(vTo.dotProduct(vUp))){
+            if (!isZero(vTo.dotProduct(vUp))) {
                 throw new IllegalArgumentException("the vectors vUp and vTo are not orthogonal");
             }
 
@@ -95,19 +104,17 @@ public class Camera {
             return this;
         }
 
-        public CameraBuilder setVPSize(int width , int height) {
-            _width =width;
+        public CameraBuilder setVPSize(int width, int height) {
+            _width = width;
             _height = height;
             return this;
         }
 
-        public Camera build(){
-            Camera cam=new Camera(this);
+        public Camera build() {
+            Camera cam = new Camera(this);
             return cam;
         }
     }
-
-
 
 
     public Ray constructRay(int Nx, int Ny, int j, int i) {
@@ -115,25 +122,25 @@ public class Camera {
         Point Pc = _p0.add(_vTo.scale(_distance));
 
         //Ratio (pixel width & height)
-        double Ry = (double)  _height / Ny;
-        double Rx = (double)  _width / Nx;
+        double Ry = (double) _height / Ny;
+        double Rx = (double) _width / Nx;
 
         Point Pij = Pc;
 
-        double yI = -(i - (Ny -1)/2d)* Ry;
-        double xJ = (j - (Nx -1)/2d)* Rx;
+        double yI = -(i - (Ny - 1) / 2d) * Ry;
+        double xJ = (j - (Nx - 1) / 2d) * Rx;
 
         // move to middle of pixel i,j
 
-        if(! isZero(xJ)){
-            Pij= Pij.add(_vRight.scale(xJ));
+        if (!isZero(xJ)) {
+            Pij = Pij.add(_vRight.scale(xJ));
         }
 
-        if(! isZero(yI)){
-            Pij= Pij.add(_vUp.scale(yI));
+        if (!isZero(yI)) {
+            Pij = Pij.add(_vUp.scale(yI));
         }
 
         //return ray from camera to viewplane coordinates (i, j)
-        return  new Ray(_p0, Pij.subtract(_p0));
+        return new Ray(_p0, Pij.subtract(_p0));
     }
 }

@@ -9,6 +9,9 @@ import java.util.List;
 
 import static primitives.Util.isZero;
 
+/**
+ * finite tube delimited by two planes
+ */
 public class Cylinder extends Tube{
 
     /**

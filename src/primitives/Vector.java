@@ -38,7 +38,7 @@ public class Vector extends Point{
 
     /**
      * calculate x² + y² + z² expression from the 3D vector length formula:
-     *<p> |V| = √(x² + y² + z²) </p>
+     *<p> |V| = sqrt(x² + y² + z²) </p>
      * @return expression value in double format
      */
     public double lengthSquared() {
@@ -51,7 +51,7 @@ public class Vector extends Point{
     }
 
     /**
-     * calculate length of a vector implementing: <p> ||V|| = √(x² + y² + z²) formula</p>
+     * calculate length of a vector implementing: <p> ||V|| = sqrt(x² + y² + z²) formula</p>
      * @return length of vector in double format
      */
     public double length(){
@@ -67,7 +67,9 @@ public class Vector extends Point{
 
 
     /**
-     *
+     * subtract between two vectors
+     * @param vector second vector
+     * @return vector from second vector to this vector
      */
     public Vector subtract(Vector vector){
             return new Vector(_xyz.subtract(vector._xyz));
