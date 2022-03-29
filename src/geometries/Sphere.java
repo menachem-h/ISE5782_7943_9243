@@ -9,8 +9,7 @@ import java.util.List;
 import static primitives.Util.alignZero;
 
 /**
- * Sphere class represents a three-dimensional sphere in 3D Cartesian coordinate
- * system
+ * Sphere in 3D Cartesian coordinate system
  */
 public class Sphere implements Geometry{
 
@@ -37,10 +36,18 @@ public class Sphere implements Geometry{
         this.radius = radius;
     }
 
+    /**
+     * getter for center field
+     * @return center point of sphere
+     */
     public Point getCenter() {
         return center;
     }
 
+    /**
+     * getter for radius field
+     * @return radius of sphere
+     */
     public double getRadius() {
         return radius;
     }

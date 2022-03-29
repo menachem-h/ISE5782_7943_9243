@@ -8,7 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Composite class for all geometries object implementing {@link Intersectable}
+ * Collection of geometry objects implementing {@link Intersectable}
+ * implements Composite pattern
  */
 public class Geometries  implements Intersectable{
 
@@ -23,7 +24,7 @@ public class Geometries  implements Intersectable{
 
     /**
      * constructor with parameter
-     * @param intersectables collection of {@link  Geometry} implemented objects to add to geometry composite
+     * @param intersectables collection of {@link  Intersectable} implemented objects, to add to geometry composite
      */
     public Geometries(Intersectable... intersectables) {
         _intersectables = new LinkedList<Intersectable>();
@@ -31,8 +32,8 @@ public class Geometries  implements Intersectable{
     }
 
     /**
-     * add list of {@link  Geometries} geometry composite
-     * @param intersectables collection of geometries passed as
+     * add collection of {@link  Geometries} geometry composite
+     * @param intersectables collection of geometries passed as parameters
      */
     public void  add( Intersectable... intersectables){
         Collections.addAll(_intersectables, intersectables);
@@ -41,15 +42,17 @@ public class Geometries  implements Intersectable{
     /**
      * find intersection between ray and all geometries in the geometry composite
      * @param ray ray towards the composite of geometries
-     * @return list of intersection points
+     * @return  immutable list of intersection points
      */
     @Override
     public List<Point> findIntersections(Ray ray) {
+
         List<Point> result = null;   // intersection points
+
         //for each geometry in intersect-able collection check intersection points
         for (var item: _intersectables ) {
 
-            // get intersection point for a specific geometry in composite
+            // get intersection point for each specific item, (item can be either geometry/nested composite of geometries)
             List<Point> itemList = item.findIntersections(ray);
 
             // points were found , add to composite's total intersection points list

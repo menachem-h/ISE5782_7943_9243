@@ -3,8 +3,7 @@ package primitives;
 import java.util.Objects;
 
 /**
- * Point class represents a point in 3D Cartesian coordinate
- * system
+ * Point in 3D space - Cartesian coordinate representation
  */
 public class Point{
 
@@ -21,15 +20,27 @@ public class Point{
         _xyz = xyz;
     }
 
+    /**
+     * get X axis coordinate of a point
+     * @return X axis coordinate - (double)
+     */
     public double getX() {
         return _xyz._d1;
     }
+
+    /**
+     * get Y axis coordinate of a point
+     * @return Y axis coordinate - (double)
+     */
     public double getY() {
         return _xyz._d2;
     }
-    public double getZ() {
-        return _xyz._d3;
-    }
+
+    /**
+     * get Z axis coordinate of a point
+     * @return Z axis coordinate - (double)
+     */
+    public double getZ() { return _xyz._d3; }
 
 
     /**

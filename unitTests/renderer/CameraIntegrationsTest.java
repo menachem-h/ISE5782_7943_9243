@@ -10,6 +10,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * integration test class, checks camera ray intersection with geometric shapes in 3D space
+ */
 public class CameraIntegrationsTest {
 
     static final Point ZERO_POINT = new Point(0, 0, 0);

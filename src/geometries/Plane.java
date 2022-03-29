@@ -6,8 +6,7 @@ import primitives.*;
 import static primitives.Util.*;
 
 /**
- * Plane class represents a two-dimensional plane in 3D Cartesian coordinate
- * system
+ * Geometric Plane in 3D Cartesian coordinate system
  */
 public class Plane implements Geometry {
 
@@ -17,7 +16,7 @@ public class Plane implements Geometry {
     final private Point _q0;
 
     /**
-     * normal vector of plane ( vector orthogonal to plan)
+     * normal vector to plane ( vector orthogonal to plane)
      */
     final private Vector _normal;
 
@@ -71,6 +70,10 @@ public class Plane implements Geometry {
     }
 
 
+    /**
+     * getter for q0 field
+     * @return representing point of plane
+     */
     public Point getQ0() {
         return _q0;
     }

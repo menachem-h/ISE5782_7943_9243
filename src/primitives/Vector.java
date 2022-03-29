@@ -1,8 +1,7 @@
 package primitives;
 import static primitives.Util.*;
 /**
- * Vector class represents two-dimensional vector  in 3D Cartesian coordinate
- * system
+ * Vector in 3D space
  */
 public class Vector extends Point{
 

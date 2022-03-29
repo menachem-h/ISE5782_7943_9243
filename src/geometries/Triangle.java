@@ -4,7 +4,9 @@ import primitives.*;
 import static primitives.Util.*;
 import java.util.List;
 
-
+/**
+ * Two-dimensional Triangle in a 3D Cartesian coordinate system
+ */
 public class Triangle extends Polygon {
 
     /**

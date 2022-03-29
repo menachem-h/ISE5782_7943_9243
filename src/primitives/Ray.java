@@ -5,8 +5,7 @@ import java.util.Objects;
 import static primitives.Util.isZero;
 
 /**
- * Ray class represents a two-dimensional ray in 3D Cartesian coordinate
- * system
+ * Ray in 3D space
  */
 public class Ray {
 
@@ -51,10 +50,18 @@ public class Ray {
                 ;
     }
 
+    /**
+     * getter for p0 field
+     * @return origin point of ray
+     */
     public Point getP0() {
         return p0;
     }
 
+    /**
+     * getter for dir field
+     * @return direction vector of ray
+     */
     public Vector getDir() {
         return dir;
     }

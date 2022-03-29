@@ -10,7 +10,7 @@ import java.util.List;
 import static primitives.Util.isZero;
 
 /**
- * finite tube delimited by two planes
+ * Finite tube delimited by two planes
  */
 public class Cylinder extends Tube{
 
@@ -33,6 +33,10 @@ public class Cylinder extends Tube{
         this.height=height;
     }
 
+    /**
+     * getter for height field
+     * @return height of cylinder
+     */
     public double getHeight() {
         return height;
     }

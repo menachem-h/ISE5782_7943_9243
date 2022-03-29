@@ -5,7 +5,7 @@ import primitives.*;
 import java.util.List;
 
 /**
- *  interface for all objects that can intersect with a ray
+ *  Interface for geometric objects that intersect with a ray in 3D space
  */
 public interface Intersectable {
     /**

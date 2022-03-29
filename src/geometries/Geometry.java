@@ -4,13 +4,13 @@ import primitives.Point;
 import primitives.Vector;
 
 /**
- * Geometry Interface represnts Geometric shapes in 3D Cartesian coordinate system
+ *  Interface for Geometric shapes in 3D  Space
  */
 public interface Geometry  extends  Intersectable{
     /**
-     * calculate the normal vector from a given point of a geometry
+     * calculate the normal vector to a geometric shape
      * @param point point to get normal vector at
-     * @return Vector -  normal vector to geometry at specified point (normalized)
+     * @return Vector -  normal vector to geometry at specified point (vector is normalized)
      */
     Vector getNormal(Point point);
 }

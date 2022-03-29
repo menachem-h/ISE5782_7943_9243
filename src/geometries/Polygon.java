@@ -6,10 +6,9 @@ import primitives.*;
 import static primitives.Util.*;
 
 /**
- * Polygon class represents two-dimensional polygon in 3D Cartesian coordinate
- * system
+ * Two-dimensional polygon in 3D Cartesian coordinate system
  * 
- * @author Dan
+ * @author Dan Zilbershtein
  */
 public class Polygon implements Geometry {
 	/**

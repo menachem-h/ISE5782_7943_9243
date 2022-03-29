@@ -7,7 +7,7 @@ import java.util.List;
 import static primitives.Util.*;
 
 /**
- * Tube class represents a three-dimensional tube in  3D Cartesian coordinate
+ * Tube in  3D Cartesian coordinate
  * system
  */
 public class Tube implements Geometry {
@@ -35,10 +35,18 @@ public class Tube implements Geometry {
         _radius = radius;
     }
 
+    /**
+     * getter for axisRay field
+     * @return axisRay of tube
+     */
     public Ray getAxisRay() {
         return _axisRay;
     }
 
+    /**
+     * getter for radius field
+     * @return radius of tube
+     */
     public double getRadius() {
         return _radius;
     }
