@@ -19,6 +19,7 @@ public class Camera {
 
     private int _width;         // width of view plane "Physical" size
     private int _height;        // height of view plane "Physical" size
+    private ImageWriter imageWriter = null;
 
     /**
      * constructor
@@ -92,6 +93,16 @@ public class Camera {
      */
     public int getHeight() {
         return _height;
+    }
+
+    public void writeToImage() {
+        imageWriter.writeToImage();
+    }
+
+    public void printGrid(int i, Color color) {
+    }
+
+    public void renderImage() {
     }
 
     /**
@@ -168,6 +179,10 @@ public class Camera {
         public Camera build() {
             Camera cam = new Camera(this);
             return cam;
+        }
+
+        public CameraBuilder setImageWriter(){
+            imageWriter  =
         }
     }
 

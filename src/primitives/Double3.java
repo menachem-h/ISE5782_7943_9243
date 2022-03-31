@@ -28,7 +28,7 @@ public class Double3 {
 	 * @param _d2 second number value
 	 * @param _d3 third number value
 	 */
-	protected Double3(double _d1, double _d2, double _d3) {
+	public Double3(double _d1, double _d2, double _d3) {
 		this._d1 = _d1;
 		this._d2 = _d2;
 		this._d3 = _d3;
