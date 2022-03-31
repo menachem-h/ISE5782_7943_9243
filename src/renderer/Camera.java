@@ -19,7 +19,8 @@ public class Camera {
 
     private int _width;         // width of view plane "Physical" size
     private int _height;        // height of view plane "Physical" size
-    private ImageWriter imageWriter = null;
+    private ImageWriter _imageWriter = null;
+    private RayTracer _rayTracer =null;
 
     /**
      * constructor
@@ -35,6 +36,8 @@ public class Camera {
         _distance = camBuilder._distance;
         _width = camBuilder._width;
         _height = camBuilder._height;
+        _imageWriter = camBuilder._imageWriter;
+        _rayTracer = camBuilder._rayTracer;
 
     }
 
@@ -96,7 +99,7 @@ public class Camera {
     }
 
     public void writeToImage() {
-        imageWriter.writeToImage();
+        _imageWriter.writeToImage();
     }
 
     public void printGrid(int i, Color color) {
@@ -121,6 +124,8 @@ public class Camera {
 
         private int _width;         // width of view plane "Physical" size
         private int _height;        // height of view plane "Physical" size
+        private ImageWriter _imageWriter;
+        private RayTracer _rayTracer;
 
         /**
          * constructor
@@ -181,8 +186,14 @@ public class Camera {
             return cam;
         }
 
-        public CameraBuilder setImageWriter(){
-            imageWriter  =
+        public CameraBuilder setImageWriter(ImageWriter imageWriter){
+            _imageWriter  = imageWriter;
+            return this;
+        }
+
+        public CameraBuilder setRayTracer(RayTracer rayTracer) {
+            _rayTracer = rayTracer;
+            return this;
         }
     }
 
