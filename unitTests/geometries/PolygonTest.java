@@ -3,6 +3,8 @@ package geometries;
 import org.junit.jupiter.api.Test;
 import primitives.*;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -99,5 +101,65 @@ class PolygonTest {
         Polygon pl = new Polygon(new Point(0, 0, 1), new Point(1, 0, 0), new Point(0, 1, 0), new Point(-1, 1, 1));
         double sqrt3 = Math.sqrt(1d / 3);
         assertEquals(new Vector(sqrt3, sqrt3, sqrt3), pl.getNormal(new Point(0, 0, 1)), "Bad normal to trinagle");
+    }
+
+    Polygon square = new Polygon(new Point(1, 0, 2), new Point(4, 0, 2), new Point(4, 3, 2),
+            new Point(1, 3, 2));
+
+    Plane pl = new Plane(new Point(0, 0, 2), new Point(1, 0, 2), new Point(0, 1, 2));
+    Ray ray;
+
+    // ============ Equivalence Partitions Tests ==============
+    @Test
+    void testFindIntersectionsEP1() {
+        // TC01: Inside polygon
+        ray = new Ray(new Point(2, 1, 0), new Vector(0, 0, 1));
+        var d= square.findIntersections(ray);
+        assertEquals(List.of(new Point(2, 1, 2)), square.findIntersections(ray), "wrong intersection point");
+    }
+
+    @Test
+    void testFindIntersectionsEP2() {
+        // TC02: Against edge
+        ray = new Ray(new Point(5, 1, 0), new Vector(0, 0, 1));
+        assertEquals(List.of(new Point(5, 1, 2)), pl.findIntersections(ray), "wrong intersection point");
+        assertNull(square.findIntersections(ray), "no intersections");
+    }
+
+    @Test
+    void testFindIntersectionsEP3() {
+        // TC03: Against vertex
+        ray = new Ray(new Point(5, 4, 0), new Vector(0, 0, 1));
+        assertEquals(List.of(new Point(5, 4, 2)), pl.findIntersections(ray), "wrong intersection point");
+        assertNull(square.findIntersections(ray), "no intersections");
+
+    }
+
+
+    // =============== Boundary Values Tests ==================
+    @Test
+    void testFindIntersectionsBVA1() {
+        // TC04: In vertex
+        ray = new Ray(new Point(4, 3, 0), new Vector(0, 0, 1));
+        assertEquals(List.of(new Point(4, 3, 2)), pl.findIntersections(ray), "wrong intersection point");
+        assertNull(square.findIntersections(ray), "no intersections");
+
+    }
+
+    @Test
+    void testFindIntersectionsBVA2() {
+        // TC05: On edge
+        ray = new Ray(new Point(4, 1, 0), new Vector(0, 0, 1));
+        assertEquals(List.of(new Point(4, 1, 2)), pl.findIntersections(ray), "wrong intersection point");
+        assertNull(square.findIntersections(ray), "no intersections");
+    }
+
+
+    @Test
+    void testFindIntersectionsBVA3() {
+        // TC06: On edge continuation
+        ray = new Ray(new Point(5, 0, 0), new Vector(0, 0, 1));
+        assertEquals(List.of(new Point(5, 0, 2)), pl.findIntersections(ray), "wrong intersection point");
+        assertNull(square.findIntersections(ray), "no intersections");
     }
 }

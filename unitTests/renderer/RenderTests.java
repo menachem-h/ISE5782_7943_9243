@@ -1,10 +1,9 @@
 package renderer;
 
-import elelments.AmbientLight;
+import lighting.AmbientLight;
 import org.junit.jupiter.api.Test;
 import geometries.*;
 import primitives.*;
-import renderer.*;
 import scene.Scene;
 
 /**
@@ -21,11 +20,11 @@ public class RenderTests {
 	@Test
 	public void basicRenderTwoColorTest() {
 		Scene scene = new Scene.SceneBuilder("Test scene")
-				.set_ambientLight(new AmbientLight(new Color(255, 191, 191),
+				.setAmbientLight(new AmbientLight(new Color(255, 191, 191),
 						                          new Double3(1,1,1))) //
-				.set_background(new Color(75, 127, 90)).build();
+				.setBackground(new Color(75, 127, 90)).build();
 
-		scene.get_geometries().add(new Sphere(new Point(0, 0, -100),50),
+		scene.getGeometries().add(new Sphere(new Point(0, 0, -100),50),
 				new Triangle(new Point(-100, 0, -100), new Point(0, 100, -100), new Point(-100, 100, -100)), // up
 																													// left
 				new Triangle(new Point(-100, 0, -100), new Point(0, -100, -100), new Point(-100, -100, -100)), // down

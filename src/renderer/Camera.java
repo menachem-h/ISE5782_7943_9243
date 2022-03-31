@@ -2,6 +2,8 @@ package renderer;
 
 import primitives.*;
 
+import java.util.MissingResourceException;
+
 import static primitives.Util.isZero;
 
 /**
@@ -10,17 +12,17 @@ import static primitives.Util.isZero;
 public class Camera {
 
 
-    private Point _p0;         // camera's position point in 3D space
-    private Vector _vTo;       // vector pointing towards view plane (-Z axis)
-    private Vector _vUp;       // vector pointing up ( Y axis)
-    private Vector _vRight;    // vector pointing right ( X axis)
+    private Point p0;         // camera's position point in 3D space
+    private Vector vTo;       // vector pointing towards view plane (-Z axis)
+    private Vector vUp;       // vector pointing up ( Y axis)
+    private Vector vRight;    // vector pointing right ( X axis)
 
-    private double _distance;   // distance between view plane from camera
+    private double distance;   // distance between view plane from camera
 
-    private int _width;         // width of view plane "Physical" size
-    private int _height;        // height of view plane "Physical" size
-    private ImageWriter _imageWriter = null;
-    private RayTracer _rayTracer =null;
+    private int width;         // width of view plane "Physical" size
+    private int height;        // height of view plane "Physical" size
+    private ImageWriter imageWriter = null;
+    private RayTracer rayTracer =null;
 
     /**
      * constructor
@@ -29,15 +31,15 @@ public class Camera {
      */
     private Camera(CameraBuilder camBuilder) {
 
-        _p0 = camBuilder._p0;
-        _vTo = camBuilder._vTo;
-        _vUp = camBuilder._vUp;
-        _vRight = camBuilder._vRight;
-        _distance = camBuilder._distance;
-        _width = camBuilder._width;
-        _height = camBuilder._height;
-        _imageWriter = camBuilder._imageWriter;
-        _rayTracer = camBuilder._rayTracer;
+        p0 = camBuilder.p0;
+        vTo = camBuilder.vTo;
+        vUp = camBuilder.vUp;
+        vRight = camBuilder.vRight;
+        distance = camBuilder.distance;
+        width = camBuilder.width;
+        height = camBuilder.height;
+        imageWriter = camBuilder.imageWriter;
+        rayTracer = camBuilder.rayTracer;
 
     }
 
@@ -46,7 +48,7 @@ public class Camera {
      * @return position point of camera
      */
     public Point getP0() {
-        return _p0;
+        return p0;
     }
 
     /**
@@ -54,7 +56,7 @@ public class Camera {
      * @return vector pointing towards view plane (-Z axis)
      */
     public Vector getvTo() {
-        return _vTo;
+        return vTo;
     }
 
     /**
@@ -62,7 +64,7 @@ public class Camera {
      * @return vector pointing up ( Y axis)
      */
     public Vector getvUp() {
-        return _vUp;
+        return vUp;
     }
 
 
@@ -71,7 +73,7 @@ public class Camera {
      * @return vector pointing right ( X axis)
      */
     public Vector getvRight() {
-        return _vRight;
+        return vRight;
     }
 
     /**
@@ -79,7 +81,7 @@ public class Camera {
      * @return distance between view plane from camera
      */
     public double getDistance() {
-        return _distance;
+        return distance;
     }
 
     /**
@@ -87,7 +89,7 @@ public class Camera {
      * @return width of view plane "Physical" size
      */
     public int getWidth() {
-        return _width;
+        return width;
     }
 
     /**
@@ -95,17 +97,41 @@ public class Camera {
      * @return height of view plane "Physical" size
      */
     public int getHeight() {
-        return _height;
+        return height;
     }
 
     public void writeToImage() {
-        _imageWriter.writeToImage();
+        if (imageWriter==null)
+            throw new MissingResourceException("image writer is not initialized",ImageWriter.class.getName(),"");
+        imageWriter.writeToImage();
     }
 
-    public void printGrid(int i, Color color) {
+    public void printGrid(int interval, Color color) {
+        if (imageWriter==null)
+            throw new MissingResourceException("image writer is not initialized",ImageWriter.class.getName(),"");
+        for (int i = 0; i < imageWriter.getNx(); i++) {
+            for (int j = 0; j < imageWriter.getNy(); j++) {
+                if(i%interval ==0 || j%interval==0)
+                    imageWriter.writePixel(j,i,color);
+            }
+
+        }
     }
 
     public void renderImage() {
+        if (imageWriter==null)
+            throw new MissingResourceException("image writer is not initialized",ImageWriter.class.getName(),"");
+
+        if(rayTracer==null)
+            throw new MissingResourceException("ray tracer is not initialized",RayTracer.class.getName(),"");
+
+        for (int i = 0; i < imageWriter.getNx(); i++) {
+            for (int j = 0; j < imageWriter.getNy(); j++) {
+                Ray ray = constructRay(imageWriter.getNx(), imageWriter.getNy(), j,i);
+                imageWriter.writePixel(j,i,rayTracer.traceRay(ray));
+            }
+
+        }
     }
 
     /**
@@ -115,17 +141,17 @@ public class Camera {
     public static class CameraBuilder {
 
         // fields identical to Camera class
-        private Point _p0;         // camera's position point in 3D space
-        private Vector _vTo;       // vector pointing towards view plane (-Z axis)
-        private Vector _vUp;       // vector pointing up ( Y axis)
-        private Vector _vRight;    // vector pointing right ( X axis)
+        private Point p0;         // camera's position point in 3D space
+        private Vector vTo;       // vector pointing towards view plane (-Z axis)
+        private Vector vUp;       // vector pointing up ( Y axis)
+        private Vector vRight;    // vector pointing right ( X axis)
 
-        private double _distance;   // distance between view plane from camera
+        private double distance;   // distance between view plane from camera
 
-        private int _width;         // width of view plane "Physical" size
-        private int _height;        // height of view plane "Physical" size
-        private ImageWriter _imageWriter;
-        private RayTracer _rayTracer;
+        private int width;         // width of view plane "Physical" size
+        private int height;        // height of view plane "Physical" size
+        private ImageWriter imageWriter;
+        private RayTracer rayTracer;
 
         /**
          * constructor
@@ -135,7 +161,7 @@ public class Camera {
          */
         public CameraBuilder(Point p0, Vector vTo, Vector vUp) {
 
-            _p0 = p0;
+            this.p0 = p0;
 
             //vto and vup must be orthogonal
             if (!isZero(vTo.dotProduct(vUp))) {
@@ -143,11 +169,11 @@ public class Camera {
             }
 
             //stores the vector after normalizing
-            _vTo = vTo.normalize();
-            _vUp = vUp.normalize();
+            this.vTo = vTo.normalize();
+            this.vUp = vUp.normalize();
 
             // vector to right (X axis calculated by cross product of vUp and vTo)
-            _vRight = _vTo.crossProduct(_vUp);
+            vRight = this.vTo.crossProduct(this.vUp);
         }
 
 
@@ -160,7 +186,7 @@ public class Camera {
          * @return this {@link CameraBuilder} instance
          */
         public CameraBuilder setVPDistance(double distance) {
-            _distance = distance;
+            this.distance = distance;
             return this;
         }
 
@@ -171,8 +197,8 @@ public class Camera {
          * @return this {@link CameraBuilder} instance
          */
         public CameraBuilder setVPSize(int width, int height) {
-            _width = width;
-            _height = height;
+            this.width = width;
+            this.height = height;
             return this;
         }
 
@@ -187,12 +213,12 @@ public class Camera {
         }
 
         public CameraBuilder setImageWriter(ImageWriter imageWriter){
-            _imageWriter  = imageWriter;
+            this.imageWriter = imageWriter;
             return this;
         }
 
         public CameraBuilder setRayTracer(RayTracer rayTracer) {
-            _rayTracer = rayTracer;
+            this.rayTracer = rayTracer;
             return this;
         }
     }
@@ -208,13 +234,13 @@ public class Camera {
      */
     public Ray constructRay(int Nx, int Ny, int j, int i) {
         //view plane center:
-        Point Pc = _p0.add(_vTo.scale(_distance));
+        Point Pc = p0.add(vTo.scale(distance));
 
         // calculate "size" of each pixel -
         // height per pixel = total "physical" height / number of rows
         // width per pixel = total "physical" width / number of columns
-        double Ry = (double) _height / Ny;
-        double Rx = (double) _width / Nx;
+        double Ry = (double) height / Ny;
+        double Rx = (double) width / Nx;
 
         // set result point to middle of view plane
         Point Pij = Pc;
@@ -229,17 +255,22 @@ public class Camera {
         // move result point left/right on  X axis
         // to reach middle point of pixel (i,j) (on X axis direction)
         if (!isZero(xJ)) {
-            Pij = Pij.add(_vRight.scale(xJ));
+            Pij = Pij.add(vRight.scale(xJ));
         }
 
         // if result of yI is > 0
         // move result point up/down on Y axis
         // to reach middle point of pixel (i,j)
         if (!isZero(yI)) {
-            Pij = Pij.add(_vUp.scale(yI));
+            Pij = Pij.add(vUp.scale(yI));
         }
 
         //return ray from camera to midlle point of pixel(i,j) in view plane
-        return new Ray(_p0, Pij.subtract(_p0));
+        return new Ray(p0, Pij.subtract(p0));
+    }
+
+    private Color castRay(int Nx, int Ny, int j, int i){
+        Ray ray= constructRay(Nx,Ny,j,i);
+        return rayTracer.traceRay(ray);
     }
 }

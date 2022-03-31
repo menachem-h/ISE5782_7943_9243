@@ -63,7 +63,7 @@ public class Ray {
     /**
      * getter for dir field
      *
-     * @return direction vector of ray
+     * @return  direction vector of ray
      */
     public Vector getDir() {
         return dir;
@@ -75,9 +75,9 @@ public class Ray {
     }
 
     /**
-     * creating a {@link Point} at a specific distance in the ray direction
+     * creating a {@link Point} at a specific distance in the ray's direction
      *
-     * @param t
+     * @param t scale factor
      * @return new {@link Point}
      */
     public Point getPoint(double t) {
@@ -87,15 +87,25 @@ public class Ray {
         return p0.add(dir.scale(t));
     }
 
-    Point findClosestPoint(List<Point> pointList) {
-        Point result = null;
+    /**
+     * from list of intersection points with ray, find closest to ray origin
+     *
+     * @param pointList list of intersection points
+     * @return {@link Point}
+     */
+    public Point findClosestPoint(List<Point> pointList) {
+        if (pointList==null)
+            return null;
+
+        Point result =null;
         double minDistance = Double.MAX_VALUE;
         double ptDistance;
         for (Point pt : pointList) {
             ptDistance = p0.distance(pt);
-            if (ptDistance < minDistance)
+            if (ptDistance < minDistance) {
                 minDistance = ptDistance;
-            result = pt;
+                result = pt;
+            }
         }
         return result;
     }

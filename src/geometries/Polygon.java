@@ -90,6 +90,40 @@ public class Polygon implements Geometry {
 
 	@Override
 	public List<Point> findIntersections(Ray ray) {
-		return null;
+
+		List<Point> points=plane.findIntersections(ray);
+		if (points==null)
+			return null;
+
+		Point p0 = ray.getP0();
+		Vector direction = ray.getDir();
+
+		Vector v1 = vertices.get(0).subtract(p0);
+
+		Vector v2 = vertices.get(1).subtract(p0);
+
+		double sign = direction.dotProduct(v2.crossProduct(v1));
+
+		if (isZero(sign))
+			return null;
+
+		boolean checkSign = sign > 0;
+
+		for (int i = vertices.size() - 1; i > 0; --i) {
+			v2 = v1;
+			v1 = vertices.get(i).subtract(p0);
+			sign = alignZero(direction.dotProduct(v2.crossProduct(v1)));
+
+			if (isZero(sign))
+				return null;
+
+			if (checkSign != (sign > 0))
+				return null;
+		}
+
+		return points;
 	}
+
+
+
 }

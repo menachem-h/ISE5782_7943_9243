@@ -6,12 +6,12 @@ import scene.Scene;
 
 public abstract class RayTracer {
 
-    protected final Scene _scene;
+    protected final Scene scene;
 
     public RayTracer(Scene scene) {
-        _scene = scene;
+        this.scene = scene;
     }
 
-    abstract Color traceRay(Ray ray);
+    public abstract Color traceRay(Ray ray);
 
 }

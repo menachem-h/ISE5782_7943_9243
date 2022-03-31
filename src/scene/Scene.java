@@ -1,64 +1,64 @@
 package scene;
 
-import elelments.AmbientLight;
+import lighting.AmbientLight;
 import geometries.Geometries;
 import primitives.Color;
 
 public class Scene {
 
-    private final String _name;
+    private final String name;
 
-    private final Color _background ;
-    private final AmbientLight _ambientLight ;
-    private final Geometries _geometries ;
+    private final Color background;
+    private final AmbientLight ambientLight;
+    private final Geometries geometries;
 
-    public String get_name() {
-        return _name;
+    public String getName() {
+        return name;
     }
 
-    public Color get_background() {
-        return _background;
+    public Color getBackground() {
+        return background;
     }
 
-    public AmbientLight get_ambientLight() {
-        return _ambientLight;
+    public AmbientLight getAmbientLight() {
+        return ambientLight;
     }
 
-    public Geometries get_geometries() {
-        return _geometries;
+    public Geometries getGeometries() {
+        return geometries;
     }
 
     private Scene(SceneBuilder builder){
-        _name = builder._name;
-        _background = builder._background;
-        _geometries = builder._geometries;
-        _ambientLight = builder._ambientLight;
+        name = builder.name;
+        background = builder.background;
+        geometries = builder.geometries;
+        ambientLight = builder.ambientLight;
     }
 
     public static class SceneBuilder {
 
-        private final String _name;
-        private Color _background = Color.BLACK;
-        private AmbientLight _ambientLight = new AmbientLight();
-        private Geometries _geometries = new Geometries();
+        private final String name;
+        private Color background = Color.BLACK;
+        private AmbientLight ambientLight = new AmbientLight();
+        private Geometries geometries = new Geometries();
 
         public SceneBuilder(String name) {
-            _name = name;
+            this.name = name;
         }
 
 
-        public SceneBuilder set_background(Color _background) {
-            this._background = _background;
+        public SceneBuilder setBackground(Color background) {
+            this.background = background;
             return this;
         }
 
-        public SceneBuilder set_ambientLight(AmbientLight _ambientLight) {
-            this._ambientLight = _ambientLight;
+        public SceneBuilder setAmbientLight(AmbientLight ambientLight) {
+            this.ambientLight = ambientLight;
             return this;
         }
 
-        public SceneBuilder set_geometries(Geometries _geometries) {
-            this._geometries = _geometries;
+        public SceneBuilder setGeometries(Geometries geometries) {
+            this.geometries = geometries;
             return this;
         }
 
