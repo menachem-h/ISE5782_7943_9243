@@ -1,5 +1,6 @@
 package renderer;
 
+import XmlTools.XmlTool;
 import lighting.AmbientLight;
 import org.junit.jupiter.api.Test;
 import geometries.*;
@@ -47,7 +48,7 @@ public class RenderTests {
 	 */
 	@Test
 	public void basicRenderXml() {
-		Scene scene = new Scene.SceneBuilder("XML Test scene").build();
+		Scene scene = new XmlTool().createSceneFromXml("XML Test scene");
 		// enter XML file name and parse from XML file into scene object
 		// ...
 
