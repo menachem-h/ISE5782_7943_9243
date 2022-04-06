@@ -10,8 +10,8 @@ import static primitives.Util.isZero;
  * camera in 3D space with view plane
  */
 public class Camera {
-
-
+    
+    // static data fields
     private Point p0;         // camera's position point in 3D space
     private Vector vTo;       // vector pointing towards view plane (-Z axis)
     private Vector vUp;       // vector pointing up ( Y axis)
@@ -21,8 +21,10 @@ public class Camera {
 
     private int width;         // width of view plane "Physical" size
     private int height;        // height of view plane "Physical" size
-    private ImageWriter imageWriter = null;
-    private RayTracer rayTracer =null;
+
+    // functionality  fields
+    private ImageWriter imageWriter = null; // image writing to file functionality
+    private RayTracer rayTracer = null;     // calculates color of pixel
 
     /**
      * constructor
@@ -100,12 +102,20 @@ public class Camera {
         return height;
     }
 
+    /**
+     * crate a jpeg file, with scene "captured" by camera
+     */
     public void writeToImage() {
         if (imageWriter==null)
             throw new MissingResourceException("image writer is not initialized",ImageWriter.class.getName(),"");
         imageWriter.writeToImage();
     }
 
+    /**
+     * print grid lines on  image
+     * @param interval interval ("physical" space) between each pair of grid lines
+     * @param color color of grid lines
+     */
     public void printGrid(int interval, Color color) {
         if (imageWriter==null)
             throw new MissingResourceException("image writer is not initialized",ImageWriter.class.getName(),"");
@@ -118,13 +128,19 @@ public class Camera {
         }
     }
 
+    /**
+     * render image "captured" through view plane
+     */
     public void renderImage() {
+        // check that image, writing and rendering objects are instantiated
         if (imageWriter==null)
             throw new MissingResourceException("image writer is not initialized",ImageWriter.class.getName(),"");
 
         if(rayTracer==null)
             throw new MissingResourceException("ray tracer is not initialized",RayTracer.class.getName(),"");
 
+        // for each pixel (i,j) , construct  a ray from camera through pixel,
+        // then use rayTracer object to get correct color, finally use imageWriter to write pixel
         for (int i = 0; i < imageWriter.getNx(); i++) {
             for (int j = 0; j < imageWriter.getNy(); j++) {
                 Ray ray = constructRay(imageWriter.getNx(), imageWriter.getNy(), j,i);
@@ -150,8 +166,8 @@ public class Camera {
 
         private int width;         // width of view plane "Physical" size
         private int height;        // height of view plane "Physical" size
-        private ImageWriter imageWriter;
-        private RayTracer rayTracer;
+        private ImageWriter imageWriter; // image writing to file functionality
+        private RayTracer rayTracer;     // calculates color of pixel
 
         /**
          * constructor
@@ -177,7 +193,7 @@ public class Camera {
         }
 
 
-        //chaining methods
+        //chaining methods - for builder pattern
 
         /**
          * set view plane distance - (chaining method)
@@ -203,24 +219,36 @@ public class Camera {
         }
 
         /**
+         * set image writing to file functionality of camera
+         * @param imageWriter instance of {@link ImageWriter} class ,enables writing a scene to jpeg file
+         * @return this {@link CameraBuilder} instance
+         */
+        public CameraBuilder setImageWriter(ImageWriter imageWriter){
+            this.imageWriter = imageWriter;
+            return this;
+        }
+
+        /**
+         * set image rendering functionality of camera
+         * @param rayTracer instance of {@link RayTracer} class - enables calculating color of each pixel
+         * @return this {@link CameraBuilder} instance
+         */
+        public CameraBuilder setRayTracer(RayTracer rayTracer) {
+            this.rayTracer = rayTracer;
+            return this;
+        }
+
+        /**
          * Builder pattern - build function - creates new camera
          * using this instance of {@link CameraBuilder}
-         * @return Camera object
+         * @return new {@link Camera} object
          */
         public Camera build() {
             Camera cam = new Camera(this);
             return cam;
         }
 
-        public CameraBuilder setImageWriter(ImageWriter imageWriter){
-            this.imageWriter = imageWriter;
-            return this;
-        }
 
-        public CameraBuilder setRayTracer(RayTracer rayTracer) {
-            this.rayTracer = rayTracer;
-            return this;
-        }
     }
 
 
@@ -265,12 +293,22 @@ public class Camera {
             Pij = Pij.add(vUp.scale(yI));
         }
 
-        //return ray from camera to midlle point of pixel(i,j) in view plane
+        //return ray from camera to middle point of pixel(i,j) in view plane
         return new Ray(p0, Pij.subtract(p0));
     }
 
+    /**
+     * cast a ray from camera through pixel (i,j) in view plane and get color of pixel
+     * @param Nx number of rows in view plane
+     * @param Ny number of columns in view plane
+     * @param j  column index of pixel
+     * @param i  row index of pixel
+     * @return {@link Color} of pixel
+     */
     private Color castRay(int Nx, int Ny, int j, int i){
+        // construct ray through pixel
         Ray ray= constructRay(Nx,Ny,j,i);
+        // return the color using ray tracer
         return rayTracer.traceRay(ray);
     }
 }
