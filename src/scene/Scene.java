@@ -2,7 +2,11 @@ package scene;
 
 import lighting.AmbientLight;
 import geometries.Geometries;
+import lighting.LightSource;
 import primitives.Color;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Graphical scene
@@ -29,6 +33,10 @@ public class Scene {
      */
     private final Geometries geometries;
 
+    /**
+     * light sources of scene
+     */
+    private final List<LightSource> lights;
 
     /**
      * constructor (uses builder pattern)
@@ -39,6 +47,7 @@ public class Scene {
         background = builder.background;
         geometries = builder.geometries;
         ambientLight = builder.ambientLight;
+        lights = builder.lights;
     }
     /**
      * getter for name field
@@ -102,6 +111,11 @@ public class Scene {
         private Geometries geometries = new Geometries();
 
         /**
+         * light sources of scene
+         */
+        private List<LightSource> lights = new LinkedList<>();
+
+        /**
          * constructor (only name parameter is mandatory at instantiation)
          * @param name name of scene
          */
@@ -138,6 +152,17 @@ public class Scene {
          */
         public SceneBuilder setGeometries(Geometries geometries) {
             this.geometries = geometries;
+            return this;
+        }
+
+
+        /**
+         * setter for light sources in scene
+         * @param lights collection of light objects implementing {@link LightSource} interface
+         * @return this {@link SceneBuilder} instance
+         */
+        public SceneBuilder setLights(List<LightSource> lights) {
+            this.lights = lights;
             return this;
         }
 
