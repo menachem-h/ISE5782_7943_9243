@@ -108,7 +108,7 @@ public class Cylinder extends Tube{
         if (result.size()==2)
             return result;
 
-        List<GeoPoint> intersectionsTube=super.findGeoIntersections(ray);
+        List<GeoPoint> intersectionsTube=super.findGeoIntersectionsHelper(ray);
 
         if(intersectionsTube!=null){
             for (var p:intersectionsTube){
