@@ -73,49 +73,48 @@ public class Cylinder extends Tube{
         return super.getNormal(point);
     }
 
-
     @Override
-    public List<Point> findIntersections(Ray ray) {
-
-
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
         Point basePoint=_axisRay.getP0();
         Point topPoint =_axisRay.getPoint(height);
         Vector vC=_axisRay.getDir();
 
-        List<Point> result= new LinkedList<>();
+        List<GeoPoint> result= new LinkedList<>();
         Plane basePlane= new Plane(basePoint,vC);
-        List<Point> intersectionsBase=basePlane.findIntersections(ray);
+        List<GeoPoint> intersectionsBase=basePlane.findGeoIntersections(ray);
 
         if(intersectionsBase!=null){
-            for (Point p:intersectionsBase) {
-                if(p.equals(basePoint))
-                   result.add(basePoint);
-                else if(p.subtract(basePoint).dotProduct(p.subtract(basePoint))<_radius*_radius)
-                    result.add(p);
+            for (GeoPoint p:intersectionsBase) {
+                Point pt = p.point;
+                if(pt.equals(basePoint))
+                    result.add(new GeoPoint(this,basePoint));
+                else if(pt.subtract(basePoint).dotProduct(pt.subtract(basePoint))<_radius*_radius)
+                    result.add(new GeoPoint(this,pt));
             }
         }
 
         Plane topPlane= new Plane(topPoint,vC);
-        List<Point> intersectionsTop=topPlane.findIntersections(ray);
+        List<GeoPoint> intersectionsTop=topPlane.findGeoIntersections(ray);
         if(intersectionsTop!=null){
-            for (Point p:intersectionsTop) {
-                if(p.equals(topPoint))
-                    result.add(topPoint);
-                else if(p.subtract(topPoint).dotProduct(p.subtract(topPoint))<_radius*_radius)
-                    result.add(p);
+            for (var p:intersectionsTop) {
+                Point pt = p.point;
+                if(pt.equals(topPoint))
+                    result.add(new GeoPoint(this,topPoint));
+                else if(pt.subtract(topPoint).dotProduct(pt.subtract(topPoint))<_radius*_radius)
+                    result.add(new GeoPoint(this,pt));
             }
         }
 
         if (result.size()==2)
-            return List.of(result.get(0),result.get(1));
+            return result;
 
-        List<Point> intersectionsTube=super.findIntersections(ray);
-
+        List<GeoPoint> intersectionsTube=super.findGeoIntersections(ray);
 
         if(intersectionsTube!=null){
-            for (Point p:intersectionsTube){
-                if(vC.dotProduct(p.subtract(basePoint))>0 && vC.dotProduct(p.subtract(topPoint))<0)
-                    result.add(p);
+            for (var p:intersectionsTube){
+                Point pt = p.point;
+                if(vC.dotProduct(pt.subtract(basePoint))>0 && vC.dotProduct(pt.subtract(topPoint))<0)
+                    result.add(new GeoPoint(this,pt));
             }
         }
 
@@ -128,8 +127,5 @@ public class Cylinder extends Tube{
 
         // no intersections
         return null;
-
     }
-
-
 }

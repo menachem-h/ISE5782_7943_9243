@@ -10,7 +10,7 @@ import static primitives.Util.*;
  * 
  * @author Dan Zilbershtein
  */
-public class Polygon implements Geometry {
+public class Polygon extends Geometry {
 	/**
 	 * List of polygon's vertices
 	 */
@@ -43,7 +43,7 @@ public class Polygon implements Geometry {
 	 *                                  </ul>
 	 */
 	public Polygon(Point... vertices) {
-		if (vertices.length < 3)
+			if (vertices.length < 3)
 			throw new IllegalArgumentException("A polygon can't have less than 3 vertices");
 		this.vertices = List.of(vertices);
 		// Generate the plane according to the first three vertices and associate the
@@ -88,10 +88,11 @@ public class Polygon implements Geometry {
 		return plane.getNormal();
 	}
 
-	@Override
-	public List<Point> findIntersections(Ray ray) {
 
-		List<Point> points=plane.findIntersections(ray);
+	@Override
+	protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+
+		List<GeoPoint> points=plane.findGeoIntersections(ray);
 		if (points==null)
 			return null;
 
@@ -121,9 +122,8 @@ public class Polygon implements Geometry {
 				return null;
 		}
 
-		return points;
+		return List.of(new GeoPoint(this,points.get(0).point));
 	}
-
 
 
 }

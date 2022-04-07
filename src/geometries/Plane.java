@@ -8,7 +8,7 @@ import static primitives.Util.*;
 /**
  * Geometric Plane in 3D Cartesian coordinate system
  */
-public class Plane implements Geometry {
+public class Plane extends Geometry {
 
     /**
      * point on plane
@@ -36,6 +36,7 @@ public class Plane implements Geometry {
     public Plane(Point p1, Point p2, Point p3) {
 
         // check that all three points are different
+
         if (p1.equals(p2) || p1.equals(p3) || p2.equals(p3))
             throw new IllegalArgumentException("points must be different");
 
@@ -110,17 +111,18 @@ public class Plane implements Geometry {
      * @throws IllegalArgumentException if ray is constructed at
      * plane's representing point
      */
+
     @Override
-    public List<Point> findIntersections(Ray ray) {
-       Point P0 = ray.getP0();
-       Vector v = ray.getDir();
-       Vector n = _normal;
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+        Point P0 = ray.getP0();
+        Vector v = ray.getDir();
+        Vector n = _normal;
 
         // ray cannot start at plane's origin point
-       if(_q0.equals(P0))
-           return null;
+        if(_q0.equals(P0))
+            return null;
 
-       // ray points -> P = p0 + t*v_ (v_ = direction vector)
+        // ray points -> P = p0 + t*v_ (v_ = direction vector)
         // points on plane  if normal vector dot product with vector from
         // origin point to proposed point == 0
         // glossary:  (n,v) = dot product between vectors n,v
@@ -148,7 +150,7 @@ public class Plane implements Geometry {
         double t = alignZero(nQMinusP0 / nv);
         if (t > 0){
             //return immutable List
-            return List.of(ray.getPoint(t));
+            return List.of(new GeoPoint(this, ray.getPoint(t)));
         }
         // no intersection point  - ray and plane in opposite  direction
         return null;

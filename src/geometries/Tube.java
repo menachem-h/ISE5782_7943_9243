@@ -10,7 +10,7 @@ import static primitives.Util.*;
  * Tube in  3D Cartesian coordinate
  * system
  */
-public class Tube implements Geometry {
+public class Tube extends Geometry {
 
     /**
      * ray originating from base of tube
@@ -86,8 +86,7 @@ public class Tube implements Geometry {
      * @return list containing 0,1,2 intersection points
      */
     @Override
-    public List<Point> findIntersections(Ray ray) {
-
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
         Vector v = ray.getDir();
         Vector vt = _axisRay.getDir();
         Point pa = _axisRay.getP0();
@@ -152,7 +151,7 @@ public class Tube implements Geometry {
                 // vvt == 0 -> B = 2 * (v , ∆p - (∆p,vt)*vt)
                 if(isZero(vvt))
                     b= 2*v.dotProduct(deltaMinusVt);
-                // vvt != 0
+                    // vvt != 0
                 else
                     b = 2 * (vMinusVt.dotProduct(deltaMinusVt));
 
@@ -171,7 +170,7 @@ public class Tube implements Geometry {
                     b=0;
                     c = -(_radius * _radius);
                 }
-           }
+            }
         }
 
 
@@ -191,11 +190,11 @@ public class Tube implements Geometry {
             // root < 0 indicates scale factor is in opposite direction
             // no intersection occurs
             if (t1 > 0 && t2 > 0)
-                return List.of(ray.getPoint(t2), ray.getPoint(t1));
+                return List.of(new GeoPoint(this,ray.getPoint(t2)), new GeoPoint(this,ray.getPoint(t1)));
             if (t1 > 0)
-                return List.of(ray.getPoint(t1));
+                return List.of(new GeoPoint(this,ray.getPoint(t1)));
             if (t2 > 0)
-                return List.of(ray.getPoint(t2));
+                return List.of(new GeoPoint(this,ray.getPoint(t2)));
         }
 
         return null;

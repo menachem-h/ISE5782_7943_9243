@@ -49,7 +49,7 @@ public class Color {
 	 * @param rgb triad of Red/Green/Blue components 
 	 */
 	private Color(Double3 rgb) {
-		if (rgb._d1 < 0 || rgb._d2 < 0 || rgb._d3 < 0)
+		if (rgb.d1 < 0 || rgb.d2 < 0 || rgb.d3 < 0)
 			throw new IllegalArgumentException("Negative color component is illegal");
 		this.rgb = rgb;
 	}
@@ -70,9 +70,9 @@ public class Color {
 	 * @return java.awt.Color object based on this Color RGB components
 	 */
 	public java.awt.Color getColor() {
-		int ir = (int) rgb._d1;
-		int ig = (int) rgb._d2;
-		int ib = (int) rgb._d3;
+		int ir = (int) rgb.d1;
+		int ig = (int) rgb.d2;
+		int ib = (int) rgb.d3;
 		return new java.awt.Color(ir > 255 ? 255 : ir, ig > 255 ? 255 : ig, ib > 255 ? 255 : ib);
 	}
 
@@ -83,27 +83,51 @@ public class Color {
 	 * @return new Color object which is a result of the operation
 	 */
 	public Color add(Color... colors) {
-		double rr = rgb._d1;
-		double rg = rgb._d2;
-		double rb = rgb._d3;
+		double rr = rgb.d1;
+		double rg = rgb.d2;
+		double rb = rgb.d3;
 		for (Color c : colors) {
-			rr += c.rgb._d1;
-			rg += c.rgb._d2;
-			rb += c.rgb._d3;
+			rr += c.rgb.d1;
+			rg += c.rgb.d2;
+			rb += c.rgb.d3;
 		}
 		return new Color(rr, rg, rb);
 	}
 
+	/**
+	 * Scale the color by a scalar triad per rgb
+	 *
+	 * @param k scale factor per rgb
+	 * @return new Color object which is the result of the operation
+	 */
+	public Color scale(Double3 k) {
+		if (k.d1 < 0.0 || k.d2 < 0.0 || k.d3 < 0.0)
+			throw new IllegalArgumentException("Can't scale a color by a negative number");
+		return new Color(rgb.product(k));
+	}
+	
 	/**
 	 * Scale the color by a scalar
 	 *
 	 * @param k scale factor
 	 * @return new Color object which is the result of the operation
 	 */
-	public Color scale(Double3 k) {
-		if (k._d1 < 0.0 || k._d2 < 0.0 || k._d3 < 0.0)
+	public Color scale(double k) {
+		if (k < 0.0)
 			throw new IllegalArgumentException("Can't scale a color by a negative number");
-		return new Color(rgb.product(k));
+		return new Color(rgb.scale(k));
+	}
+
+	/**
+	 * Scale the color by (1 / reduction factor)
+	 * 
+	 * @param k reduction factor
+	 * @return new Color object which is the result of the operation
+	 */
+	public Color reduce(double k) {
+		if (k < 1)
+			throw new IllegalArgumentException("Can't scale a color by a by a number lower than 1");
+		return new Color(rgb.reduce(k));
 	}
 
 	/**
@@ -113,9 +137,9 @@ public class Color {
 	 * @return new Color object which is the result of the operation
 	 */
 	public Color reduce(Double3 k) {
-		if (k._d1 < 1.0 || k._d2 < 1.0 || k._d3 < 1.0)
+		if (k.d1 < 1.0 || k.d2 < 1.0 || k.d3 < 1.0)
 			throw new IllegalArgumentException("Can't scale a color by a by a number lower than 1");
-		return new Color(rgb._d1 / k._d1, rgb._d2 / k._d2, rgb._d3 / k._d3);
+		return new Color(rgb.d1 / k.d1, rgb.d2 / k.d2, rgb.d3 / k.d3);
 	}
 
 }

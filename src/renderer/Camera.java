@@ -119,8 +119,8 @@ public class Camera {
     public void printGrid(int interval, Color color) {
         if (imageWriter==null)
             throw new MissingResourceException("image writer is not initialized",ImageWriter.class.getName(),"");
-        for (int i = 0; i < imageWriter.getNx(); i++) {
-            for (int j = 0; j < imageWriter.getNy(); j++) {
+        for (int i = 0; i < imageWriter.getNy(); i++) {
+            for (int j = 0; j < imageWriter.getNx(); j++) {
                 if(i%interval ==0 || j%interval==0)
                     imageWriter.writePixel(j,i,color);
             }
@@ -139,15 +139,31 @@ public class Camera {
         if(rayTracer==null)
             throw new MissingResourceException("ray tracer is not initialized",RayTracer.class.getName(),"");
 
+        int nX = imageWriter.getNx();
+        int nY = imageWriter.getNy();
         // for each pixel (i,j) , construct  a ray from camera through pixel,
         // then use rayTracer object to get correct color, finally use imageWriter to write pixel
-        for (int i = 0; i < imageWriter.getNx(); i++) {
-            for (int j = 0; j < imageWriter.getNy(); j++) {
-                Ray ray = constructRay(imageWriter.getNx(), imageWriter.getNy(), j,i);
-                imageWriter.writePixel(j,i,rayTracer.traceRay(ray));
+        for (int i = 0; i < nY; i++) {
+            for (int j = 0; j < nX; j++) {
+                 castRay( nX, nY,i, j);
             }
 
         }
+    }
+
+    /**
+     * cast a ray from camera through pixel (i,j) in view plane and get color of pixel
+     * @param Nx number of rows in view plane
+     * @param Ny number of columns in view plane
+     * @param j  column index of pixel
+     * @param i  row index of pixel
+     */
+    private void castRay(int Nx, int Ny, int j, int i){
+        // construct ray through pixel
+        Ray ray= constructRay(Nx,Ny,j,i);
+        // return the color using ray tracer
+        Color color = rayTracer.traceRay(ray);
+        imageWriter.writePixel(j,i,color);
     }
 
     /**
@@ -297,18 +313,5 @@ public class Camera {
         return new Ray(p0, Pij.subtract(p0));
     }
 
-    /**
-     * cast a ray from camera through pixel (i,j) in view plane and get color of pixel
-     * @param Nx number of rows in view plane
-     * @param Ny number of columns in view plane
-     * @param j  column index of pixel
-     * @param i  row index of pixel
-     * @return {@link Color} of pixel
-     */
-    private Color castRay(int Nx, int Ny, int j, int i){
-        // construct ray through pixel
-        Ray ray= constructRay(Nx,Ny,j,i);
-        // return the color using ray tracer
-        return rayTracer.traceRay(ray);
-    }
+
 }

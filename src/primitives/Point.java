@@ -1,5 +1,7 @@
 package primitives;
 
+import renderer.Camera;
+
 import java.util.Objects;
 
 /**
@@ -7,6 +9,7 @@ import java.util.Objects;
  */
 public class Point{
 
+    public static final Point ZERO = new Point(0d,0d,0d);
     /**
      * (x,y,z) coordinates of point
      */
@@ -25,7 +28,7 @@ public class Point{
      * @return X axis coordinate - (double)
      */
     public double getX() {
-        return _xyz._d1;
+        return _xyz.d1;
     }
 
     /**
@@ -33,14 +36,14 @@ public class Point{
      * @return Y axis coordinate - (double)
      */
     public double getY() {
-        return _xyz._d2;
+        return _xyz.d2;
     }
 
     /**
      * get Z axis coordinate of a point
      * @return Z axis coordinate - (double)
      */
-    public double getZ() { return _xyz._d3; }
+    public double getZ() { return _xyz.d3; }
 
 
     /**
@@ -79,9 +82,9 @@ public class Point{
      */
     public double distanceSquared(Point point) {
 
-        double u1= _xyz._d1 - point._xyz._d1;
-        double u2= _xyz._d2 - point._xyz._d2;
-        double u3= _xyz._d3 - point._xyz._d3;
+        double u1= _xyz.d1 - point._xyz.d1;
+        double u2= _xyz.d2 - point._xyz.d2;
+        double u3= _xyz.d3 - point._xyz.d3;
 
         return u1*u1 + u2*u2 + u3*u3;
     }

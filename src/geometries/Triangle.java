@@ -25,10 +25,11 @@ public class Triangle extends Polygon {
      * @param ray ray towards object
      * @return list containing one intersection point
      */
+
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
         // check if ray intersects plane containing the triangle
-        List<Point> result = plane.findIntersections(ray);
+        List<GeoPoint> result = plane.findGeoIntersections(ray);
         // no intersections
         if (result == null)
             return null;
@@ -69,7 +70,7 @@ public class Triangle extends Polygon {
             return null;
 
         // ray intersects triangle
-        return List.of(result.get(0));
+        return List.of(new GeoPoint(this, result.get(0).point));
     }
 
     @Override

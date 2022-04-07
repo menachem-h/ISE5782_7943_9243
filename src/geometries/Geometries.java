@@ -11,7 +11,7 @@ import java.util.List;
  * Collection of geometry objects implementing {@link Intersectable}
  * implements Composite pattern
  */
-public class Geometries  implements Intersectable{
+public class Geometries  extends Intersectable{
 
     private List<Intersectable>  _intersectables;
 
@@ -44,16 +44,15 @@ public class Geometries  implements Intersectable{
      * @param ray ray towards the composite of geometries
      * @return  immutable list of intersection points
      */
-    @Override
-    public List<Point> findIntersections(Ray ray) {
-
-        List<Point> result = null;   // intersection points
+       @Override
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+        List<GeoPoint> result = null;   // intersection points
 
         //for each geometry in intersect-able collection check intersection points
         for (var item: _intersectables ) {
 
             // get intersection point for each specific item, (item can be either geometry/nested composite of geometries)
-            List<Point> itemList = item.findIntersections(ray);
+            List<GeoPoint> itemList = item.findGeoIntersections(ray);
 
             // points were found , add to composite's total intersection points list
             if(itemList != null) {
@@ -65,5 +64,6 @@ public class Geometries  implements Intersectable{
         }
         // return list of points - null if no intersection points were found
         return result;
+
     }
 }

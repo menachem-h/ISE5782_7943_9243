@@ -1,10 +1,12 @@
 package renderer;
 
 import geometries.Geometries;
+import geometries.Intersectable;
 import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
 import scene.Scene;
+import  geometries.Intersectable.GeoPoint;
 
 import java.util.List;
 
@@ -34,7 +36,7 @@ public class RayTracerBasic extends RayTracer{
         Geometries geometries = super.scene.getGeometries();
 
         // check if ray constructed through the pixel intersects any of geometries
-        List<Point> intersections =geometries.findIntersections(ray);
+        List<GeoPoint> intersections =geometries.findGeoIntersections(ray);
 
         // if no intersections were found , return basic background color of scene
         if (intersections==null)
@@ -43,7 +45,8 @@ public class RayTracerBasic extends RayTracer{
         // intersection was found, calculate color of the nearest intersection point.
         // the nearest intersection point is first point ray will "reach" and it hides
         // intersection points from camera "view"
-        return calcColor(ray.findClosestPoint(intersections));
+        GeoPoint geoPoint = ray.findClosestGeoPoint(intersections);
+        return calcColor(geoPoint,ray);
     }
 
     /**
@@ -51,7 +54,9 @@ public class RayTracerBasic extends RayTracer{
      * @param p {@link  Point} to calculate color at
      * @return {@link Color} value at the point
      */
-    private Color calcColor(Point p){
-        return scene.getAmbientLight().getIntensity();
+    private Color calcColor(GeoPoint p, Ray  ray){
+        Color result =scene.getAmbientLight().getIntensity();
+        result = result.add(p.geometry.getEmission());
+        return result;
     }
 }
