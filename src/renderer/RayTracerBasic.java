@@ -1,14 +1,15 @@
 package renderer;
 
 import geometries.Geometries;
+import geometries.Geometry;
 import geometries.Intersectable;
-import primitives.Color;
-import primitives.Point;
-import primitives.Ray;
+import primitives.*;
 import scene.Scene;
 import  geometries.Intersectable.GeoPoint;
 
 import java.util.List;
+
+import static java.lang.Math.*;
 
 /**
  * class implements rayTracer abstract class
@@ -55,8 +56,32 @@ public class RayTracerBasic extends RayTracer{
      * @return {@link Color} value at the point
      */
     private Color calcColor(GeoPoint p, Ray  ray){
-        Color result =scene.getAmbientLight().getIntensity();
-        result = result.add(p.geometry.getEmission());
-        return result;
+        Geometry geometry=p.geometry;
+        Color Ia =scene.getAmbientLight().getIntensity();
+        Color Ie = geometry.getEmission();
+        var lights =super.scene.getLights();
+        Point pt=p.point;
+        Vector N=geometry.getNormal(pt);
+        Vector minusV= ray.getDir().scale(-1);
+        int shininess =geometry.getMaterial().nShininess;
+        Double3 kD=geometry.getMaterial().kD;
+        Double3 kS=geometry.getMaterial().kS;
+
+        Color Il=Color.BLACK;
+
+        for (var light:lights){
+            Vector l=light.getL(pt);
+            double lDotN=abs(l.dotProduct(N));
+            Vector r=l.subtract(N.scale(2*lDotN)).normalize();
+
+            double diffuse= max(0,minusV.dotProduct(r));
+            if (diffuse !=0)
+                diffuse=pow(diffuse,shininess);
+
+            Double3 factor= kD.scale(lDotN).add( kS.scale(diffuse));
+            Il=Il.add(light.getIntensity(pt).scale(factor));
+        }
+
+        return Ia.add(Ie).add(Il);
     }
 }

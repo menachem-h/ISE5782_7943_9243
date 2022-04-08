@@ -81,6 +81,13 @@ public class Scene {
         return geometries;
     }
 
+    /**
+     * getter for lights field
+     * @return collection of {@link LightSource} in scene
+     */
+    public List<LightSource> getLights() {
+        return lights;
+    }
 
     /**
      * inner class, responsible to create new instances of Scene objects

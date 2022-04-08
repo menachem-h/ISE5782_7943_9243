@@ -10,10 +10,9 @@ public class SpotLight extends PointLight  {
 
     private final Vector direction;
 
-    protected SpotLight(Color intensity, Point position,
-                        double kC, double kL, double kQ, Vector direction) {
-        super(intensity, position, kC, kL, kQ);
-        this.direction = direction;
+    public SpotLight(Color intensity, Point position, Vector direction) {
+        super(intensity, position);
+        this.direction = direction.normalize();
     }
 
     @Override
@@ -24,4 +23,6 @@ public class SpotLight extends PointLight  {
         double factor=max(0,direction.dotProduct(v));
         return color.scale(factor);
     }
+
+
 }
