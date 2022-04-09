@@ -4,6 +4,7 @@ import primitives.*;
 
 import java.util.MissingResourceException;
 
+import static primitives.Util.alignZero;
 import static primitives.Util.isZero;
 
 /**
@@ -313,5 +314,16 @@ public class Camera {
         return new Ray(p0, Pij.subtract(p0));
     }
 
+    public void moveCamera(double to, double up, double right){
 
+        if(to==0&&up==0&&right==0)
+            return ;
+        if(to!=0)
+            p0 = p0.add(vTo.scale(to));
+        if(up!=0)
+            p0 = p0.add(vUp.scale(up));
+        if(right!=0)
+            p0 = p0.add(vRight.scale(right));
+
+    }
 }
