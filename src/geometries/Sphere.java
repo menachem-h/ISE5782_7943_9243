@@ -70,9 +70,9 @@ public class Sphere extends Geometry{
     }
 
     /**
-     * find intersection {@link Point}s between ray and sphere
+     * find intersection points between ray and sphere
      * @param ray ray towards the object
-     * @return list of intersection {@link Point}s
+     * @return immutable list containing 0/1/2 intersection points as {@link GeoPoint}s objects
      */
      @Override
     protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {

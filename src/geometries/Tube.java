@@ -81,9 +81,9 @@ public class Tube extends Geometry {
     }
 
     /**
-     * find intersection points between ray and 3D sphere
+     * find intersection points between ray and 3D tube
      * @param ray ray towards the sphere
-     * @return list containing 0,1,2 intersection points
+     * @return immutable list containing 0/1/2 intersection points as {@link GeoPoint}s objects
      */
     @Override
     protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {

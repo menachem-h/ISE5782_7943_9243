@@ -23,9 +23,8 @@ public class Triangle extends Polygon {
     /**
      * find intersection between ray and  2D triangle
      * @param ray ray towards object
-     * @return list containing one intersection point
+     * @return immutable list of one intersection point as  {@link GeoPoint} object
      */
-
     @Override
     protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
         // check if ray intersects plane containing the triangle

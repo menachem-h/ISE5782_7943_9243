@@ -40,9 +40,9 @@ public class Geometries  extends Intersectable{
     }
 
     /**
-     * find intersection between ray and all geometries in the geometry composite
+     * find intersection between ray and all geometries in the geometry collection
      * @param ray ray towards the composite of geometries
-     * @return  immutable list of intersection points
+     * @return  immutable list of intersection points as  {@link GeoPoint} objects
      */
        @Override
     protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {

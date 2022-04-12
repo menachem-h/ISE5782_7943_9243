@@ -107,11 +107,8 @@ public class Plane extends Geometry {
     /**
      * find intersection between ray and plane
      * @param ray ray towards the plane
-     * @return list with one intersection point
-     * @throws IllegalArgumentException if ray is constructed at
-     * plane's representing point
+     * @return  immutable list of one intersection point as  {@link GeoPoint} object
      */
-
     @Override
     protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
         Point P0 = ray.getP0();

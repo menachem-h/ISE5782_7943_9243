@@ -314,10 +314,17 @@ public class Camera {
         return new Ray(p0, Pij.subtract(p0));
     }
 
+    /**
+     * move a camera to a different position point (angel of camera does not change)
+     * @param to number coordinates to move on Z axis
+     * @param up number coordinates to move on Y axis
+     * @param right number coordinates to move on X axis
+     */
     public void moveCamera(double to, double up, double right){
-
+        // all values == 0 , do not move camera
         if(to==0&&up==0&&right==0)
             return ;
+        // scale  and set camera's position point with values sent as parameters to move to new point
         if(to!=0)
             p0 = p0.add(vTo.scale(to));
         if(up!=0)

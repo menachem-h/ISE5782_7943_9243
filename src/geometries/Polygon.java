@@ -89,39 +89,59 @@ public class Polygon extends Geometry {
 	}
 
 
+	/**
+	 * find intersection between ray and polygon
+	 * @param ray ray towards the plane
+	 * @return  immutable list of one intersection point as  {@link GeoPoint} object
+	 */
 	@Override
 	protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
 
+		// find intersection between ray and plane containing the polygon
 		List<GeoPoint> points=plane.findGeoIntersections(ray);
+		// no intersections with plane , ray does not intersect polygon
 		if (points==null)
 			return null;
 
+		// check that intersection point is within polygon boundary
+		// by  creating vectors from ray origin to each pair of adjacent vertices in polygon
+		// if the sign of the dot product of the vertices for all pairs is matching. ray intersects polygon
 		Point p0 = ray.getP0();
 		Vector direction = ray.getDir();
 
+		// get vector from ray origin to first vertices of polygon
 		Vector v1 = vertices.get(0).subtract(p0);
 
+		// get vector from ray origin to adjacent vertices of previous vertices
 		Vector v2 = vertices.get(1).subtract(p0);
 
+		// get sign of dot product of the vectors
 		double sign = direction.dotProduct(v2.crossProduct(v1));
 
+		// if dot product == 0 ray does not intersect polygon
 		if (isZero(sign))
 			return null;
 
+		// flag setting the sign of the dot product of the first pair of vertices
 		boolean checkSign = sign > 0;
 
+		// loop over all adjacent vertices in polygon and check sign of dot-product for constructed
+		// vectors
 		for (int i = vertices.size() - 1; i > 0; --i) {
 			v2 = v1;
 			v1 = vertices.get(i).subtract(p0);
 			sign = alignZero(direction.dotProduct(v2.crossProduct(v1)));
 
+			// vectors constructed are orthogonal , ray does not intersect polygon
 			if (isZero(sign))
 				return null;
 
+			//  sign is not matching
 			if (checkSign != (sign > 0))
 				return null;
 		}
 
+		// all signs were matching return the intersection point
 		return List.of(new GeoPoint(this,points.get(0).point));
 	}
 

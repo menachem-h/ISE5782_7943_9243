@@ -9,6 +9,9 @@ import java.util.Objects;
  */
 public class Point{
 
+    /**
+     * origin point of 3D space
+     */
     public static final Point ZERO = new Point(0d,0d,0d);
     /**
      * (x,y,z) coordinates of point
