@@ -1,4 +1,4 @@
-package renderer;
+package lighting;
 
 import org.junit.jupiter.api.Test;
 

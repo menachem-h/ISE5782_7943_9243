@@ -17,6 +17,11 @@ import static primitives.Util.alignZero;
  */
 public class RayTracerBasic extends RayTracer {
 
+    /**
+     * ToDo
+     */
+    private static final double EPS = 0.1;
+
 
     /**
      * constructor
@@ -116,11 +121,13 @@ public class RayTracerBasic extends RayTracer {
             double nl = alignZero(n.dotProduct(l));
             // check that light direction is towards shape and not behind
             if (nl * nv > 0) { // sign(nl) == sing(nv)
-                Color lightIntensity = lightSource.getIntensity(intersection.point);
-                // (Kd * |l.dorProduct(n)|) * Il
-                color = color.add(calcDiffusive(kD, nl, lightIntensity),
-                        // (Ks * max(0 ,(-v).dotProduct(r)) ** nShinines ) * Il
-                        calcSpecular(kS, nl, l, n, v, nShininess, lightIntensity));
+                if (unshaded(intersection,l,n)) {
+                    Color lightIntensity = lightSource.getIntensity(intersection.point);
+                    // (Kd * |l.dorProduct(n)|) * Il
+                    color = color.add(calcDiffusive(kD, nl, lightIntensity),
+                            // (Ks * max(0 ,(-v).dotProduct(r)) ** nShinines ) * Il
+                            calcSpecular(kS, nl, l, n, v, nShininess, lightIntensity));
+                }
             }
         }
         return color;
@@ -174,5 +181,23 @@ public class RayTracerBasic extends RayTracer {
         return lightIntensity.scale(kD.scale(nDotL));
     }
 
+
+    /**
+     * ToDo
+     * @param gp
+     * @param l
+     * @param n
+     * @return
+     */
+    private boolean unshaded(GeoPoint gp, Vector l, Vector n){
+        Vector lightDirection = l.scale(-1); // from point to light source
+
+        Vector epsVector = n.scale(EPS);
+        Point point = gp.point.add(epsVector);
+
+        Ray lightRay = new Ray(gp.point, lightDirection);
+        List<GeoPoint> intersections = scene.getGeometries().findGeoIntersections(lightRay);
+        return intersections ==null;
+    }
 
 }
