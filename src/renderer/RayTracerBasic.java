@@ -3,6 +3,7 @@ package renderer;
 import geometries.Geometries;
 import geometries.Geometry;
 import geometries.Intersectable;
+import lighting.LightSource;
 import primitives.*;
 import scene.Scene;
 import geometries.Intersectable.GeoPoint;
@@ -121,7 +122,7 @@ public class RayTracerBasic extends RayTracer {
             double nl = alignZero(n.dotProduct(l));
             // check that light direction is towards shape and not behind
             if (nl * nv > 0) { // sign(nl) == sing(nv)
-                if (unshaded(intersection,l,n)) {
+                if (unshaded(intersection,l,n,lightSource)) {
                     Color lightIntensity = lightSource.getIntensity(intersection.point);
                     // (Kd * |l.dorProduct(n)|) * Il
                     color = color.add(calcDiffusive(kD, nl, lightIntensity),
@@ -189,13 +190,13 @@ public class RayTracerBasic extends RayTracer {
      * @param n
      * @return
      */
-    private boolean unshaded(GeoPoint gp, Vector l, Vector n){
+    private boolean unshaded(GeoPoint gp, Vector l, Vector n, LightSource light){
         Vector lightDirection = l.scale(-1); // from point to light source
 
-        Vector epsVector = n.scale(EPS);
+        Vector epsVector = n.scale(n.dotProduct(lightDirection) >=0 ? EPS : - EPS);
         Point point = gp.point.add(epsVector);
 
-        Ray lightRay = new Ray(gp.point, lightDirection);
+        Ray lightRay = new Ray(point, lightDirection);
         List<GeoPoint> intersections = scene.getGeometries().findGeoIntersections(lightRay);
         return intersections ==null;
     }
