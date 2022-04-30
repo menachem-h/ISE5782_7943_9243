@@ -95,12 +95,18 @@ public class Polygon extends Geometry {
 	 * @return  immutable list of one intersection point as  {@link GeoPoint} object
 	 */
 	@Override
-	protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+	protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray, double maxDistance) {
 
 		// find intersection between ray and plane containing the polygon
-		List<GeoPoint> points=plane.findGeoIntersections(ray);
+		List<GeoPoint> points=plane.findGeoIntersections(ray,maxDistance);
 		// no intersections with plane , ray does not intersect polygon
 		if (points==null)
+			return null;
+
+		//check that intersection point is closer to ray origin than
+		// max distance parameter
+		double distance = points.get(0).point.distance(ray.getP0());
+		if(alignZero(distance-maxDistance)>0)
 			return null;
 
 		// check that intersection point is within polygon boundary

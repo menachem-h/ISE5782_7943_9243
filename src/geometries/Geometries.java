@@ -45,14 +45,14 @@ public class Geometries  extends Intersectable{
      * @return  immutable list of intersection points as  {@link GeoPoint} objects
      */
        @Override
-    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray,double maxDistance) {
         List<GeoPoint> result = null;   // intersection points
 
         //for each geometry in intersect-able collection check intersection points
         for (var item: _intersectables ) {
 
             // get intersection point for each specific item, (item can be either geometry/nested composite of geometries)
-            List<GeoPoint> itemList = item.findGeoIntersections(ray);
+            List<GeoPoint> itemList = item.findGeoIntersections(ray,maxDistance);
 
             // points were found , add to composite's total intersection points list
             if(itemList != null) {

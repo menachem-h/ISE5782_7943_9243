@@ -197,7 +197,8 @@ public class RayTracerBasic extends RayTracer {
         Point point = gp.point.add(epsVector);
 
         Ray lightRay = new Ray(point, lightDirection);
-        List<GeoPoint> intersections = scene.getGeometries().findGeoIntersections(lightRay);
+        double distance = light.getDistance(point);
+        List<GeoPoint> intersections = scene.getGeometries().findGeoIntersections(lightRay,distance);
         return intersections ==null;
     }
 

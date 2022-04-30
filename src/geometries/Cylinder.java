@@ -79,7 +79,7 @@ public class Cylinder extends Tube{
      * @return immutable list containing 0/1/2 intersection points as {@link GeoPoint}s objects
      */
     @Override
-    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray ,double maxDistance) {
         // origin point of cylinder (on bottom base)
         Point basePoint=_axisRay.getP0();
         // point across base point on top base
@@ -92,7 +92,7 @@ public class Cylinder extends Tube{
         // crate plane that contains base point in it
         Plane basePlane= new Plane(basePoint,vC);
         // find intersection between ray and plane
-        List<GeoPoint> intersectionsBase=basePlane.findGeoIntersections(ray);
+        List<GeoPoint> intersectionsBase=basePlane.findGeoIntersections(ray,maxDistance);
 
         // if intersections were found, check that point are actually on the base of the cylinder
         //if distance from base point to intersection point holds the equation ->  distance² < from radius²
@@ -112,7 +112,7 @@ public class Cylinder extends Tube{
         // crate plane that contains top point in it
         Plane topPlane= new Plane(topPoint,vC);
         // find intersection between ray and plane
-        List<GeoPoint> intersectionsTop=topPlane.findGeoIntersections(ray);
+        List<GeoPoint> intersectionsTop=topPlane.findGeoIntersections(ray,maxDistance);
         // if intersections were found, check that point are actually on the base of the cylinder
         //if distance from top point to intersection point holds the equation ->  distance² < from radius²
         if(intersectionsTop!=null){
@@ -133,7 +133,7 @@ public class Cylinder extends Tube{
 
         // use tube parent class function to find intersections with the cylinder represented
         // as an infinite tube
-        List<GeoPoint> intersectionsTube=super.findGeoIntersectionsHelper(ray);
+        List<GeoPoint> intersectionsTube=super.findGeoIntersectionsHelper(ray ,maxDistance);
 
         // if intersection points were found check that they are within the finite cylinder's boundary
         // by checking if  scalar product fo direction vector with a vector from intersection point

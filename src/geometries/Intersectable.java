@@ -77,15 +77,27 @@ public abstract class Intersectable {
      */
     public List<GeoPoint> findGeoIntersections(Ray ray) {
         //....
-        return findGeoIntersectionsHelper(ray);
+        return findGeoIntersectionsHelper(ray,Double.POSITIVE_INFINITY);
     }
 
+    /**
+     * find all intersection {@link  GeoPoint}s between ray and a geometric object
+     * calls abstract helper method, each implementing class , implements helper method
+     * to return list of intersection {@link GeoPoint}s for that specific geometry
+     * @param ray  ray towards the object
+     * @param maxDistance todo
+     * @return immutable list of intersection {@link  GeoPoint}s
+     */
+    public List<GeoPoint> findGeoIntersections(Ray ray, double maxDistance) {
+        //....
+        return findGeoIntersectionsHelper(ray,maxDistance);
+    }
     /**
      * abstract helper method , implemented by interface implementing classes,
      * gets list of intersection {@link GeoPoint}s for that specific class's geometry
      * @param ray ray towards the object
      * @return immutable list of intersection {@link  GeoPoint}s
      */
-    protected abstract List<GeoPoint> findGeoIntersectionsHelper(Ray ray);
+    protected abstract List<GeoPoint> findGeoIntersectionsHelper(Ray ray, double maxDistance);
 
 }

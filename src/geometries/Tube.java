@@ -86,7 +86,7 @@ public class Tube extends Geometry {
      * @return immutable list containing 0/1/2 intersection points as {@link GeoPoint}s objects
      */
     @Override
-    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray, double maxDistance) {
         Vector v = ray.getDir();
         Vector vt = _axisRay.getDir();
         Point pa = _axisRay.getP0();
@@ -185,15 +185,20 @@ public class Tube extends Geometry {
             double t1 = (-b + Math.sqrt(discriminant)) / (2 * a);
             double t2 = (-b - Math.sqrt(discriminant)) / (2 * a);
 
+            // check that distance from ray origin to intersection points
+            // is smaller than max distance parameter set by user
+            boolean distanceT1 = alignZero(t1-maxDistance) <= 0;
+            boolean distanceT2 = alignZero(t2-maxDistance) <= 0;
+
             // root> 0 indicates that scaling factor is in
             // forward direction of ray and , intersection occurs
             // root < 0 indicates scale factor is in opposite direction
             // no intersection occurs
-            if (t1 > 0 && t2 > 0)
+            if (t1 > 0 && t2 > 0 && distanceT1 && distanceT2)
                 return List.of(new GeoPoint(this,ray.getPoint(t2)), new GeoPoint(this,ray.getPoint(t1)));
-            if (t1 > 0)
+            if (t1 > 0 && distanceT1)
                 return List.of(new GeoPoint(this,ray.getPoint(t1)));
-            if (t2 > 0)
+            if (t2 > 0 && distanceT2)
                 return List.of(new GeoPoint(this,ray.getPoint(t2)));
         }
 

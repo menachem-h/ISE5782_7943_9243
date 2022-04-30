@@ -110,7 +110,7 @@ public class Plane extends Geometry {
      * @return  immutable list of one intersection point as  {@link GeoPoint} object
      */
     @Override
-    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray,double maxDistance) {
         Point P0 = ray.getP0();
         Vector v = ray.getDir();
         Vector n = _normal;
@@ -145,7 +145,7 @@ public class Plane extends Geometry {
         // scaling factor for ray , if value is positive
         // ray intersects plane
         double t = alignZero(nQMinusP0 / nv);
-        if (t > 0){
+        if (t > 0 && alignZero(t-maxDistance) <= 0){
             //return immutable List
             return List.of(new GeoPoint(this, ray.getPoint(t)));
         }

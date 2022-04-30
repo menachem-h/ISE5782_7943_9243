@@ -26,11 +26,17 @@ public class Triangle extends Polygon {
      * @return immutable list of one intersection point as  {@link GeoPoint} object
      */
     @Override
-    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray ,double maxDistance) {
         // check if ray intersects plane containing the triangle
         List<GeoPoint> result = plane.findGeoIntersections(ray);
         // no intersections
         if (result == null)
+            return null;
+
+        //check that intersection point is closer to ray origin than
+        // max distance parameter
+        double distance = result.get(0).point.distance(ray.getP0());
+        if(alignZero(distance-maxDistance)>0)
             return null;
 
         // check if intersection points are in Triangle

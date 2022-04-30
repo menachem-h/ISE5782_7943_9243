@@ -75,7 +75,7 @@ public class Sphere extends Geometry{
      * @return immutable list containing 0/1/2 intersection points as {@link GeoPoint}s objects
      */
      @Override
-    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray,double maxDistance) {
         Point P0 = ray.getP0();
         Vector v = ray.getDir();
 
@@ -109,20 +109,25 @@ public class Sphere extends Geometry{
         // to second intersection point
         double t2 = alignZero(tm + th);
 
+        // check that distance from ray origin to intersection points
+        // is smaller than max distance parameter set by user
+        boolean distanceT1 = alignZero(t1-maxDistance) <= 0;
+        boolean distanceT2 = alignZero(t2-maxDistance) <= 0;
+
         // ray constructed outside sphere
         // two intersection points
-        if (t1 > 0 && t2 > 0) {
+        if (t1 > 0 && t2 > 0 && distanceT1 && distanceT2) {
             Point P1 =ray.getPoint(t1);
             Point P2 =ray.getPoint(t2);
             return List.of(new GeoPoint(this,P1), new GeoPoint (this,P2));
         }
         // ray constructed inside sphere and intersect in back direction
-        if (t1 > 0) {
+        if (t1 > 0 && distanceT1) {
             Point P1 =ray.getPoint(t1);
             return List.of(new GeoPoint(this,P1));
         }
         // ray constructed inside sphere and intersect in forward direction
-        if (t2 > 0) {
+        if (t2 > 0 && distanceT2) {
             Point P2 =ray.getPoint(t2);
             return List.of(new GeoPoint (this,P2));
         }
