@@ -13,14 +13,14 @@ class CylinderTest {
 
     Vector direction= new Vector(1,0,0);
     Ray ray=new Ray(new Point(0,0,0),direction);
-    Cylinder _cylinder= new Cylinder(ray,1,4);
+    Cylinder cylinder1 = new Cylinder(ray,1,4);
 
     /**
      * Test method for {@link geometries.Cylinder#getNormal(Point)}.
      */
     @Test
     void testGetNormalEP1() {
-        assertEquals(new Vector(0,0,1),_cylinder.getNormal(new Point(3,0,1)),
+        assertEquals(new Vector(0,0,1), cylinder1.getNormal(new Point(3,0,1)),
                 "returned normal vector is incorrect");
 
     }
@@ -30,7 +30,7 @@ class CylinderTest {
      */
     @Test
     void testGetNormalEP2() {
-        assertEquals(direction.normalize(),_cylinder.getNormal(new Point(0,0.5,0)),
+        assertEquals(direction.normalize(), cylinder1.getNormal(new Point(0,0.5,0)),
                 "returned normal vector is incorrect");
     }
 
@@ -39,7 +39,7 @@ class CylinderTest {
      */
     @Test
     void testGetNormalEP3() {
-        assertEquals(direction.normalize(),_cylinder.getNormal(new Point(4,0.5,0)),
+        assertEquals(direction.normalize(), cylinder1.getNormal(new Point(4,0.5,0)),
                 "returned normal vector is incorrect");
     }
 
@@ -48,7 +48,7 @@ class CylinderTest {
      */
     @Test
     void testGetNormalBVE1(){
-        assertEquals(direction.normalize(),_cylinder.getNormal(new Point(4,0,0)),
+        assertEquals(direction.normalize(), cylinder1.getNormal(new Point(4,0,0)),
                 "returned normal vector is incorrect");
     }
 
@@ -57,7 +57,7 @@ class CylinderTest {
      */
     @Test
     void testGetNormalBVE2(){
-        assertEquals(direction.normalize(),_cylinder.getNormal(new Point(0,0,0)),
+        assertEquals(direction.normalize(), cylinder1.getNormal(new Point(0,0,0)),
                 "returned normal vector is incorrect");
     }
 
@@ -346,5 +346,35 @@ class CylinderTest {
         result = cylinder.findIntersections(new Ray(new Point(3,0,2), new Vector(0,0,1)));
         assertNull(result, "Wrong number of points");
     }
+
+    List<Intersectable.GeoPoint> res=null;
+    /**
+     * Test method for {@link Cylinder#findGeoIntersectionsHelper(Ray, double)}.
+     */
+    @Test
+    void findGeoIntersectionsHelperTest1(){
+        res=cylinder.findGeoIntersectionsHelper(new Ray(new Point(-1,0,1),new Vector(1,0,0)),1d);
+        assertNull(res,"wrong zero intersections");
+    }
+
+    /**
+     * Test method for {@link Cylinder#findGeoIntersectionsHelper(Ray, double)}.
+     */
+    @Test
+    void findGeoIntersectionsHelperTest2(){
+        res=cylinder.findGeoIntersectionsHelper(new Ray(new Point(-1,0,1),new Vector(1,0,0)),2.5d);
+        assertEquals(1,res.size(),"wrong one point intersections");
+    }
+
+    /**
+     * Test method for {@link Cylinder#findGeoIntersectionsHelper(Ray, double)}.
+     */
+    @Test
+    void findGeoIntersectionsHelperTest3(){
+        res=cylinder.findGeoIntersectionsHelper(new Ray(new Point(-1,0,1),new Vector(1,0,0)),5d);
+        assertEquals(2,res.size(),"wrong two point intersections");
+    }
+
+
 
 }

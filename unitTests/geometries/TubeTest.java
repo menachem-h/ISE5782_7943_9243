@@ -770,6 +770,34 @@ class TubeTest {
 
     //endregion
 
+    List<Intersectable.GeoPoint> res=null;
+    /**
+     * Test method for {@link Tube#findGeoIntersectionsHelper(Ray, double)}.
+     */
+    @Test
+    void findGeoIntersectionsHelperTest1(){
+        res=tube.findGeoIntersectionsHelper(new Ray(new Point(-3,1,3),new Vector(1,0,0)),2d);
+        assertNull(res,"wrong zero intersections");
+    }
+
+    /**
+     * Test method for {@link Tube#findGeoIntersectionsHelper(Ray, double)}.
+     */
+    @Test
+    void findGeoIntersectionsHelperTest2(){
+        res=tube.findGeoIntersectionsHelper(new Ray(new Point(-3,1,3),new Vector(1,0,0)),3.8);
+        assertEquals(1,res.size(),"wrong one intersections");
+    }
+
+    /**
+     * Test method for {@link Tube#findGeoIntersectionsHelper(Ray, double)}.
+     */
+    @Test
+    void findGeoIntersectionsHelperTest3(){
+        res=tube.findGeoIntersectionsHelper(new Ray(new Point(-3,1,3),new Vector(1,0,0)),7d);
+        assertEquals(2,res.size(),"wrong two intersections");
+    }
+
 }
 
 

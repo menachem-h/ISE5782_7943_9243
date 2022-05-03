@@ -161,4 +161,25 @@ class PlaneTest {
     }
     //endregion
 
+    Plane pl1= new Plane(new Point(4,0,0),new Vector(1,0,0));
+    Intersectable.GeoPoint gp= new Intersectable.GeoPoint((Geometry)pl1, new Point(4,0,1));
+    Ray ray1= new Ray(new Point(1,0,1),new Vector(1,0,0));
+    /**
+     * Test method for {@link geometries.Plane#findGeoIntersectionsHelper(Ray, double)}
+     */
+    @Test
+    void findGeoIntersectionsHelperTest1(){
+        assertNull(pl1.findGeoIntersectionsHelper(ray1,1d),"wrong zero intersections");
+    }
+
+    /**
+     * Test method for {@link geometries.Plane#findGeoIntersectionsHelper(Ray, double)}
+     */
+    @Test
+    void findGeoIntersectionsHelperTest2(){
+        List<Intersectable.GeoPoint> res=pl1.findGeoIntersectionsHelper(ray1,8d);
+        assertEquals(List.of(gp),res,"wrong one intersections");
+    }
+
+
 }
