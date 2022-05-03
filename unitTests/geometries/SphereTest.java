@@ -229,4 +229,41 @@ class SphereTest {
     //endregion
     //endregion
 
+    //region *** test including consideration that points are closer to ray origin than maxDistance parameter
+    // ray and sphere intersect twice at (0,0,3) and (0,6,3)
+    Sphere sphere1 = new Sphere(new Point(0,3,3),3);
+    Ray ray = new Ray(new Point(0,-4,3),new Vector(0,1,0));
+    Intersectable.GeoPoint gp1 = new Intersectable.GeoPoint(sphere1 , new Point(0, 0, 3));
+    Intersectable.GeoPoint gp2 = new Intersectable.GeoPoint(sphere1 , new Point(0, 6, 3));
+
+    /**
+     * Test method for {@link geometries.Sphere#findGeoIntersectionsHelper(Ray, double)}
+     */
+    @Test
+    void findGeoIntersectionsEP1() {
+        // TC01 -  max distance is smaller than distance to both intersection points - no intersections
+        assertNull(sphere1.findGeoIntersectionsHelper(ray,2),"points are further than maxDistance");
+
+    }
+
+    /**
+     * Test method for {@link geometries.Sphere#findGeoIntersectionsHelper(Ray, double)}
+     */
+    @Test
+    void findGeoIntersectionsEP2() {
+        //TC02 -  max distance is smaller than distance to second intersection point - one intersection point
+        List<Intersectable.GeoPoint> res = sphere1.findGeoIntersectionsHelper(ray,5);
+        assertEquals(List.of(gp1),res,"one point only is in boundary");
+
+    }
+
+    @Test
+    void findGeoIntersectionsEP3() {
+        //TC03 -  distance to both points is smaller than maxDistance - two intersection points
+        List<Intersectable.GeoPoint> res = sphere1.findGeoIntersectionsHelper(ray,12);
+        assertEquals(List.of(gp1,gp2),res,"one point only is in boundary");
+
+    }
+    //endregion
+
     }

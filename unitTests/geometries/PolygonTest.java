@@ -162,4 +162,35 @@ class PolygonTest {
         assertEquals(List.of(new Point(5, 0, 2)), pl.findIntersections(ray), "wrong intersection point");
         assertNull(square.findIntersections(ray), "no intersections");
     }
+
+    //region ***test for intersection points with consideration to maxDistance parameter
+    Polygon square1 = new Polygon(
+            new Point(-1,0,0),
+            new Point(-1,0,1),
+            new Point(1,0,1),
+            new Point(1,0,0));
+    Ray ray1 = new Ray(new Point(0,-3,0.5),new Vector(0,1,0));
+    Intersectable.GeoPoint gp1 = new Intersectable.GeoPoint(square1 , new Point(0, 0, 0.5));
+
+    /**
+     * Test method for {@link Triangle#findGeoIntersectionsHelper(Ray, double)}
+     */
+    @Test
+    void findGeoIntersectionsEP1() {
+        // TC01 -  max distance is smaller than distance to intersection point - no intersections
+        assertNull(square1.findGeoIntersectionsHelper(ray1,2),"points are further than maxDistance");
+
+    }
+
+    /**
+     * Test method for {@link Triangle#findGeoIntersectionsHelper(Ray, double)}
+     */
+    @Test
+    void findGeoIntersectionsEP2() {
+        //TC02 -  max distance is larger than distance to  intersection point - one intersection point
+        List<Intersectable.GeoPoint> res = square1.findGeoIntersectionsHelper(ray1,5);
+        assertEquals(List.of(gp1),res,"point is in boundary");
+
+    }
+    //endregion
 }

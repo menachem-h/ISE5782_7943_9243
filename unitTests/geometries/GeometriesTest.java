@@ -62,4 +62,51 @@ class GeometriesTest {
     }
 
 
+    // test for intersection points with consideration to maxDistance parameter
+
+    // ray and sphere intersect twice at (0,0,3) and (0,6,3)
+    Sphere sphere1 = new Sphere(new Point(0,3,3),3);
+    Triangle triangle1 = new Triangle(new Point(-10,8,0),new Point(10,8,0),new Point(0,8,10));
+    Plane plane1 = new Plane(new Point(0,12,0),new Vector(0,1,0));
+    Ray ray = new Ray(new Point(0,-4,3),new Vector(0,1,0));
+    Intersectable.GeoPoint gp1 = new Intersectable.GeoPoint(sphere1 , new Point(0, 0, 3));
+    Intersectable.GeoPoint gp2 = new Intersectable.GeoPoint(sphere1 , new Point(0, 6, 3));
+    Intersectable.GeoPoint gp3 = new Intersectable.GeoPoint(triangle1 , new Point(0, 8, 3));
+    Intersectable.GeoPoint gp4 = new Intersectable.GeoPoint(plane1 , new Point(0, 12, 3));
+    Geometries geometries1=new Geometries(sphere1,triangle1,plane1);
+
+    /**
+     * Test method for {@link Geometries#findGeoIntersectionsHelper(Ray, double)}
+     */
+    @Test
+    void findGeoIntersectionsEP1() {
+        // TC01 -  max distance is larger than distance to all intersection points - 4 intersections
+        List<Intersectable.GeoPoint> res = geometries1.findGeoIntersectionsHelper(ray,20);
+        assertEquals(List.of(gp1,gp2,gp3,gp4),res,"one point only is in boundary");
+
+    }
+
+    /**
+     * Test method for {@link Geometries#findGeoIntersectionsHelper(Ray, double)}
+     */
+    @Test
+    void findGeoIntersectionsEP2() {
+        //TC02 -  max distance is smaller than distance to all intersection points - no intersection
+        List<Intersectable.GeoPoint> res = geometries1.findGeoIntersectionsHelper(ray,2);
+        assertNull(res, "points are beyond distance");
+
+    }
+
+    /**
+     * Test method for {@link Geometries#findGeoIntersectionsHelper(Ray, double)}
+     */
+    @Test
+    void findGeoIntersectionsEP3() {
+        //TC03 -  distance to points of sphere and triangle are close enough but plane not - 3 intersection points
+        List<Intersectable.GeoPoint> res = geometries1.findGeoIntersectionsHelper(ray,13.5);
+        assertEquals(List.of(gp1,gp2,gp3),res,"one point only is in boundary");
+
+    }
+
+
 }
