@@ -13,9 +13,20 @@ public class Material {
      */
     public Double3 kS=Double3.ZERO;
     /**
+     * todo
+     */
+    public Double3 kT=Double3.ZERO;
+
+    /**
+     *
+     */
+    public Double3 kR=Double3.ZERO;
+    /**
      * shininess level of geometry
      */
     public int nShininess=0;
+
+
 
     /**
      * setter for kD field (Builder pattern style)
@@ -54,6 +65,21 @@ public class Material {
      */
     public Material setkS(double kS) {
         this.kS = new Double3(kS);
+        return this;
+    }
+
+    /**
+     * todo
+     */
+    public Material setkT(double kT) {
+        this.kT = new Double3(kT);
+        return this;
+    }
+    /**
+     * todo
+     */
+    public Material setkR(double kR) {
+        this.kR = new Double3(kR);
         return this;
     }
 

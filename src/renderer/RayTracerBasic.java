@@ -23,6 +23,11 @@ public class RayTracerBasic extends RayTracer {
      */
     private static final double EPS = 0.1;
 
+    /**
+     * todo
+     */
+    private static final int MAX_CALC_COLOR_LEVEL = 10;
+    private static final double MIN_CALC_COLOR_K = 0.001;
 
     /**
      * constructor

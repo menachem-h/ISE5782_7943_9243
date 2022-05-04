@@ -1,8 +1,11 @@
 package lighting;
 
 import primitives.Color;
+import primitives.Double3;
 import primitives.Point;
 import primitives.Vector;
+
+import java.awt.image.DataBufferUShort;
 
 /**
  * light source object
@@ -12,15 +15,15 @@ public class PointLight extends Light implements LightSource {
     /**
      * attenuation coefficient
      */
-    private double kC=1;
+    private Double3 kC=Double3.ONE;
     /**
      * attenuation coefficient depending on distance
      */
-    private double kL=0;
+    private Double3 kL=Double3.ZERO;
     /**
      * attenuation coefficient depending on distance²
      */
-    private double kQ=0;
+    private Double3 kQ=Double3.ZERO;
 
     /**
      * position {@link Point} of light source in 3D space
@@ -43,7 +46,7 @@ public class PointLight extends Light implements LightSource {
      * @return this instance of object
      */
     public PointLight setkC(double kC) {
-        this.kC = kC;
+        this.kC = new Double3(kC);
         return this;
     }
 
@@ -53,7 +56,7 @@ public class PointLight extends Light implements LightSource {
      * @return this instance of object
      */
     public PointLight setkL(double kL) {
-        this.kL = kL;
+        this.kL =new Double3(kL);
         return this;
     }
 
@@ -63,7 +66,7 @@ public class PointLight extends Light implements LightSource {
      * @return this instance of object
      */
     public PointLight setkQ(double kQ) {
-        this.kQ = kQ;
+        this.kQ =new Double3(kQ);
         return this;
     }
 
@@ -79,9 +82,9 @@ public class PointLight extends Light implements LightSource {
         // calculate distance from light to point
         double distance =p.distance(position);
         // calculate denominator
-        double factor=kC+ kL *distance+kQ*distance*distance;
+        Double3 factor=kC.add(kL.scale(distance)).add(kQ.scale(distance*distance));
         // scale color by 1/denominator
-        Color color=getIntensity().scale(1/factor);
+        Color color=getIntensity().reduce(factor);
         return color;
     }
 
