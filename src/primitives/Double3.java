@@ -104,6 +104,16 @@ public class Double3 {
 	}
 
 	/**
+	 * Scale (multiply) floating point triad by a floating point triad into a new triad where each
+	 * each number is multiplied by parallel  number in rhs
+	 *
+	 * @param rhs right handle side operand for scaling
+	 * @return result of scale
+	 */
+	public Double3 scale(Double3 rhs) {
+		return new Double3(d1 * rhs.d1, d2 * rhs.d2, d3 * rhs.d3);
+	}
+	/**
 	 * Reduce (divide) floating point triad by a number into a new triad where each
 	 * number is divided by the number
 	 *
@@ -133,6 +143,16 @@ public class Double3 {
 
 	public boolean lowerThan(double k) {
 		return d1 < k && d2 < k && d3 < k;
+	}
+
+	/**
+	 * Checks whether all the numbers are greater than a test number
+	 * @param k the test number
+	 * @return true if all the numbers are greater than k, false otherwise
+	 */
+
+	public boolean greaterThan(double k) {
+		return d1 > k && d2 > k && d3 > k;
 	}
 
 }

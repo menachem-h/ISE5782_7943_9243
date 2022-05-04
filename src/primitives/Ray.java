@@ -24,6 +24,10 @@ public class Ray {
     final private Vector dir;
 
     /**
+     * ToDo
+     */
+    private static final double EPS = 0.1;
+    /**
      * ray constructor based on a fixed starting point and direction
      *
      * @param p0  starting point
@@ -38,6 +42,20 @@ public class Ray {
         this.dir = dir.normalize();
     }
 
+    /**
+     * constructor - construct ray slightly moved from point
+     * @param p original point
+     * @param normal normal vector to geometry at the point
+     * @param dir vector of light direction
+     */
+    public Ray(Point p,Vector normal, Vector dir) {
+        if (dir._xyz.equals(Double3.ZERO))
+            throw new IllegalArgumentException("Vector (0,0,0) not valid");
+
+        Vector epsVector = normal.scale(normal.dotProduct(dir) >=0 ? EPS : - EPS);
+        this.p0=p.add(epsVector);
+        this.dir = dir.normalize();
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
