@@ -36,7 +36,7 @@ public class ReflectionRefractionTests {
                 .setkL(0.0004).setkQ(0.0000006));
         Scene scene = new Scene.SceneBuilder("Test Scene")
                 .setGeometries(new Geometries( //
-                        new Sphere(new Point(0, 0, -50), 50d).setEmission(new Color(BLUE)) //
+                                new Sphere(new Point(0, 0, -50), 50d).setEmission(new Color(BLUE)) //
                                 .setMaterial(new Material().setkD(0.4).setkS(0.3).setnShininess(100).setkT(0.3)),
                         new Sphere(new Point(0, 0, -50), 25d).setEmission(new Color(RED)) //
                                 .setMaterial(new Material().setkD(0.5).setkS(0.5).setnShininess(100))))
