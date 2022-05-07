@@ -123,4 +123,35 @@ public class ReflectionRefractionTests {
         camera.renderImage(); //
 		camera.writeToImage();
     }
+
+
+    @Test
+    public void reflectionIntegrationTest(){
+        List<LightSource> lights = new LinkedList<>();
+        lights.add(new PointLight(new Color(WHITE),new Point(0,0,100)));
+        Scene scene = new Scene.SceneBuilder("Test Scene")
+                .setAmbientLight(new AmbientLight(new Color(229,204,255), new Double3(.15)))
+                .setGeometries(new Geometries(
+                        new Sphere(new Point(0,0,-100),25d).setEmission(new Color(255,0,0))
+                                .setMaterial(new Material().setkS(0.25).setkD(0.25).setnShininess(50)),
+                        new Cylinder(new Ray(new Point(50,-20,-100),new Vector(0,1,1)),20d,80d)
+                                .setEmission(new Color(255,255,51))
+                                .setMaterial(new Material().setkS(0.35).setkD(0.25).setkT(0.15))))
+                .setLights(lights)
+                .setBackground(new Color(130d,220d,136d))
+                .build();
+
+
+
+        ImageWriter imageWriter = new ImageWriter("refractionIntegration", 600, 600);
+        Camera camera = new Camera.CameraBuilder(new Point(0, 0, 1000), new Vector(0, 0, -1), new Vector(0, 1, 0)) //
+                .setVPSize(200, 200)
+                .setVPDistance(1000)
+                .setImageWriter(imageWriter) //
+                .setRayTracer(new RayTracerBasic(scene))
+                .build();//
+        camera.renderImage(); //
+        camera.writeToImage();
+    }
+
 }
