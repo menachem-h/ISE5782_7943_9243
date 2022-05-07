@@ -197,7 +197,7 @@ public class RayTracerBasic extends RayTracer {
             double nl = alignZero(n.dotProduct(l));
             // check that light direction is towards shape and not behind
             if (nl * nv > 0) { // sign(nl) == sing(nv)
-
+                /**
                  if (unshaded(intersection, l, n, lightSource)) {
                  Color lightIntensity = lightSource.getIntensity(intersection.point);
                  // (Kd * |l.dorProduct(n)|) * Il
@@ -206,7 +206,7 @@ public class RayTracerBasic extends RayTracer {
                  calcSpecular(kS, nl, l, n, v, nShininess, lightIntensity));
                  }
 
-                  /**
+                  **/
                 Double3 ktr = transparency(intersection, lightSource, l, n);
                 if (ktr.scale(k).greaterThan(MIN_CALC_COLOR_K)) {
                     Color lightIntensity = lightSource.getIntensity(intersection.point).scale(ktr);
@@ -215,7 +215,7 @@ public class RayTracerBasic extends RayTracer {
                             // (Ks * max(0 ,(-v).dotProduct(r)) ** nShinines ) * Il
                             calcSpecular(kS, nl, l, n, v, nShininess, lightIntensity));
                 }
-                **/
+
 
             }
         }
@@ -320,7 +320,7 @@ public class RayTracerBasic extends RayTracer {
             return Double3.ONE;
         Double3 ktr = Double3.ONE;
         for (var geoPoint : intersections) {
-                ktr.scale(geoPoint.geometry.getMaterial().kT);
+                ktr=ktr.scale(geoPoint.geometry.getMaterial().kT);
             if (ktr.lowerThan(MIN_CALC_COLOR_K))
                 return Double3.ZERO;
         }

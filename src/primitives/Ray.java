@@ -52,7 +52,7 @@ public class Ray {
         if (dir._xyz.equals(Double3.ZERO))
             throw new IllegalArgumentException("Vector (0,0,0) not valid");
 
-        Vector epsVector = normal.scale(normal.dotProduct(dir) >=0 ? EPS : - EPS);
+        Vector epsVector = normal.scale(normal.dotProduct(dir) >0 ? EPS : - EPS);
         this.p0=p.add(epsVector);
         this.dir = dir.normalize();
     }
