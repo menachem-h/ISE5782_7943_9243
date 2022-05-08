@@ -128,23 +128,32 @@ public class ReflectionRefractionTests {
     @Test
     public void reflectionIntegrationTest(){
         List<LightSource> lights = new LinkedList<>();
-        lights.add(new PointLight(new Color(WHITE),new Point(0,0,100)));
+        lights.add(new SpotLight(new Color(WHITE),new Point(100,0,200),new Vector(-1,0,-1)).setkL(0.0004).setkQ(0.0000006));
         Scene scene = new Scene.SceneBuilder("Test Scene")
                 .setAmbientLight(new AmbientLight(new Color(229,204,255), new Double3(.15)))
                 .setGeometries(new Geometries(
-                        new Sphere(new Point(0,0,-100),25d).setEmission(new Color(255,0,0))
-                                .setMaterial(new Material().setkS(0.25).setkD(0.25).setnShininess(50)),
-                        new Cylinder(new Ray(new Point(50,-20,-100),new Vector(0,1,1)),20d,80d)
-                                .setEmission(new Color(255,255,51))
-                                .setMaterial(new Material().setkS(0.35).setkD(0.25).setkT(0.15))))
+                        new Sphere(new Point(-15,0,-10),25d).setEmission(new Color(242,11,0))
+                                .setMaterial(new Material().setkS(0.25).setkD(0.25).setnShininess(15).setkT(0.6)),
+                        new Polygon(new Point(-250,-40,-70),new Point(0,50,-57),new Point(200,-40,-70))
+                                .setMaterial(new Material().setkD(0.5).setkS(0.5).setnShininess(60)),
+                        new Polygon(new Point(-100,30,-50),new Point(-100,30,50),new Point(100,70,50),new Point(100,70,-50))
+                                .setEmission(new Color(20, 20, 20)) //
+                                .setMaterial(new Material().setkR(1)),
+                        new Sphere(new Point(-6,2,-2),7).setMaterial(new Material().setkS(0.25).setkD(0.25)).setEmission(new Color(0,255,0)),
+
+
+                         new Cylinder(new Ray(new Point(75,-8,-88),new Vector(-0.2,-0.3,1)),10d,130d)
+                                 .setEmission(new Color(102,0,204))
+                                 .setMaterial(new Material().setkS(0.35).setkD(0.25).setkT(0).setkR(0))))
+
                 .setLights(lights)
-                .setBackground(new Color(130d,220d,136d))
+                .setBackground(new Color(0,102d,102d))
                 .build();
 
 
 
         ImageWriter imageWriter = new ImageWriter("refractionIntegration", 600, 600);
-        Camera camera = new Camera.CameraBuilder(new Point(0, 0, 1000), new Vector(0, 0, -1), new Vector(0, 1, 0)) //
+        Camera camera = new Camera.CameraBuilder(new Point(0, -1050, 0), new Vector(0, 1, 0), new Vector(0, 0, 1)) //
                 .setVPSize(200, 200)
                 .setVPDistance(1000)
                 .setImageWriter(imageWriter) //
