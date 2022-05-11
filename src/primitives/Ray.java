@@ -24,9 +24,10 @@ public class Ray {
     final private Vector dir;
 
     /**
-     * ToDo
+     * delta used to move a ray origin point by a small margin
      */
     private static final double EPS = 0.1;
+
     /**
      * ray constructor based on a fixed starting point and direction
      *
@@ -43,7 +44,7 @@ public class Ray {
     }
 
     /**
-     * constructor - construct ray slightly moved from point
+     * constructor - construct a ray slightly removed from a given point
      * @param p original point
      * @param normal normal vector to geometry at the point
      * @param dir vector of light direction
@@ -102,17 +103,15 @@ public class Ray {
      * @return new {@link Point}
      */
     public Point getPoint(double t) {
-        if (isZero(t)) {
+        if (isZero(t))
             return p0;
-        }
         return p0.add(dir.scale(t));
     }
 
     /**
-     * from list of intersection points with ray, find closest to ray origin
-     *
+     * find the closest point to ray origin from a list of points
      * @param pointList list of intersection points
-     * @return {@link Point}
+     * @return the closest {@link Point}
      */
     public Point findClosestPoint(List<Point> pointList) {
         if (pointList==null)
@@ -131,10 +130,9 @@ public class Ray {
         return result;
     }
     /**
-     * from list of intersection points with ray, find closest to ray origin
-     *
+     * find the closest GeoPoint to ray origin from a list of GeoPoints
      * @param pointList list of intersection points
-     * @return {@link Point}
+     * @return the closest {@link GeoPoint}
      */
     public GeoPoint findClosestGeoPoint(List<GeoPoint> pointList) {
         if (pointList==null)

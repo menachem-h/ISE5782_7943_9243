@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static primitives.Util.*;
 
+/**
+ * tests for {@link Point} class functionalities
+ */
 class PointTest {
     Point p1 = new Point(1, 2, 3);
 

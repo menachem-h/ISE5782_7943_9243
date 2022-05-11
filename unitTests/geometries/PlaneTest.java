@@ -7,6 +7,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * test for {@link Plane} class functionalities
+ */
 class PlaneTest {
 
     /// three points to configure plane

@@ -5,6 +5,9 @@ import primitives.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * test {@link Camera} class functionalities
+ */
 class CameraTest {
     static final Point ZERO_POINT = new Point(0, 0, 0);
 

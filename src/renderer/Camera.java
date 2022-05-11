@@ -13,19 +13,44 @@ import static primitives.Util.isZero;
 public class Camera {
     
     // static data fields
-    private Point p0;         // camera's position point in 3D space
-    private Vector vTo;       // vector pointing towards view plane (-Z axis)
-    private Vector vUp;       // vector pointing up ( Y axis)
-    private Vector vRight;    // vector pointing right ( X axis)
-
-    private double distance;   // distance between view plane from camera
-
-    private int width;         // width of view plane "Physical" size
-    private int height;        // height of view plane "Physical" size
+    /**
+     * camera's position point in 3D space
+     */
+    private Point p0;
+    /**
+     *  vector pointing towards view plane (-Z axis)
+     */
+    private Vector vTo;
+    /**
+     * vector pointing up ( Y axis)
+     */
+    private Vector vUp;
+    /**
+     * vector pointing right ( X axis)
+     */
+    private Vector vRight;
+    /**
+     * distance between view plane from camera
+     */
+    private double distance;
+    /**
+     * width of view plane "Physical" size
+     */
+    private int width;
+    /**
+     * height of view plane "Physical" size
+     */
+    private int height;        //
 
     // functionality  fields
-    private ImageWriter imageWriter = null; // image writing to file functionality
-    private RayTracer rayTracer = null;     // calculates color of pixel
+    /**
+     * image writing to file functionality object
+     */
+    private ImageWriter imageWriter = null;
+    /**
+     * calculate color of pixel functionality object
+     */
+    private RayTracer rayTracer = null;
 
     /**
      * constructor
@@ -173,18 +198,45 @@ public class Camera {
      */
     public static class CameraBuilder {
 
-        // fields identical to Camera class
-        private Point p0;         // camera's position point in 3D space
-        private Vector vTo;       // vector pointing towards view plane (-Z axis)
-        private Vector vUp;       // vector pointing up ( Y axis)
-        private Vector vRight;    // vector pointing right ( X axis)
+        // static data fields
+        /**
+         * camera's position point in 3D space
+         */
+        private Point p0;
+        /**
+         *  vector pointing towards view plane (-Z axis)
+         */
+        private Vector vTo;
+        /**
+         * vector pointing up ( Y axis)
+         */
+        private Vector vUp;
+        /**
+         * vector pointing right ( X axis)
+         */
+        private Vector vRight;
+        /**
+         * distance between view plane from camera
+         */
+        private double distance;
+        /**
+         * width of view plane "Physical" size
+         */
+        private int width;
+        /**
+         * height of view plane "Physical" size
+         */
+        private int height;        //
 
-        private double distance;   // distance between view plane from camera
-
-        private int width;         // width of view plane "Physical" size
-        private int height;        // height of view plane "Physical" size
-        private ImageWriter imageWriter; // image writing to file functionality
-        private RayTracer rayTracer;     // calculates color of pixel
+        // functionality  fields
+        /**
+         * image writing to file functionality object
+         */
+        private ImageWriter imageWriter;
+        /**
+         * calculate color of pixel functionality object
+         */
+        private RayTracer rayTracer;
 
         /**
          * constructor

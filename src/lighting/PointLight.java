@@ -106,9 +106,9 @@ public class PointLight extends Light implements LightSource {
     }
 
     /**
-     * todo
-     * @param p
-     * @return
+     * get the distance between a point light to a given point
+     * @param p {@link Point} to calculate distance to
+     * @return distance
      */
     @Override
     public double getDistance(Point p) {

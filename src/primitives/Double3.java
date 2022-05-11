@@ -11,8 +11,17 @@ import static primitives.Util.*;
  * @author Dan Zilberstein
  */
 public class Double3 {
+	/**
+	 * first coordinate of triad
+	 */
 	final double d1;
+	/**
+	 * second coordinate of triad
+	 */
 	final double d2;
+	/**
+	 * third coordinate of triad
+	 */
 	final double d3;
 
 	/**

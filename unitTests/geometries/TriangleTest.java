@@ -9,6 +9,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * test for {@link Triangle} class functionalities
+ */
 class TriangleTest {
 
     Triangle tri = new Triangle(

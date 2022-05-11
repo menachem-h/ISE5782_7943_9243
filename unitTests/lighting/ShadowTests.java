@@ -15,7 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Testing basic shadows
+ * Testing  shadow functionality
  * 
  * @author Dan
  */

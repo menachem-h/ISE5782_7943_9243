@@ -7,6 +7,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * test for {@link Sphere} class functionalities
+ */
 class SphereTest {
 
     /**

@@ -7,6 +7,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * test for {@link Geometries} class functionalities
+ */
 class GeometriesTest {
 
     Plane plane=new Plane(new Point(5,2,2),new Vector(1,0,0));

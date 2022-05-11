@@ -9,6 +9,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * test for {@link Cylinder} class functionalities
+ */
 class CylinderTest {
 
     Vector direction= new Vector(1,0,0);

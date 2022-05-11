@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static primitives.Util.*;
 
-
+/**
+ * tests for {@link Vector} class functionalities
+ */
 class VectorTest {
 
     Vector v1 = new Vector(1, 2, 3);

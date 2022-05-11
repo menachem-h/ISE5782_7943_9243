@@ -125,6 +125,10 @@ public class ReflectionRefractionTests {
     }
 
 
+    /**
+     * Produce a picture of two spheres and a cylinder - includes all effects
+     * transparency and reflectiveness
+     */
     @Test
     public void reflectionIntegrationTest(){
         List<LightSource> lights = new LinkedList<>();

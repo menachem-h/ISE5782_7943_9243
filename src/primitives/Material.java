@@ -13,12 +13,12 @@ public class Material {
      */
     public Double3 kS=Double3.ZERO;
     /**
-     * todo
+     * coefficient for transparency level of material
      */
     public Double3 kT=Double3.ZERO;
 
     /**
-     *
+     *  coefficient for reflectiveness level of material
      */
     public Double3 kR=Double3.ZERO;
     /**
@@ -69,14 +69,18 @@ public class Material {
     }
 
     /**
-     * todo
+     * setter for kT field (Builder pattern style)
+     * @param kT coefficient value of transparency level of material
+     * @return  this instance of object
      */
     public Material setkT(double kT) {
         this.kT = new Double3(kT);
         return this;
     }
     /**
-     * todo
+     * setter for kR field (Builder pattern style)
+     * @param kR coefficient value of reflectiveness level of material
+     * @return  this instance of object
      */
     public Material setkR(double kR) {
         this.kR = new Double3(kR);

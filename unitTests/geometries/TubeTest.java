@@ -7,6 +7,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * test for {@link Tube} class functionalities
+ */
 class TubeTest {
 
     Vector direction= new Vector(1,0,0);

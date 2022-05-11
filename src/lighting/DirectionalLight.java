@@ -46,9 +46,9 @@ public class DirectionalLight extends Light implements LightSource {
     }
 
     /**
-     * Todo
-     * @param p
-     * @return
+     * get distance of between directional light to a given point
+     * @param p point to calculate distance to
+     * @return {@link Double#POSITIVE_INFINITY}
      */
     @Override
     public double getDistance(Point p) {

@@ -1,6 +1,5 @@
 package geometries;
 
-import primitives.Point;
 import primitives.Ray;
 
 import java.util.Collections;
@@ -13,13 +12,16 @@ import java.util.List;
  */
 public class Geometries  extends Intersectable{
 
-    private List<Intersectable>  _intersectables;
+    /**
+     * list of geometries that implement {@link Intersectable} interface
+     */
+    private List<Intersectable> intersectables;
 
     /**
      * constructor
      */
     public Geometries() {
-        _intersectables = new LinkedList<Intersectable>();
+        intersectables = new LinkedList<Intersectable>();
     }
 
     /**
@@ -27,8 +29,8 @@ public class Geometries  extends Intersectable{
      * @param intersectables collection of {@link  Intersectable} implemented objects, to add to geometry composite
      */
     public Geometries(Intersectable... intersectables) {
-        _intersectables = new LinkedList<Intersectable>();
-         Collections.addAll(_intersectables, intersectables);
+        this.intersectables = new LinkedList<Intersectable>();
+         Collections.addAll(this.intersectables, intersectables);
     }
 
     /**
@@ -36,7 +38,7 @@ public class Geometries  extends Intersectable{
      * @param intersectables collection of geometries passed as parameters
      */
     public void  add( Intersectable... intersectables){
-        Collections.addAll(_intersectables, intersectables);
+        Collections.addAll(this.intersectables, intersectables);
     }
 
     /**
@@ -49,7 +51,7 @@ public class Geometries  extends Intersectable{
         List<GeoPoint> result = null;   // intersection points
 
         //for each geometry in intersect-able collection check intersection points
-        for (var item: _intersectables ) {
+        for (var item: intersectables) {
 
             // get intersection point for each specific item, (item can be either geometry/nested composite of geometries)
             List<GeoPoint> itemList = item.findGeoIntersections(ray,maxDistance);

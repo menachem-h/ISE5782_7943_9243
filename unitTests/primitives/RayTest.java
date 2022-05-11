@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * tests for {@link Ray} class functionalities
+ */
 class RayTest {
 
     Plane plane=new Plane(new Point(5,2,2),new Vector(1,0,0));
