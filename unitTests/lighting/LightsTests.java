@@ -65,7 +65,7 @@ public class LightsTests {
 		scene1=new Scene.SceneBuilder(name).setGeometries(new Geometries(sphere)).
 				setLights(lights).build();
 
-		ImageWriter imageWriter = new ImageWriter("lightSphereDirectional", 500, 500);
+		ImageWriter imageWriter = new ImageWriter("lightSphereDirectional1", 500, 500);
 		camera1=new Camera.CameraBuilder(camPosition,camVto,camVup).setVPDistance(distance).setVPSize(widthVP1,heightVP1)
 				.setImageWriter(imageWriter)
 				.setRayTracer(new RayTracerBasic(scene1)).build(); //

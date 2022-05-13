@@ -2,7 +2,10 @@ package renderer;
 
 import primitives.*;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.MissingResourceException;
+import java.util.Random;
 
 import static primitives.Util.alignZero;
 import static primitives.Util.isZero;
@@ -171,7 +174,8 @@ public class Camera {
         // then use rayTracer object to get correct color, finally use imageWriter to write pixel
         for (int i = 0; i < nY; i++) {
             for (int j = 0; j < nX; j++) {
-                 castRay( nX, nY,i, j);
+                castRayBeam( nX, nY,i, j,3,3);
+              //castRay(nX,nY,i,j);
             }
 
         }
@@ -189,6 +193,19 @@ public class Camera {
         Ray ray= constructRay(Nx,Ny,j,i);
         // return the color using ray tracer
         Color color = rayTracer.traceRay(ray);
+        imageWriter.writePixel(j,i,color);
+    }
+
+    private void castRayBeam(int Nx, int Ny, int j, int i,int n ,int m){
+        // construct ray through pixel
+        Ray ray= constructRay(Nx,Ny,j,i);
+        var rayBeam = constructRayBeam(Nx,Ny,n,m,ray);
+        // return the color using ray tracer
+        Color color = rayTracer.traceRay(ray);
+        for (var r : rayBeam) {
+            color = color.add(rayTracer.traceRay(r));
+        }
+        //color = color.scale(1/(m*n)+1);
         imageWriter.writePixel(j,i,color);
     }
 
@@ -364,6 +381,62 @@ public class Camera {
 
         //return ray from camera to middle point of pixel(i,j) in view plane
         return new Ray(p0, Pij.subtract(p0));
+    }
+
+    /**
+     * todo
+     * @param Nx
+     * @param Ny
+     * @param Pij
+     * @return
+     */
+    public Ray constructRandomRay(int Nx, int Ny, Point Pij){
+
+        // calculate "size" of each pixel -
+        // height per pixel = total "physical" height / number of rows
+        // width per pixel = total "physical" width / number of columns
+        double Ry = (double) height / Ny;
+        double Rx = (double) width / Nx;
+
+        Random r = new Random();
+        // calculate necessary "size" needed to move from
+        // center of view plane to reach the middle point of pixel (i,j)
+        double yI = r.nextDouble(Ry)-Ry/2;
+        double xJ = r.nextDouble(Rx)-Rx/2;
+
+        // if result of xJ is > 0
+        // move result point left/right on  X axis
+        // to reach middle point of pixel (i,j) (on X axis direction)
+        if (!isZero(xJ)) {
+            Pij = Pij.add(vRight.scale(xJ));
+        }
+
+        // if result of yI is > 0
+        // move result point up/down on Y axis
+        // to reach middle point of pixel (i,j)
+        if (!isZero(yI)) {
+            Pij = Pij.add(vUp.scale(yI));
+        }
+
+        return new Ray(p0,Pij.subtract(p0));
+
+    }
+
+    /**
+     * todo
+     * @param m
+     * @param n
+     * @param Nx
+     * @param Ny
+     * @param ray
+     * @return
+     */
+    public List<Ray> constructRayBeam(int m, int n,int Nx,int Ny,Ray ray){
+        Point Pij = ray.getPoint(distance);
+        List<Ray> temp = new LinkedList<>();
+        for (int i = 0; i < n*m; i++)
+            temp.add(constructRandomRay(Nx,Ny,Pij));
+        return temp;
     }
 
     /**
