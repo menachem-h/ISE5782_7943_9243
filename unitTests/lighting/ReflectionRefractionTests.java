@@ -141,7 +141,7 @@ public class ReflectionRefractionTests {
                                 .setMaterial(new Material().setkS(0.25).setkD(0.25).setnShininess(80).setkT(0.5)),
                         new Polygon(new Point(-250,-90,-70),new Point(0,50,-60),new Point(200,-90,-70))
                                 .setMaterial(new Material().setkD(0.5).setkS(0.5).setnShininess(60)),
-                        new Polygon(new Point(-100,90,-65),new Point(-100,90,50),new Point(100,160,50),new Point(100,160,-65))
+                        new Polygon(new Point(-150,90,-65),new Point(-150,90,50),new Point(150,160,50),new Point(150,160,-65))
                                 .setEmission(new Color(20, 20, 20)) //
                                 .setMaterial(new Material().setkR(0.45)),
                         new Sphere(new Point(-6,2,-2),7).setMaterial(new Material().setkS(0.25).setkD(0.25)).setEmission(new Color(0,255,0)),
