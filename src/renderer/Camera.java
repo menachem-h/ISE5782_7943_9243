@@ -174,7 +174,8 @@ public class Camera {
         // then use rayTracer object to get correct color, finally use imageWriter to write pixel
         for (int i = 0; i < nY; i++) {
             for (int j = 0; j < nX; j++) {
-                castRayBeam( nX, nY,i, j,3,3);
+                //castRayBeamCorners(nX,nY,i,j);
+                castRayBeamRandom( nX, nY,i, j,17,17);
               //castRay(nX,nY,i,j);
             }
 
@@ -196,7 +197,16 @@ public class Camera {
         imageWriter.writePixel(j,i,color);
     }
 
-    private void castRayBeam(int Nx, int Ny, int j, int i,int n ,int m){
+    /**
+     * todo
+     * @param Nx
+     * @param Ny
+     * @param j
+     * @param i
+     * @param n
+     * @param m
+     */
+    private void castRayBeamRandom(int Nx, int Ny, int j, int i, int n , int m){
         // construct ray through pixel
         Ray ray= constructRay(Nx,Ny,j,i);
         var rayBeam = constructRayBeam(Nx,Ny,n,m,ray);
@@ -205,10 +215,22 @@ public class Camera {
         for (var r : rayBeam) {
             color = color.add(rayTracer.traceRay(r));
         }
-        //color = color.scale(1/(m*n)+1);
+        color = color.reduce((m*n)+1);
         imageWriter.writePixel(j,i,color);
     }
 
+    private void castRayBeamCorners(int Nx, int Ny,int j, int i){
+        // construct ray through pixel
+        Ray ray= constructRay(Nx,Ny,j,i);
+        var rayBeam = constructRayCorners(Nx,Ny,ray);
+        // return the color using ray tracer
+        Color color = rayTracer.traceRay(ray);
+        for (var r : rayBeam) {
+            color = color.add(rayTracer.traceRay(r));
+        }
+        color = color.reduce(5);
+        imageWriter.writePixel(j,i,color);
+    }
     /**
      * inner builder class. implements Builder pattern
      * constructs a new {@link Camera} object
@@ -431,11 +453,40 @@ public class Camera {
      * @param ray
      * @return
      */
-    public List<Ray> constructRayBeam(int m, int n,int Nx,int Ny,Ray ray){
+    public List<Ray> constructRayBeam(int Nx,int Ny,int n, int m,Ray ray){
         Point Pij = ray.getPoint(distance);
         List<Ray> temp = new LinkedList<>();
         for (int i = 0; i < n*m; i++)
             temp.add(constructRandomRay(Nx,Ny,Pij));
+        return temp;
+    }
+
+    /**
+     * todo
+     * @param Nx
+     * @param Ny
+     * @param ray
+     * @return
+     */
+    public List<Ray> constructRayCorners(int Nx,int Ny,Ray ray){
+        Point Pij = ray.getPoint(distance);
+        // calculate "size" of each pixel -
+        // height per pixel = total "physical" height / number of rows
+        // width per pixel = total "physical" width / number of columns
+        double Ry =  alignZero((double)height / Ny/2);
+        double Rx = alignZero((double)width / Nx/2);
+        Point p=Pij;
+
+        List<Ray> temp = new LinkedList<>();
+        p=p.add(vUp.scale(Ry)).add(vRight.scale(Rx));
+        temp.add(new Ray(p0,p.subtract(p0)));
+        p=p.add(vUp.scale(-2*Ry));
+        temp.add(new Ray(p0,p.subtract(p0)));
+        p=p.add(vRight.scale(-2*Rx));
+        temp.add(new Ray(p0,p.subtract(p0)));
+        p=p.add(vUp.scale(2*Ry));
+        temp.add(new Ray(p0,p.subtract(p0)));
+
         return temp;
     }
 
