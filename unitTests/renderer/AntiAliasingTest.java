@@ -6,7 +6,6 @@ import geometries.Polygon;
 import geometries.Sphere;
 import lighting.AmbientLight;
 import lighting.LightSource;
-import lighting.PointLight;
 import lighting.SpotLight;
 import org.junit.jupiter.api.Test;
 import primitives.*;
@@ -17,12 +16,19 @@ import java.util.List;
 
 import static java.awt.Color.*;
 
-public class AntiAlisingTest {
+/**
+ * test picture improvements using various Anti-Aliasing methods
+ */
+public class AntiAliasingTest {
 
 
 
+    /**
+     * Produce a simple picture of a sphere - basic test
+     *  image improvement - anti aliasing random beam method
+     */
     @Test
-    public void advancedBeamTest() {
+    public void antiAliasingBasicTest() {
         Scene scene = new Scene.SceneBuilder("Test Scene")
                 .setAmbientLight(new AmbientLight(new Color(black), new Double3(1)))
                 .setGeometries(new Geometries( //
@@ -43,8 +49,8 @@ public class AntiAlisingTest {
 
     }
     /**
-     * Produce a picture of two spheres and a cylinder - includes all effects
-     * transparency and reflectiveness - image improvement - anti aliasing random beam method
+     * Produce a picture of two spheres and a cylinder - includes all effects - advanced test
+     *  image improvement - anti aliasing random beam method
      */
     @Test
     public void antiAliasingRandomTest(){
