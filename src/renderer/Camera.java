@@ -526,14 +526,18 @@ public class Camera {
         // construct n*m random rays towards the pixel
         var rayBeam = constructRayBeam(Nx, Ny, n, m, ray);
 
-        // return the color of pixel using the ray towards center
-        Color color = rayTracer.traceRay(ray);
-        // add to pixel color - values of colors returnd for each random ray
+        // remove from the list rays that were randomly constructed identical to ray to center
+        rayBeam.removeIf((item)->{return item.equals(ray);});
+        // add the ray to the center of the pixel to the list
+        rayBeam.add(ray);
+
+        // calculate color of the pixel using the average from all the rays in beam
+        Color color = Color.BLACK;
         for (var r : rayBeam) {
             color = color.add(rayTracer.traceRay(r));
         }
-        // reduce final color by m*n+1 to get mean value of pixel color
-        color = color.reduce((m * n) + 1);
+        // reduce final color by total number of rays to get mean value of pixel color
+        color = color.reduce(rayBeam.size());
 
         //write pixel
         imageWriter.writePixel(j, i, color);
