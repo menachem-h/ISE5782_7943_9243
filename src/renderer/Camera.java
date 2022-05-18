@@ -526,10 +526,6 @@ public class Camera {
         // construct n*m random rays towards the pixel
         var rayBeam = constructRayBeam(Nx, Ny, n, m, ray);
 
-        // remove from the list rays that were randomly constructed identical to ray to center
-        rayBeam.removeIf((item)->{return item.equals(ray);});
-        // add the ray to the center of the pixel to the list
-        rayBeam.add(ray);
 
         // calculate color of the pixel using the average from all the rays in beam
         Color color = Color.BLACK;
@@ -559,6 +555,12 @@ public class Camera {
         // cast m*n random rays
         for (int i = 0; i < n * m; i++)
             temp.add(constructRandomRay(Nx, Ny, Pij));
+
+        // remove from the list rays that were randomly constructed identical to ray to center
+        temp.removeIf((item)->{return item.equals(ray);});
+        // add to list the ray to the center of the pixel
+        temp.add(ray);
+
         return temp;
     }
 
