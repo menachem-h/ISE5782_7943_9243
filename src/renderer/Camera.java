@@ -47,11 +47,12 @@ public class Camera {
      * height of view plane "Physical" size
      */
     private int height;
-    /**
-     * anti aliasing method tu use in image rendering
-     */
+
 
     //anti-aliasing functionality
+    /**
+     * anti aliasing method to use in image rendering
+     */
     private AntiAliasing antiAliasing;
     /**
      *  first parameter for number of random ray to cast for random beam anti aliasing
@@ -71,6 +72,17 @@ public class Camera {
      * calculate color of pixel functionality object
      */
     private RayTracer rayTracer = null;
+
+    // depth of field functionality
+    /**
+     * distance of focal popint from camera to create dof effect
+     */
+    private double dof;
+
+    /**
+     * camera's aperture size
+     */
+    private double apertureRadius;
 
     //endregion
 
@@ -93,6 +105,8 @@ public class Camera {
         m = camBuilder.m;
         imageWriter = camBuilder.imageWriter;
         rayTracer = camBuilder.rayTracer;
+        dof = camBuilder.dof;
+        apertureRadius = camBuilder.apertureRadius;
     }
 
     //region Camera Builder
@@ -159,6 +173,19 @@ public class Camera {
          *  first parameter for number of random ray to cast for random beam anti aliasing
          */
         private int m ;
+
+
+
+        // depth of field functionality
+        /**
+         * distance of focal popint from camera to create dof effect
+         */
+        private double dof;
+
+        /**
+         * camera's aperture size
+         */
+        private double apertureRadius;
 
 
 
@@ -263,6 +290,26 @@ public class Camera {
          */
         public CameraBuilder setRayTracer(RayTracer rayTracer) {
             this.rayTracer = rayTracer;
+            return this;
+        }
+
+        /**
+         * set for dof field
+         * @param dof depth of field focal point distance from camera
+         * @return this {@link CameraBuilder} instance
+         */
+        public CameraBuilder setDof(double dof) {
+            this.dof = dof;
+            return this;
+        }
+
+        /**
+         * set for apertureRadius field
+         * @param apertureRadius radius of aperture of camera
+         * @return this {@link CameraBuilder} instance
+         */
+        public CameraBuilder setApertureRadius(double apertureRadius) {
+            this.apertureRadius = apertureRadius;
             return this;
         }
 
@@ -552,11 +599,15 @@ public class Camera {
         // get center point of pixel
         Point Pij = ray.getPoint(distance);
         List<Ray> temp = new LinkedList<>();
-        // cast m*n random rays
-        for (int i = 0; i < n * m; i++)
-            temp.add(constructRandomRay(Nx, Ny, Pij));
 
-        // remove from the list rays that were randomly constructed identical to ray to center
+        // create a grid of n rows * m columns in each pixel
+        // construct a ray from camera to every cell in grid
+        // each ray is constructed randomly precisely within the grid borders
+        for (int i = -n/2; i < n/2 ; i++)
+            for(int j = -m/2;j<m/2; j++)
+                temp.add(constructRandomRay(Nx, Ny, Pij,i,j,n,m));
+
+        // remove from the list if a  ray was randomly constructed identical to ray to center
         temp.removeIf((item)->{return item.equals(ray);});
         // add to list the ray to the center of the pixel
         temp.add(ray);
@@ -565,13 +616,17 @@ public class Camera {
     }
 
     /**
-     * given a pixel ,cast a ray to a randomly selected point within the grid of the pixel
+     * given a pixel ,cast a ray to a randomly selected point within a cell in a sub-grid made on a pixel
      * @param Nx number of rows in view plane
      * @param Ny number of columns in view plane
      * @param Pij center point of pixel (i,j)
+     * @param gridRow row index of the cell in  the sub-grid of pixel
+     * @param gridColumn column index of the cell in  the sub-grid of pixel
+     * @param n number of rows in the grid
+     * @param m number of columns in the grid
      * @return {@link Ray} from camera to randomly selected point
      */
-    public Ray constructRandomRay(int Nx, int Ny, Point Pij) {
+    public Ray constructRandomRay(int Nx, int Ny, Point Pij,int gridRow ,int gridColumn , int n, int m) {
 
         // calculate "size" of each pixel -
         // height per pixel = total "physical" height / number of rows
@@ -579,24 +634,30 @@ public class Camera {
         double Ry = (double) height / Ny;
         double Rx = (double) width / Nx;
 
+        //calculate height and width of a cell from the sub-grid
+        double gridHeight = (double) Ry/n;
+        double gridWidth =  (double) Rx/m;
+
         Random r = new Random();
         // set a random value to scale vector on Y axis
-        // value range is from -(height/2) to (height/2)
-        double yI = r.nextDouble(Ry) - Ry / 2;
+        // value range is from -(gridHeight/2) to (gridHeight/2)
+        double yI = r.nextDouble(gridHeight) - gridHeight / 2;
         // set a random value to scale vector on X axis
-        // value range is from -(width/2) to (width/2)
-        double xJ = r.nextDouble(Rx) - Rx / 2;
+        // value range is from -(gridWidth/2) to (gridWidth/2)
+        double xJ = r.nextDouble(gridWidth) - gridWidth / 2;
 
         // if result of xJ is > 0
-        // move result point from middle of pixel, left/right on  X axis
+        // move result point from middle of pixel to column index in sub-grid
+        // then add the random value to move left/right on X axis within the cell
         if (!isZero(xJ)) {
-            Pij = Pij.add(vRight.scale(xJ));
+            Pij = Pij.add(vRight.scale( gridWidth*gridColumn+xJ));
         }
 
         // if result of yI is > 0
-        // move result point from middle of pixel up/down on Y axis
+        // move result point from middle of pixel to row index in sub-grid
+        // then add the random value to move up/down on Y axis within the cell
         if (!isZero(yI)) {
-            Pij = Pij.add(vUp.scale(yI));
+            Pij = Pij.add(vUp.scale(gridHeight*gridRow +yI));
         }
 
         // return ray cast from camera to randomly selected point within grid of pixel
