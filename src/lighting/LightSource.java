@@ -4,6 +4,8 @@ import primitives.Color;
 import primitives.Point;
 import primitives.Vector;
 
+import java.util.List;
+
 /**
  * interface for objects representing a light source
  */
@@ -22,6 +24,12 @@ public interface LightSource {
      */
     public Vector getL(Point p);
 
+    /**
+     * todo
+     * @param p
+     * @return
+     */
+    public List<Vector> getListL(Point p);
     /**
      * get the distance between a light source to a given point
      * @param p {@link Point} to calculate distance to

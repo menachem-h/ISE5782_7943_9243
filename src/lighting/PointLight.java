@@ -1,11 +1,14 @@
 package lighting;
 
+import geometries.Sphere;
 import primitives.Color;
 import primitives.Double3;
 import primitives.Point;
 import primitives.Vector;
 
 import java.awt.image.DataBufferUShort;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * light source object
@@ -31,6 +34,11 @@ public class PointLight extends Light implements LightSource {
     private Point position;
 
     /**
+     * todo
+     */
+    private Double radius;
+
+    /**
      * constructor
      * @param intensity {@link Color} of intensity of light
      * @param position position {@link Point} of the light object
@@ -38,6 +46,28 @@ public class PointLight extends Light implements LightSource {
     public PointLight(Color intensity ,Point position) {
         super(intensity);
         this.position = position;
+    }
+
+    /**
+     * todo
+     * @param intensity
+     * @param position
+     * @param radius
+     */
+    public PointLight(Color intensity, Point position, Double radius) {
+        super(intensity);
+        this.position = position;
+        this.radius = radius;
+    }
+
+    /**
+     * todo
+     * @param radius
+     * @return
+     */
+    public PointLight setRadius(Double radius) {
+        this.radius = radius;
+        return this;
     }
 
     /**
@@ -105,6 +135,42 @@ public class PointLight extends Light implements LightSource {
         }
     }
 
+    /**
+     * todo
+     * @param p
+     * @return
+     */
+    public List<Vector> getListL(Point p){
+
+        double distance=p.subtract(position).length();
+        Sphere sphere=new Sphere(position,distance/10);
+
+        List<Vector> vectors = new LinkedList();
+        for (double i = -radius; i < radius; i += radius / 10) {
+            for (double j = -radius; j < radius; j += radius / 10) {
+                if (i != 0 && j != 0) {
+                    Point point = position.add(new Vector(i, 0.1d, j));
+                    if (point.equals(position)){
+                        vectors.add(p.subtract(point).normalize());
+                    }
+                    else{
+                        try{
+                            if (point.subtract(position).dotProduct(point.subtract(position)) <= radius * radius){
+                                vectors.add(p.subtract(point).normalize());
+                            }
+                        }
+                        catch (Exception e){
+                            vectors.add(p.subtract(point).normalize());
+                        }
+
+                    }
+                }
+
+            }
+        }
+        vectors.add(getL(p));
+        return vectors;
+    }
     /**
      * get the distance between a point light to a given point
      * @param p {@link Point} to calculate distance to

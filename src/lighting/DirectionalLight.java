@@ -4,6 +4,8 @@ import primitives.Color;
 import primitives.Point;
 import primitives.Vector;
 
+import java.util.List;
+
 /**
  * light source object with direction to the light (no attenuation)
  */
@@ -45,6 +47,9 @@ public class DirectionalLight extends Light implements LightSource {
         return direction;
     }
 
+    public List<Vector> getListL(Point p){
+        return List.of(getL(p));
+    }
     /**
      * get distance of between directional light to a given point
      * @param p point to calculate distance to
