@@ -35,25 +35,33 @@ public class ChairTest {
             Polygon seatSideleft;
             Polygon seatSideBck;
             Polygon seatSideRight;
-            Polygon backFr;
-            Polygon backBck;
-            Polygon backLft;
-            Polygon backRt;
+            Polygon backrestFr;
+            Polygon backrestBck;
+            Polygon backrestLft;
+            Polygon backrestRt;
+            Polygon backrestTop;
 
             Vector zAxis = new Vector(0, 0, 1);
             double cornerScale = seatLength / 2;
             double heightScale = height / 2;
             Vector down = forward.crossProduct(right).normalize();
             Vector up = down.scale(-1);
-            Point centerDown=p.add(down.scale(-seatWidth));
+            Vector downScale = down.scale(-seatWidth);
+            Point centerDown=p.add(downScale);
             Point frleftUp = p.add(right.scale(-cornerScale).add(forward.scale(cornerScale)));
             Point frRightUp = p.add(right.scale(cornerScale).add(forward.scale(cornerScale)));
             Point bckLeftUp = p.add(right.scale(-cornerScale).add(forward.scale(-cornerScale)));
             Point bckRightUp = p.add(right.scale(cornerScale).add(forward.scale(-cornerScale)));
-            Point frleftDwn = frleftUp.add(down.scale(-seatWidth));
-            Point frRightDwn = frRightUp.add(down.scale(-seatWidth));
-            Point bckLeftDwn = bckLeftUp.add(down.scale(-seatWidth));
-            Point bckRightDwn = bckRightUp.add(down.scale(-seatWidth));
+            Point frleftDwn = frleftUp.add(downScale);
+            Point frRightDwn = frRightUp.add(downScale);
+            Point bckLeftDwn = bckLeftUp.add(downScale);
+            Point bckRightDwn = bckRightUp.add(downScale);
+            Point bRestFrLft = bckLeftUp.add(forward.scale(backWidth));
+            Point bRestFrRt = bckRightUp.add(forward.scale(backWidth));
+            Point bRestFrLftUp = bRestFrLft.add(up.scale(height/2));
+            Point bRestFrRtUp = bRestFrRt.add(up.scale(height/2));
+            Point bRestBckLftUp = bckLeftUp.add(up.scale(height/2));
+            Point bRestBckRtUp = bckRightUp.add(up.scale(height/2));
             seatUp = (Polygon) new Polygon(bckLeftUp, frleftUp, frRightUp, bckRightUp).setEmission(color);
             seatDown = (Polygon) new Polygon(bckLeftDwn, frleftDwn, frRightDwn, bckRightDwn).setEmission(color);
             seatSideFr = (Polygon) new Polygon(frleftDwn, frleftUp, frRightUp, frRightDwn).setEmission(color);
@@ -68,9 +76,17 @@ public class ChairTest {
             frontRight = (Cylinder) new Cylinder(new Ray(frRightDwn.add(down.scale(height/2)).add(tmp.scale(3)),up),3,height/2).setEmission(color);
             tmp = centerDown.subtract(frleftDwn).normalize();
             frontLeft = (Cylinder) new Cylinder(new Ray(frleftDwn.add(down.scale(height/2)).add(tmp.scale(3)),up),3,height/2).setEmission(color);
-            leftBar = (Cylinder) new Cylinder(new Ray(bckLeftDwn.add(down.scale(height/2/2)),forward),3,seatLength).setEmission(color) ;
-            rightBar = (Cylinder) new Cylinder(new Ray(bckRightDwn.add(down.scale(height/2/2)),forward),3,seatLength).setEmission(color) ;
-            elements = new Geometries(seatUp, seatDown, seatSideFr, seatSideleft, seatSideBck, seatSideRight,backLeft,backRight,frontLeft,frontRight,leftBar,rightBar);
+            leftBar = (Cylinder) new Cylinder(new Ray(bckLeftDwn.add(down.scale(height/2/2)).add(forward.scale(3)),forward),0.75,seatLength).setEmission(color) ;
+            rightBar = (Cylinder) new Cylinder(new Ray(bckRightDwn.add(down.scale(height/2/2)).add(forward.scale(3)),forward),0.75,seatLength).setEmission(color) ;
+            backrestLft = (Polygon) new Polygon(bRestFrLft,bRestFrLftUp,bRestBckLftUp,bckLeftUp).setEmission(color);
+            backrestBck = (Polygon) new Polygon(bckLeftUp,bRestBckLftUp,bRestBckRtUp,bckRightUp).setEmission(color);
+            backrestRt = (Polygon) new Polygon(bRestFrRt,bRestFrRtUp,bRestBckRtUp,bckRightUp).setEmission(color);
+            backrestFr = (Polygon) new Polygon(bRestFrLft,bRestFrRt,bRestFrRtUp,bRestFrLftUp).setEmission(color);
+            backrestTop = (Polygon) new Polygon(bRestBckLftUp,bRestFrLftUp,bRestFrRtUp,bRestBckRtUp).setEmission(color);
+
+            elements = new Geometries(seatUp, seatDown, seatSideFr, seatSideleft, seatSideBck, seatSideRight,
+                    backLeft,backRight,frontLeft,frontRight,leftBar,rightBar
+                    ,backrestLft,backrestBck,backrestRt,backrestFr,backrestTop);
 
         }
 
@@ -99,8 +115,8 @@ public class ChairTest {
         Scene scene = new Scene.SceneBuilder("Test Scene")
                 .setAmbientLight(new AmbientLight(new Color(229,204,255), new Double3(.15)))
                 .setGeometries(new Geometries(
-                        new Chair(new Point(0,0,5),45,100,6,100,
-                                new Vector(-1,1,0),new Vector(1,1,0), new Color(164,116,73)).getElements()
+                        new Chair(new Point(0,0,5),45,100,6,5,
+                                new Vector(-1,0,0),new Vector(0,1,0), new Color(164,116,73)).getElements()
                         , new Polygon(new Point(-250,-90,-70),new Point(0,50,-60),new Point(200,-90,-70))
                         .setMaterial(new Material().setkD(0.5).setkS(0.5).setnShininess(60))))
 
