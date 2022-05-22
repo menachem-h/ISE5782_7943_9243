@@ -27,8 +27,8 @@ public class ChairTest {
             Cylinder frontRight;
             Cylinder backLeft;
             Cylinder backRight;
-            Cylinder frontBar;
-            Cylinder backBar;
+            Cylinder leftBar;
+            Cylinder rightBar;
             Polygon seatUp;
             Polygon seatDown;
             Polygon seatSideFr;
@@ -43,7 +43,7 @@ public class ChairTest {
             Vector zAxis = new Vector(0, 0, 1);
             double cornerScale = seatLength / 2;
             double heightScale = height / 2;
-            Vector down = right.crossProduct(forward).normalize();
+            Vector down = forward.crossProduct(right).normalize();
             Vector up = down.scale(-1);
             Point centerDown=p.add(down.scale(-seatWidth));
             Point frleftUp = p.add(right.scale(-cornerScale).add(forward.scale(cornerScale)));
@@ -61,14 +61,16 @@ public class ChairTest {
             seatSideBck = (Polygon) new Polygon(frleftUp, frleftDwn, frRightDwn, frRightUp).setEmission(color);
             seatSideRight = (Polygon) new Polygon(bckRightDwn, bckRightUp, frRightUp, frRightDwn).setEmission(color);
             Vector tmp = centerDown.subtract(bckLeftDwn).normalize();
-            backLeft = (Cylinder) new Cylinder(new Ray(bckLeftDwn.add(down.scale(-height/2)).add(tmp.scale(3)),down),3,height/2).setEmission(color);
+            backLeft = (Cylinder) new Cylinder(new Ray(bckLeftDwn.add(down.scale(height/2)).add(tmp.scale(3)),up),3,height/2).setEmission(color);
             tmp = centerDown.subtract(bckRightDwn).normalize();
-            backRight = (Cylinder) new Cylinder(new Ray(bckRightDwn.add(down.scale(-height/2)).add(tmp.scale(3)),down),3,height/2).setEmission(color);
+            backRight = (Cylinder) new Cylinder(new Ray(bckRightDwn.add(down.scale(height/2)).add(tmp.scale(3)),up),3,height/2).setEmission(color);
             tmp = centerDown.subtract(frRightDwn).normalize();
-            frontRight = (Cylinder) new Cylinder(new Ray(frRightDwn.add(down.scale(-height/2)).add(tmp.scale(3)),down),3,height/2).setEmission(color);
+            frontRight = (Cylinder) new Cylinder(new Ray(frRightDwn.add(down.scale(height/2)).add(tmp.scale(3)),up),3,height/2).setEmission(color);
             tmp = centerDown.subtract(frleftDwn).normalize();
-            frontLeft = (Cylinder) new Cylinder(new Ray(frleftDwn.add(down.scale(-height/2)).add(tmp.scale(3)),down),3,height/2).setEmission(color);
-            elements = new Geometries(seatUp, seatDown, seatSideFr, seatSideleft, seatSideBck, seatSideRight,backLeft,backRight,frontLeft,frontRight);
+            frontLeft = (Cylinder) new Cylinder(new Ray(frleftDwn.add(down.scale(height/2)).add(tmp.scale(3)),up),3,height/2).setEmission(color);
+            leftBar = (Cylinder) new Cylinder(new Ray(bckLeftDwn.add(down.scale(height/2/2)),forward),3,seatLength).setEmission(color) ;
+            rightBar = (Cylinder) new Cylinder(new Ray(bckRightDwn.add(down.scale(height/2/2)),forward),3,seatLength).setEmission(color) ;
+            elements = new Geometries(seatUp, seatDown, seatSideFr, seatSideleft, seatSideBck, seatSideRight,backLeft,backRight,frontLeft,frontRight,leftBar,rightBar);
 
         }
 
@@ -115,7 +117,7 @@ public class ChairTest {
                 .setVPDistance(1000)
                 .setImageWriter(imageWriter) //
                 .setRayTracer(new RayTracerBasic(scene))
-                .setAntiAliasing(AntiAliasing.RANDOM).setM(9).setN(9)
+                .setAntiAliasing(AntiAliasing.NONE)
                 .build();//
         camera.renderImage(); //
         camera.writeToImage();
