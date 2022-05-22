@@ -82,7 +82,7 @@ public class tableTest {
                         new Cylinder(new Ray(new Point(75,-8,-88),new Vector(-0.2,-0.3,1)),10d,130d)
                                 .setEmission(new Color(102,0,204))
                                 .setMaterial(new Material().setkS(0.35).setkD(0.25).setkT(0.2).setkR(0).setnShininess(10)),
-                        new Table(60,50,new Color(184,46,179),new Point(0,0,-60),new Vector(1,1,0.5)).getElements()))
+                        new Table(60,50,new Color(184,46,179),new Point(0,0,-60),new Vector(0,0,1)).getElements()))
 
                 .setLights(lights)
                 .setBackground(new Color(0,102d,102d))
