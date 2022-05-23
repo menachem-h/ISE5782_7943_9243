@@ -2,6 +2,7 @@ package renderer;
 
 import geometries.Cylinder;
 import geometries.Geometries;
+import geometries.Geometry;
 import geometries.Polygon;
 import lighting.AmbientLight;
 import lighting.LightSource;
@@ -19,27 +20,27 @@ public class ChairTest {
 
     public class Chair {
 
-        Geometries elements;
+        Cylinder frontLeft;
+        Cylinder frontRight;
+        Cylinder backLeft;
+        Cylinder backRight;
+        Cylinder leftBar;
+        Cylinder rightBar;
+        Polygon seatUp;
+        Polygon seatDown;
+        Polygon seatSideFr;
+        Polygon seatSideleft;
+        Polygon seatSideBck;
+        Polygon seatSideRight;
+        Polygon backrestFr;
+        Polygon backrestBck;
+        Polygon backrestLft;
+        Polygon backrestRt;
+        Polygon backrestTop;
 
 
         public Chair(Point p, double seatLength, double height, double seatWidth, double backWidth,Vector forward,Vector right,  Color color) {
-            Cylinder frontLeft;
-            Cylinder frontRight;
-            Cylinder backLeft;
-            Cylinder backRight;
-            Cylinder leftBar;
-            Cylinder rightBar;
-            Polygon seatUp;
-            Polygon seatDown;
-            Polygon seatSideFr;
-            Polygon seatSideleft;
-            Polygon seatSideBck;
-            Polygon seatSideRight;
-            Polygon backrestFr;
-            Polygon backrestBck;
-            Polygon backrestLft;
-            Polygon backrestRt;
-            Polygon backrestTop;
+
 
             Vector zAxis = new Vector(0, 0, 1);
             double cornerScale = seatLength / 2;
@@ -84,15 +85,17 @@ public class ChairTest {
             backrestFr = (Polygon) new Polygon(bRestFrLft,bRestFrRt,bRestFrRtUp,bRestFrLftUp).setEmission(color);
             backrestTop = (Polygon) new Polygon(bRestBckLftUp,bRestFrLftUp,bRestFrRtUp,bRestBckRtUp).setEmission(color);
 
-            elements = new Geometries(seatUp, seatDown, seatSideFr, seatSideleft, seatSideBck, seatSideRight,
+
+
+        }
+
+        public Geometries getGeometries() {
+            return new Geometries(seatUp, seatDown, seatSideFr, seatSideleft, seatSideBck, seatSideRight,
                     backLeft,backRight,frontLeft,frontRight,leftBar,rightBar
                     ,backrestLft,backrestBck,backrestRt,backrestFr,backrestTop);
-
         }
 
-        public Geometries getElements() {
-            return elements;
-        }
+
 
 
     }
@@ -116,7 +119,7 @@ public class ChairTest {
                 .setAmbientLight(new AmbientLight(new Color(229,204,255), new Double3(.15)))
                 .setGeometries(new Geometries(
                         new Chair(new Point(0,0,5),45,100,6,5,
-                                new Vector(-1,0,0),new Vector(0,1,0), new Color(164,116,73)).getElements()
+                                new Vector(1,-1,1),new Vector(-1,-1,0), new Color(164,116,73)).getGeometries()
                         , new Polygon(new Point(-250,-90,-70),new Point(0,50,-60),new Point(200,-90,-70))
                         .setMaterial(new Material().setkD(0.5).setkS(0.5).setnShininess(60))))
 
@@ -127,13 +130,13 @@ public class ChairTest {
 
 
 
-        ImageWriter imageWriter = new ImageWriter("TestSeat2", 600, 600);
+        ImageWriter imageWriter = new ImageWriter("TestSeat5", 600, 600);
         Camera camera = new Camera.CameraBuilder(new Point(0, -1200, 100), new Vector(0, 1, -0.1), new Vector(0, 0.1,1 )) //
                 .setVPSize(200, 200)
                 .setVPDistance(1000)
                 .setImageWriter(imageWriter) //
                 .setRayTracer(new RayTracerBasic(scene))
-                .setAntiAliasing(AntiAliasing.NONE)
+                .setAntiAliasing(AntiAliasing.RANDOM).setM(9).setN(9)
                 .build();//
         camera.renderImage(); //
         camera.writeToImage();

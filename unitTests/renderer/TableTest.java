@@ -11,7 +11,7 @@ import java.util.List;
 
 import static java.awt.Color.*;
 
-public class tableTest {
+public class TableTest {
 
     public class Table{
 
