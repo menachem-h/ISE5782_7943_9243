@@ -14,8 +14,7 @@ import scene.Scene;
 import java.util.LinkedList;
 import java.util.List;
 
-import static java.awt.Color.WHITE;
-import static java.awt.Color.yellow;
+import static java.awt.Color.*;
 
 /**
  * todo
@@ -44,16 +43,24 @@ public class ChairTest {
         Polygon backrestLft;
         Polygon backrestRt;
         Polygon backrestTop;
+        Polygon backrestBottom;
+        Cylinder backrestLftPeg;
+        Cylinder backrestRtPeg;
+
 
 
         public Chair(Point p, double seatLength, double height, double seatWidth, double backWidth,
                      double legRadius, double barRadius,Vector forward, Vector right, Color color) {
 
             double cornerScale = seatLength / 2;
-            double heightScale = height / 2;
+            double backrestSize = (height / 2)-seatWidth;
+            double heightScale =backrestSize*( (double)2/3);
+            double backrestScale = heightScale/3;
+            double legHeight = height/2;
+            double pegRadius = backWidth/2;
             Vector down = forward.crossProduct(right).normalize();
             Vector up = down.scale(-1);
-            Vector downScale = down.scale(-seatWidth);
+            Vector downScale = down.scale(seatWidth);
             Point centerDown = p.add(downScale);
             Point frleftUp = p.add(right.scale(-cornerScale).add(forward.scale(cornerScale)));
             Point frRightUp = p.add(right.scale(cornerScale).add(forward.scale(cornerScale)));
@@ -63,48 +70,51 @@ public class ChairTest {
             Point frRightDwn = frRightUp.add(downScale);
             Point bckLeftDwn = bckLeftUp.add(downScale);
             Point bckRightDwn = bckRightUp.add(downScale);
-            Point bRestFrLft = bckLeftUp.add(forward.scale(backWidth));
-            Point bRestFrRt = bckRightUp.add(forward.scale(backWidth));
+            Point bRestFrLft = bckLeftUp.add(forward.scale(backWidth)).add(up.scale(backrestScale));
+            Point bRestFrRt = bckRightUp.add(forward.scale(backWidth)).add(up.scale(backrestScale));
+            Point bRestBckLft = bckLeftUp.add(up.scale(backrestScale));
+            Point bRestBckRt = bckRightUp.add(up.scale(backrestScale));
             Point bRestFrLftUp = bRestFrLft.add(up.scale(heightScale));
             Point bRestFrRtUp = bRestFrRt.add(up.scale(heightScale));
-            Point bRestBckLftUp = bckLeftUp.add(up.scale(heightScale));
-            Point bRestBckRtUp = bckRightUp.add(up.scale(heightScale));
+            Point bRestBckLftUp = bRestBckLft.add(up.scale(heightScale));
+            Point bRestBckRtUp = bRestBckRt.add(up.scale(heightScale));
             seatUp = (Polygon) new Polygon(bckLeftUp, frleftUp, frRightUp, bckRightUp).setEmission(color);
             seatDown = (Polygon) new Polygon(bckLeftDwn, frleftDwn, frRightDwn, bckRightDwn).setEmission(color);
             seatSideFr = (Polygon) new Polygon(frleftDwn, frleftUp, frRightUp, frRightDwn).setEmission(color);
             seatSideleft = (Polygon) new Polygon(frleftDwn, frleftUp, bckLeftUp, bckLeftDwn).setEmission(color);
             seatSideBck = (Polygon) new Polygon(frleftUp, frleftDwn, frRightDwn, frRightUp).setEmission(color);
             seatSideRight = (Polygon) new Polygon(bckRightDwn, bckRightUp, frRightUp, frRightDwn).setEmission(color);
-            Vector tmp = centerDown.subtract(bckLeftDwn).normalize();
-            backLeft = (Cylinder) new Cylinder(new Ray(bckLeftDwn.add(down.scale(heightScale)).add(tmp.scale(legRadius)), up), legRadius, heightScale-seatWidth)
+
+            backLeft = (Cylinder) new Cylinder(new Ray(bckLeftDwn.add(forward.scale(legRadius).add(right.scale(legRadius))), down), legRadius, legHeight)
                     .setEmission(color);
-            tmp = centerDown.subtract(bckRightDwn).normalize();
-            backRight = (Cylinder) new Cylinder(new Ray(bckRightDwn.add(down.scale(heightScale)).add(tmp.scale(legRadius)), up), legRadius, heightScale-seatWidth)
+            backRight = (Cylinder) new Cylinder(new Ray(bckRightDwn.add(forward.scale(legRadius)).add(right.scale(-legRadius)),down ), legRadius, legHeight)
                     .setEmission(color);
-            tmp = centerDown.subtract(frRightDwn).normalize();
-            frontRight = (Cylinder) new Cylinder(new Ray(frRightDwn.add(down.scale(heightScale)).add(tmp.scale(legRadius)), up), legRadius, heightScale-seatWidth)
+            frontRight = (Cylinder) new Cylinder(new Ray(frRightDwn.add(forward.scale(-legRadius)).add(right.scale(-legRadius)), down), legRadius, legHeight)
                     .setEmission(color);
-            tmp = centerDown.subtract(frleftDwn).normalize();
-            frontLeft = (Cylinder) new Cylinder(new Ray(frleftDwn.add(down.scale(heightScale)).add(tmp.scale(legRadius)), up), legRadius, heightScale-seatWidth)
+            frontLeft = (Cylinder) new Cylinder(new Ray(frleftDwn.add(forward.scale(-legRadius)).add(right.scale(legRadius)), down), legRadius, legHeight)
                     .setEmission(color);
             double distance = backLeft.getAxisRay().getP0().distance(frontLeft.getAxisRay().getP0())-legRadius*2;
-            leftBar = (Cylinder) new Cylinder(new Ray(bckLeftDwn.add(down.scale(heightScale/ 2)).add(forward.scale(legRadius)), forward), barRadius, distance)
+            leftBar = (Cylinder) new Cylinder(new Ray(bckLeftDwn.add(down.scale(heightScale/ 2)).add(forward.scale(legRadius*2).add(right.scale(legRadius))), forward), barRadius, distance)
                     .setEmission(color);
-            rightBar = (Cylinder) new Cylinder(new Ray(bckRightDwn.add(down.scale(heightScale / 2)).add(forward.scale(legRadius)), forward), barRadius,distance)
+            rightBar = (Cylinder) new Cylinder(new Ray(bckRightDwn.add(down.scale(heightScale / 2)).add(forward.scale(legRadius*2).add(right.scale(-legRadius))), forward), barRadius,distance)
                     .setEmission(color);
-            backrestLft = (Polygon) new Polygon(bRestFrLft, bRestFrLftUp, bRestBckLftUp, bckLeftUp).setEmission(color);
-            backrestBck = (Polygon) new Polygon(bckLeftUp, bRestBckLftUp, bRestBckRtUp, bckRightUp).setEmission(color);
-            backrestRt = (Polygon) new Polygon(bRestFrRt, bRestFrRtUp, bRestBckRtUp, bckRightUp).setEmission(color);
+            backrestLft = (Polygon) new Polygon(bRestFrLft, bRestFrLftUp, bRestBckLftUp, bRestBckLft).setEmission(color);
+            backrestBck = (Polygon) new Polygon(bRestBckLft, bRestBckLftUp, bRestBckRtUp, bRestBckRt).setEmission(color);
+            backrestRt = (Polygon) new Polygon(bRestFrRt, bRestFrRtUp, bRestBckRtUp, bRestBckRt).setEmission(color);
             backrestFr = (Polygon) new Polygon(bRestFrLft, bRestFrRt, bRestFrRtUp, bRestFrLftUp).setEmission(color);
             backrestTop = (Polygon) new Polygon(bRestBckLftUp, bRestFrLftUp, bRestFrRtUp, bRestBckRtUp).setEmission(color);
-
+            backrestBottom = (Polygon) new Polygon(bRestBckLft,bRestFrLft,bRestFrRt,bRestBckRt).setEmission(color);
+            backrestLftPeg = (Cylinder) new Cylinder(new Ray(bckLeftUp.add(forward.scale(pegRadius).add(right.scale(pegRadius))), up), pegRadius, backrestScale)
+                    .setEmission(color);
+            backrestRtPeg = (Cylinder) new Cylinder(new Ray(bckRightUp.add(forward.scale(pegRadius).add(right.scale(-pegRadius))), up), pegRadius, backrestScale)
+                    .setEmission(color);
 
         }
 
         public Geometries getGeometries() {
             return new Geometries(seatUp, seatDown, seatSideFr, seatSideleft, seatSideBck, seatSideRight,
                     backLeft, backRight, frontLeft, frontRight, leftBar, rightBar
-                    , backrestLft, backrestBck, backrestRt, backrestFr, backrestTop);
+                    , backrestLft, backrestBck, backrestRt, backrestFr, backrestTop,backrestLftPeg,backrestRtPeg);
         }
 
         //region setters for chair seat
@@ -325,20 +335,12 @@ public class ChairTest {
         Scene scene = new Scene.SceneBuilder("Test Scene")
                 .setAmbientLight(new AmbientLight(new Color(229, 204, 255), new Double3(.15)))
                 .setGeometries(new Geometries(
-                        new Chair(new Point(-50, 0, -20), 45d, 100d, 6d, 5d,3d,0.75d,
-                                new Vector(1, 0, 0), new Vector(0, -1, 0), new Color(164, 116, 73))
-                                .setLegsEmission(new Color(0,235,35))
-                                .setSeatEmission(new Color(132,143,202))
-                                .setBackRestEmission(new Color(255,76,33))
+                        new Chair(new Point(-50, -50, -500), 45d, 100d, 6d, 5d,3d,0.75d,
+                                new Vector(0, 0, -1), new Vector(1, 0, 0), new Color(164, 116, 73))
                                 .getGeometries()
-                        , new Chair(new Point(50, 0, -20), 45d, 100d, 6d, 5d,3d,0.75d,
-                        new Vector(-1, 0, 0), new Vector(0, 1, 0), new Color(164, 116, 73))
-                        .setLegsEmission(new Color(0,235,35))
-                        .setSeatEmission(new Color(132,143,202))
-                        .setBackRestEmission(new Color(255,76,33))
-                        .getGeometries()
-                        , new Polygon(new Point(-250, -90, -70), new Point(0, 50, -60), new Point(200, -90, -70))
-                        .setMaterial(new Material().setkD(0.5).setkS(0.5).setnShininess(60))))
+                         ,new Chair(new Point(50, -50, -500), 45d, 100d, 6d, 5d,3d,0.75d,
+                        new Vector(-1, 0, 0), new Vector(0, 0, -1), new Color(164, 116, 73))
+                        .getGeometries()))
 
 
                 .setLights(lights)
@@ -346,14 +348,15 @@ public class ChairTest {
                 .build();
 
 
-        ImageWriter imageWriter = new ImageWriter("TestSeat7_multiColor", 600, 600);
-        Camera camera = new Camera.CameraBuilder(new Point(0, -1200, 100), new Vector(0, 1, -0.1), new Vector(0, 0.1, 1)) //
+        ImageWriter imageWriter = new ImageWriter("TestSeat9withGap", 600, 600);
+        Camera camera = new Camera.CameraBuilder(new Point(0, 0, 1000), new Vector(0, 0, -0.5), new Vector(0, 1, 0)) //
                 .setVPSize(200, 200)
                 .setVPDistance(1000)
                 .setImageWriter(imageWriter) //
                 .setRayTracer(new RayTracerBasic(scene))
-                .setAntiAliasing(AntiAliasing.RANDOM).setN(9).setM(9)
+                .setAntiAliasing(AntiAliasing.NONE)
                 .build();//
+
         camera.renderImage(); //
         camera.writeToImage();
     }
