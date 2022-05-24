@@ -6,13 +6,27 @@ import static primitives.Util.*;
 public class Vector extends Point{
 
     /**
+     * todo
+     */
+    public static final Vector axisX = new Vector(1,0,0);
+    /**
+     * todo
+     */
+    public static final Vector axisY = new Vector(0,1,0);
+    /**
+     * todo
+     */
+    public static final Vector axisZ = new Vector(0,0,1);
+
+
+    /**
      * constructor to initialize vector using a Double3 object
      * @param xyz double3 object containing <p> (x,y,z) values of vector</p>
      * @throws IllegalArgumentException <p>if  vector (0,0,0) is trying to be constructed</p>
      */
     public Vector(Double3 xyz) {
         super(xyz);
-        if(_xyz.equals(Double3.ZERO))
+        if(this.xyz.equals(Double3.ZERO))
             throw new IllegalArgumentException("Vector (0,0,0) not valid");
     }
 
@@ -29,7 +43,7 @@ public class Vector extends Point{
 
     @Override
     public String toString() {
-        return "Vector " + _xyz ;
+        return "Vector " + xyz;
     }
 
 
@@ -42,9 +56,9 @@ public class Vector extends Point{
      */
     public double lengthSquared() {
 
-        double u1= _xyz.d1;
-        double u2= _xyz.d2;
-        double u3= _xyz.d3;
+        double u1= xyz.d1;
+        double u2= xyz.d2;
+        double u3= xyz.d3;
 
         return u1*u1 + u2*u2 + u3*u3;
     }
@@ -62,7 +76,7 @@ public class Vector extends Point{
      * @param vector second vector
      * @return new vector received from adding both vectors operation
      */
-    public Vector add(Vector vector){ return new Vector(_xyz.add(vector._xyz));}
+    public Vector add(Vector vector){ return new Vector(xyz.add(vector.xyz));}
 
 
     /**
@@ -71,7 +85,7 @@ public class Vector extends Point{
      * @return vector from second vector to this vector
      */
     public Vector subtract(Vector vector){
-            return new Vector(_xyz.subtract(vector._xyz));
+            return new Vector(xyz.subtract(vector.xyz));
     }
 
     /**
@@ -84,7 +98,7 @@ public class Vector extends Point{
         if (isZero(scalar))
             throw new IllegalArgumentException("scaling factor == 0");
 
-        return new Vector(_xyz.scale(scalar));
+        return new Vector(this.xyz.scale(scalar));
     }
 
 
@@ -96,13 +110,13 @@ public class Vector extends Point{
      */
     public double dotProduct(Vector vector) {
 
-        double v1= vector._xyz.d1;
-        double v2= vector._xyz.d2;
-        double v3= vector._xyz.d3;
+        double v1= vector.xyz.d1;
+        double v2= vector.xyz.d2;
+        double v3= vector.xyz.d3;
 
-        double u1= _xyz.d1;
-        double u2= _xyz.d2;
-        double u3= _xyz.d3;
+        double u1= xyz.d1;
+        double u2= xyz.d2;
+        double u3= xyz.d3;
 
         return v1*u1 + v2*u2 + v3*u3;
     }
@@ -121,13 +135,13 @@ public class Vector extends Point{
         // cross product vector =
         // new vector(a2*b3-b2*a3 , -(a1*b3-b1*a3) , a1*b2-b1*b2)
 
-        double v1= vector._xyz.d1;
-        double v2= vector._xyz.d2;
-        double v3= vector._xyz.d3;
+        double v1= vector.xyz.d1;
+        double v2= vector.xyz.d2;
+        double v3= vector.xyz.d3;
 
-        double u1= _xyz.d1;
-        double u2= _xyz.d2;
-        double u3= _xyz.d3;
+        double u1= xyz.d1;
+        double u2= xyz.d2;
+        double u3= xyz.d3;
 
         return new Vector(u2*v3-v2*u3,-(u1*v3-v1*u3),u1*v2-v1*u2);
 
@@ -141,6 +155,39 @@ public class Vector extends Point{
          double length=length();
          if(isZero(length))
              throw new IllegalArgumentException("length cannot be zero");
-         return new Vector(_xyz.reduce(length));
+         return new Vector(xyz.reduce(length));
+    }
+
+    /**
+     * todo
+     * @param axis
+     * @param theta
+     * @return
+     */
+    public Vector vectorRotate(Vector axis, double theta) {
+        double x = this.getX();
+        double y = this.getY();
+        double z = this.getZ();
+
+        double u = axis.getX();
+        double v = axis.getY();
+        double w = axis.getZ();
+
+        double v1 = u * x + v * y + w * z;
+
+        double thetaRad=Math.toRadians(theta);
+        double xPrime = u * v1 * (1d - Math.cos(thetaRad))
+                + x * Math.cos(thetaRad)
+                + (-w * y + v * z) * Math.sin(thetaRad);
+
+        double yPrime = v * v1 * (1d - Math.cos(thetaRad))
+                + y * Math.cos(thetaRad)
+                + (w * x - u * z) * Math.sin(thetaRad);
+
+        double zPrime = w * v1 * (1d - Math.cos(thetaRad))
+                + z * Math.cos(thetaRad)
+                + (-v * x + u * y) * Math.sin(thetaRad);
+
+        return new Vector(xPrime, yPrime, zPrime);
     }
 }

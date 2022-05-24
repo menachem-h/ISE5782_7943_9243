@@ -756,4 +756,40 @@ public class Camera {
             p0 = p0.add(vRight.scale(right));
 
     }
+
+    /**
+     * todo
+     * @param newPosition
+     * @param target
+     * @param angle
+     * @return
+     */
+    public Camera cameraPosition(Point newPosition, Point target, double angle) {
+        p0 = newPosition;
+        vTo = target.subtract(newPosition).normalize();
+        try {
+            vUp = vTo.crossProduct(vRight).normalize();
+            vRight = vTo.crossProduct(Vector.axisY).normalize();
+
+        } catch (IllegalArgumentException e) {
+            vUp = Vector.axisZ;
+            vRight = Vector.axisX;
+        }
+        rotateCamera(angle);
+        return this;
+    }
+
+    /**
+     * This function set new camera position with rotation
+     *
+     * @param angle - the angle of rotation (degree)
+     * @return the camera after set the new position
+     */
+    public Camera rotateCamera(double angle) {
+        if (angle == 0)
+            return this;
+        vUp = vUp.vectorRotate(vTo, angle);
+        vRight = vTo.crossProduct(vUp).normalize();
+        return this;
+    }
 }

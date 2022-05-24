@@ -1,6 +1,5 @@
 package primitives;
 
-import geometries.Intersectable;
 import geometries.Intersectable.GeoPoint;
 
 import java.util.List;
@@ -38,7 +37,7 @@ public class Ray {
     public Ray(Point p0, Vector dir) {
 
         this.p0 = p0;
-        if (dir._xyz.equals(Double3.ZERO))
+        if (dir.xyz.equals(Double3.ZERO))
             throw new IllegalArgumentException("Vector (0,0,0) not valid");
         this.dir = dir.normalize();
     }
@@ -50,7 +49,7 @@ public class Ray {
      * @param dir vector of light direction
      */
     public Ray(Point p,Vector normal, Vector dir) {
-        if (dir._xyz.equals(Double3.ZERO))
+        if (dir.xyz.equals(Double3.ZERO))
             throw new IllegalArgumentException("Vector (0,0,0) not valid");
 
         Vector epsVector = normal.scale(normal.dotProduct(dir) >0 ? EPS : - EPS);

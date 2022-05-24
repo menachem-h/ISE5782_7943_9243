@@ -1,7 +1,5 @@
 package primitives;
 
-import renderer.Camera;
-
 import java.util.Objects;
 
 /**
@@ -16,14 +14,14 @@ public class Point{
     /**
      * (x,y,z) coordinates of point
      */
-    final protected Double3 _xyz;
+    final protected Double3 xyz;
 
     /**
      * Point constructor to initialize a point based on  a double3 class object
      * @param xyz Double3 object containing value of (x,y,z) coordinates
      */
     protected Point(Double3 xyz) {
-        _xyz = xyz;
+        this.xyz = xyz;
     }
 
     /**
@@ -31,7 +29,7 @@ public class Point{
      * @return X axis coordinate - (double)
      */
     public double getX() {
-        return _xyz.d1;
+        return xyz.d1;
     }
 
     /**
@@ -39,14 +37,14 @@ public class Point{
      * @return Y axis coordinate - (double)
      */
     public double getY() {
-        return _xyz.d2;
+        return xyz.d2;
     }
 
     /**
      * get Z axis coordinate of a point
      * @return Z axis coordinate - (double)
      */
-    public double getZ() { return _xyz.d3; }
+    public double getZ() { return xyz.d3; }
 
 
     /**
@@ -56,7 +54,7 @@ public class Point{
      * @param z  z coordinate value
      */
     public Point(double x, double y, double z) {
-        _xyz=new Double3(x,y,z);
+        xyz =new Double3(x,y,z);
     }
 
     @Override
@@ -64,17 +62,17 @@ public class Point{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Point point = (Point) o;
-        return Objects.equals(_xyz, point._xyz);
+        return Objects.equals(xyz, point.xyz);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(_xyz);
+        return Objects.hash(xyz);
     }
 
     @Override
     public String toString() {
-        return "Point " + _xyz ;
+        return "Point " + xyz;
     }
 
     /**
@@ -85,9 +83,9 @@ public class Point{
      */
     public double distanceSquared(Point point) {
 
-        double u1= _xyz.d1 - point._xyz.d1;
-        double u2= _xyz.d2 - point._xyz.d2;
-        double u3= _xyz.d3 - point._xyz.d3;
+        double u1= xyz.d1 - point.xyz.d1;
+        double u2= xyz.d2 - point.xyz.d2;
+        double u3= xyz.d3 - point.xyz.d3;
 
         return u1*u1 + u2*u2 + u3*u3;
     }
@@ -107,7 +105,7 @@ public class Point{
      * @return new point received by adding vector to original point
      */
     public Point add(Vector vector) {
-        return new Point(_xyz.add(vector._xyz));
+        return new Point(xyz.add(vector.xyz));
     }
 
     /**
@@ -119,7 +117,7 @@ public class Point{
      */
     public Vector subtract(Point point) {
 
-        Double3 result=_xyz.subtract(point._xyz);
+        Double3 result= xyz.subtract(point.xyz);
         if(result.equals(Double3.ZERO))
             throw new IllegalArgumentException(("resulting of subtract: vector (0,0,0) not allowed"));
         return new Vector(result);
