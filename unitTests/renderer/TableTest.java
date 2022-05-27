@@ -19,34 +19,48 @@ public class TableTest {
         double height;
         double radius;
         Cylinder leg;
-        Cylinder surface;
+        Cylinder surfaceTop;
+        Cylinder surfaceBase;
         Cylinder base;
+        Cylinder cy;
+        Cylinder cy1;
         Point position;
         Color color;
 
         Material material;
 
-        public Table(int height, double radius, Color color, Point position, Vector dir){
+        public Table(int height, double radius, Color color, Point position, Vector dirHeight,Vector dirSurface){
+           double radiusMini=radius/15;
+           Vector dirMini=dirSurface.scale(radius-radiusMini);
+            Point tpSurfaceTop =position.add(dirHeight.scale(height*19/20));
+            Point tpSurfaceBase=position.add(dirHeight.scale(height*15/20));
+            surfaceTop =(Cylinder) new Cylinder(new Ray(tpSurfaceTop,dirHeight),radius,height/20).setEmission(color);
+            surfaceBase=(Cylinder) new Cylinder(new Ray(tpSurfaceBase,dirHeight),radius,height/20).setEmission(new Color(GRAY))
+                    .setMaterial(new Material().setkD(0.5).setkS(0.5).setnShininess(60));
 
-            surface =(Cylinder) new Cylinder(new Ray(position.add(dir.scale(height*19/20)),dir),radius,height/20).setEmission(color);
-            Cylinder cy=new Cylinder(new Ray(position.add(dir.scale(height*17/20)),dir),radius,height/20);
-            leg=(Cylinder) new Cylinder(new Ray(position.add(dir.scale(height*2/20)),dir),radius/10,height*19/20)
+            leg=(Cylinder) new Cylinder(new Ray(position.add(dirHeight.scale(height*2/20)),dirHeight),radius/7,height*13/20)
                     .setEmission(color);
-            base=(Cylinder) new Cylinder(new Ray(position,dir),radius/3,height*2/20).setEmission(color);
-            elements=new Geometries(surface,leg,base,cy);
+            base=(Cylinder) new Cylinder(new Ray(position,dirHeight),radius/3,height*2/20).setEmission(color);
+            elements=new Geometries(surfaceTop,leg,base,surfaceBase);
+            for (int i = 0; i < 16; i++) {
+                double angle = 360 / 16;
+                cy1 = (Cylinder) new Cylinder(new Ray(tpSurfaceBase.add(dirMini.vectorRotate(dirHeight, i * angle)), dirHeight), radiusMini, height * 4 / 20)
+                        .setEmission(new Color(255, 90, 0));
+                elements.add(cy1);
+            }
         }
 
         public Geometries getElements() {
             return elements;
         }
 
-        public Table setColorSurface(Color color) {
-            surface.setEmission(color);
+        public Table setColorSurfaceTop(Color color) {
+            surfaceTop.setEmission(color);
             return this;
         }
 
-        public Table setMaterialSurface(Material material) {
-            surface.setMaterial(material);
+        public Table setMaterialSurfaceTop(Material material) {
+            surfaceTop.setMaterial(material);
             return this;
         }
 
@@ -64,25 +78,17 @@ public class TableTest {
     @Test
     public void advancedBeamTest() {
         List<LightSource> lights = new LinkedList<>();
-        lights.add(new SpotLight(new Color(WHITE),new Point(50,-30,200),new Vector(-1,0,-1)).setkL(0.0004).setkQ(0.0000006));
-        lights.add(new SpotLight(new Color(WHITE),new Point(-75,30,200),new Vector(1,0,-0.55)).setkL(0.0004).setkQ(0.0000006));
+        lights.add(new SpotLight(new Color(WHITE),new Point(100,0,50),new Vector(-1,0,0.25)).setkL(0.0004).setkQ(0.0000006));
+
         Scene scene = new Scene.SceneBuilder("Test Scene")
                 .setAmbientLight(new AmbientLight(new Color(229,204,255), new Double3(.15)))
                 .setGeometries(new Geometries(
-                        new Sphere(new Point(-15,-10,-10),25d).setEmission(new Color(200,50,0))
-                                .setMaterial(new Material().setkS(0.25).setkD(0.25).setnShininess(80).setkT(0.5)),
                         new Polygon(new Point(-250,-90,-70),new Point(0,50,-60),new Point(200,-90,-70))
                                 .setMaterial(new Material().setkD(0.5).setkS(0.5).setnShininess(60)),
                         new Polygon(new Point(-150,90,-65),new Point(-150,90,50),new Point(150,160,50),new Point(150,160,-65))
                                 .setEmission(new Color(20, 20, 20)) //
                                 .setMaterial(new Material().setkR(0.45)),
-                        new Sphere(new Point(-6,2,-2),7).setMaterial(new Material().setkS(0.25).setkD(0.25)).setEmission(new Color(0,255,0)),
-
-
-                        new Cylinder(new Ray(new Point(75,-8,-88),new Vector(-0.2,-0.3,1)),10d,130d)
-                                .setEmission(new Color(102,0,204))
-                                .setMaterial(new Material().setkS(0.35).setkD(0.25).setkT(0.2).setkR(0).setnShininess(10)),
-                        new Table(60,50,new Color(184,46,179),new Point(0,0,-60),new Vector(0,0,1)).getElements()))
+                        new Table(60,50,new Color(184,46,179),new Point(0,0,-60),new Vector(0,0,1),new Vector(1,0,0)).getElements()))
 
                 .setLights(lights)
                 .setBackground(new Color(0,102d,102d))
@@ -90,7 +96,7 @@ public class TableTest {
 
 
 
-        ImageWriter imageWriter = new ImageWriter("TableTest", 600, 600);
+        ImageWriter imageWriter = new ImageWriter("TableTest3", 600, 600);
         Camera camera = new Camera.CameraBuilder(new Point(0, -1200, 100), new Vector(0, 1, -0.1), new Vector(0, 0.1,1 )) //
                 .setVPSize(200, 200)
                 .setVPDistance(1000)

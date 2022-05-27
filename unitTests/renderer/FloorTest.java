@@ -84,10 +84,10 @@ public class FloorTest {
             elements = new Geometries();
             double squareLength = length / sumLength;
             double squareWidth = width / sumWidth;
-            Point p1=Point.ZERO;
-            Point p2=Point.ZERO;
-            Point p3=Point.ZERO;
-            Point p4=Point.ZERO;
+            Point p1;
+            Point p2;
+            Point p3;
+            Point p4;
             for (int i = 0; i < sumWidth; i++) {
 
                 if (i == 0) {
@@ -134,15 +134,13 @@ public class FloorTest {
                 .setAmbientLight(new AmbientLight(new Color(229, 204, 255), new Double3(.15)))
                 .setGeometries(new Geometries(
                         new FloorSquare(new Point(100, 10, -100), new Vector(0, 0, 1), new Vector(-1, 0, 0),
-                        new Color(250, 0, 0), new Color(0, 200, 0), 200, 200, 20, 10).getElements()))
-
-
+                        new Color(176,131,78), new Color(129,102,70), 100, 100, 10, 10).getElements()))
                 .setLights(lights)
                 .setBackground(new Color(0, 102d, 102d))
                 .build();
 
 
-        ImageWriter imageWriter = new ImageWriter("FloorSquareTest", 600, 600);
+        ImageWriter imageWriter = new ImageWriter("FloorSquareTest5", 600, 600);
         Camera camera = new Camera.CameraBuilder(new Point(0, -1200, 100), new Vector(0, 1, -0.1), new Vector(0, 0.1, 1)) //
                 .setVPSize(200, 200)
                 .setVPDistance(1000)

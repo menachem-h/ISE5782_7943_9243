@@ -757,6 +757,60 @@ public class Camera {
 
     }
 
+
+
+    /**
+     * Camera constructor by photographer location and target view point<br/>
+     * the camera is always horizontal although may be directed a bit up or
+     * down.<br/>
+     * However if the camera is directed upwards or downwards, it's top will be with
+     * the Z axis
+     *
+     * @param location camera location
+     * @param target   point the camera is directed to
+     * @param angle    clockwise rotation angle by vTo axis - in degrees
+     */
+    public Camera(Point location, Point target, double angle) {
+        vTo = target.subtract(location).normalize();
+        try {
+            vRight = vTo.crossProduct(Vector.axisY).normalize();
+            vUp = vRight.crossProduct(vTo).normalize();
+        } catch (IllegalArgumentException e) {
+            // vTo is co-lined with Y axis
+            vUp = Vector.axisZ;
+            vRight = vTo.crossProduct(vUp).normalize();
+        }
+
+        if (isZero(angle))
+            return;
+
+        double radians = Math.toRadians(angle);
+        double cos = Math.cos(radians);
+        double sin = Math.sin(radians);
+        if (isZero(cos))
+            vUp = vRight.scale(sin).normalize();
+        else if (isZero(sin))
+            vUp = vUp.scale(cos).normalize();
+        else
+            vUp = vUp.scale(cos).add(vRight.scale(sin)).normalize();
+        vRight = vTo.crossProduct(vRight).normalize();
+    }
+
+    /**
+     * This function set new camera position with rotation
+     *
+     * @param angle - the angle of rotation (degree)
+     * @return the camera after set the new position
+     */
+    /**
+    public Camera rotateCamera(double angle) {
+        if (angle == 0)
+            return this;
+        vUp = vUp.vectorRotate(vTo, angle);
+        vRight = vTo.crossProduct(vUp).normalize();
+        return this;
+    }
+     **/
     /**
      * todo
      * @param newPosition
@@ -764,6 +818,7 @@ public class Camera {
      * @param angle
      * @return
      */
+    /**
     public Camera cameraPosition(Point newPosition, Point target, double angle) {
         p0 = newPosition;
         vTo = target.subtract(newPosition).normalize();
@@ -778,18 +833,6 @@ public class Camera {
         rotateCamera(angle);
         return this;
     }
+**/
 
-    /**
-     * This function set new camera position with rotation
-     *
-     * @param angle - the angle of rotation (degree)
-     * @return the camera after set the new position
-     */
-    public Camera rotateCamera(double angle) {
-        if (angle == 0)
-            return this;
-        vUp = vUp.vectorRotate(vTo, angle);
-        vRight = vTo.crossProduct(vUp).normalize();
-        return this;
-    }
 }
