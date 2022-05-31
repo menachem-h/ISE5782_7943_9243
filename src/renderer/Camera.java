@@ -63,6 +63,11 @@ public class Camera {
      */
     private int m ;
 
+    /**
+     * depth of recursion for adaptive anti-aliasing
+     */
+    private int recurseDepth ;
+
     // functionality  fields
     /**
      * image writing to file functionality object
@@ -103,6 +108,7 @@ public class Camera {
         antiAliasing = camBuilder.antiAliasing;
         n = camBuilder.n;
         m = camBuilder.m;
+        recurseDepth= camBuilder.recurseDepth;
         imageWriter = camBuilder.imageWriter;
         rayTracer = camBuilder.rayTracer;
         dof = camBuilder.dof;
@@ -173,6 +179,11 @@ public class Camera {
          *  first parameter for number of random ray to cast for random beam anti aliasing
          */
         private int m ;
+
+        /**
+         * depth of recursion for adaptive anti-aliasing
+         */
+        private int recurseDepth =2;
 
 
 
@@ -268,6 +279,16 @@ public class Camera {
          */
         public CameraBuilder setM(int num) {
             this.m = num;
+            return this;
+        }
+
+        /**
+         * setter for recursive depth field
+         * @param recurseDepth depth of recursion
+         * @return value of depth of recursion wanted in adaptive anti-aliasing
+         */
+        public CameraBuilder setRecurseDepth(int recurseDepth) {
+            this.recurseDepth = recurseDepth;
             return this;
         }
 
@@ -413,6 +434,14 @@ public class Camera {
      * @return second parameter of n*m loop for random ray casting
      */
     public int getM() {return m;}
+
+    /**
+     * getter for recurseDepth field
+     * @return depth of recursion for adaptive anti-aliasing
+     */
+    public int getRecurseDepth() {return recurseDepth;
+    }
+
     //endregion
 
     //region Image Writing functionalities
@@ -485,6 +514,13 @@ public class Camera {
                 break;
 
 
+            }
+            case ADAPTIVE -> {
+                int depth = getRecurseDepth();
+                for (int i = 0; i < nY; i++)
+                    for (int j = 0; j < nX; j++)
+                        castRayAdaptive(nX, nY, i, j,2,depth);
+                break;
             }
         }
     }
@@ -668,6 +704,81 @@ public class Camera {
     //endregion
 
     //region Corner Ray Casting
+    private void castRayAdaptive(int Nx, int Ny, int j, int i,int size,int depth)
+    {
+        // construct ray through pixel
+        Ray ray = constructRay(Nx, Ny, j, i);
+        Point center = ray.getPoint(distance);
+        var rayBeam = constructRayCorners(Nx, Ny, ray,size);
+
+        // calculate  color of pixel - add all the rays colors
+        // ray towards center color
+        Color color = rayTracer.traceRay(ray);
+        int k = 0;
+        for (var r:rayBeam) {
+            Color cornerColor = rayTracer.traceRay(r);
+            if(color.equals(cornerColor))
+                color = color.add(cornerColor);
+            else {
+                Point subPixelCenter = getSubPixelCenter(k,Nx,Ny,size*2,center);
+                color = color.add(constructRayAdaptiveRec(Nx,Ny,subPixelCenter,r,size*2,depth));
+            }
+             k++;
+        }
+        color = color.reduce(rayBeam.size()+1);
+
+        //write pixel
+        imageWriter.writePixel(j, i, color);
+    }
+
+    private Color constructRayAdaptiveRec(int Nx, int Ny, Point center,Ray rayToCorner, int size, int depth) {
+
+        if(size<=depth) {
+            Vector camToSubPixel = center.subtract(p0);
+            Ray ray = new Ray(p0, camToSubPixel);
+            Color color = rayTracer.traceRay(ray);
+            var cornersBeam = constructRayCorners(Nx, Ny, ray, size);
+
+            // calculate  color of pixel - add all the rays colors
+            // ray towards center color
+
+            int k = 0;
+            for (var r: cornersBeam) {
+                Color cornerColor = rayTracer.traceRay(r);
+                if (color.equals(cornerColor))
+                    color = color.add(cornerColor);
+                else {
+                    Point subPixelCenter = getSubPixelCenter(k, Nx, Ny, size*2, center);
+                    color = color.add(constructRayAdaptiveRec(Nx, Ny, subPixelCenter,r ,size * 2, depth));
+                }
+                k++;
+            }
+            color = color.reduce(cornersBeam.size()+1);
+            return color;
+        }
+        else
+        {
+            return rayTracer.traceRay(rayToCorner);
+        }
+    }
+
+    private Point getSubPixelCenter(int k, int nx, int ny, int size,Point center) {
+        double Rx = alignZero( ((double)width/nx)/size);
+        double Ry = alignZero(((double) height / ny )/ size);
+        Point p = center;
+
+        switch(k){
+            case 0:
+                return p.add(vUp.scale(Ry)).add(vRight.scale(Rx));
+            case 1:
+                return p.add(vUp.scale(-Ry)).add(vRight.scale(Rx));
+            case 2:
+                return p.add(vUp.scale(-Ry)).add(vRight.scale(-Rx));
+            case 3:
+                return p.add(vUp.scale(Ry)).add(vRight.scale(-Rx));
+        }
+        return null;
+    }
 
     /**
      * cast four rays to the four corners of a pixel(i,j)
@@ -679,8 +790,9 @@ public class Camera {
     private void castRayBeamCorners(int Nx, int Ny, int j, int i) {
         // construct ray through pixel
         Ray ray = constructRay(Nx, Ny, j, i);
+        Point center = ray.getPoint(distance);
         // construct the four rays to the corners
-        var rayBeam = constructRayCorners(Nx, Ny, ray);
+        var rayBeam = constructRayCorners(Nx, Ny, ray,2);
 
         // calculate  color of pixel - add all the rays colors
         // ray towards center color
@@ -703,7 +815,7 @@ public class Camera {
      * @param ray ray towards center of the pixel
      * @return list with the four rays
      */
-    public List<Ray> constructRayCorners(int Nx, int Ny, Ray ray) {
+    public List<Ray> constructRayCorners(int Nx, int Ny, Ray ray,int depth) {
         //get the point of the center of the pixel
         Point Pij = ray.getPoint(distance);
 
@@ -711,8 +823,8 @@ public class Camera {
         // height per pixel = total "physical" height / number of rows
         // width per pixel = total "physical" width / number of columns
         // divide height and width values by two
-        double Ry = alignZero((double) height / Ny / 2);
-        double Rx = alignZero((double) width / Nx / 2);
+        double Ry = alignZero((double) height / Ny / depth);
+        double Rx = alignZero((double) width / Nx / depth);
         Point p = Pij;
 
         //construct the four rays by scaling the required camera vectors in correct direction
