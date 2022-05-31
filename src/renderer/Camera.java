@@ -55,18 +55,18 @@ public class Camera {
      */
     private AntiAliasing antiAliasing;
     /**
-     *  first parameter for number of random ray to cast for random beam anti aliasing
+     * first parameter for number of random ray to cast for random beam anti aliasing
      */
-    private int n ;
+    private int n;
     /**
-     *  first parameter for number of random ray to cast for random beam anti aliasing
+     * first parameter for number of random ray to cast for random beam anti aliasing
      */
-    private int m ;
+    private int m;
 
     /**
      * depth of recursion for adaptive anti-aliasing
      */
-    private int recurseDepth ;
+    private int recurseDepth;
 
     // functionality  fields
     /**
@@ -89,6 +89,10 @@ public class Camera {
      */
     private double apertureRadius;
 
+    /**
+     * todo
+     */
+    boolean useDOF;
     //endregion
 
     /**
@@ -108,19 +112,22 @@ public class Camera {
         antiAliasing = camBuilder.antiAliasing;
         n = camBuilder.n;
         m = camBuilder.m;
-        recurseDepth= camBuilder.recurseDepth;
+        recurseDepth = camBuilder.recurseDepth;
         imageWriter = camBuilder.imageWriter;
         rayTracer = camBuilder.rayTracer;
         dof = camBuilder.dof;
         apertureRadius = camBuilder.apertureRadius;
+        useDOF = camBuilder.useDOF;
     }
 
     //region Camera Builder
+
     /**
      * inner builder class. implements Builder pattern
      * constructs a new {@link Camera} object
      */
     public static class CameraBuilder {
+
 
         // static data fields
         /**
@@ -171,20 +178,19 @@ public class Camera {
         private AntiAliasing antiAliasing = AntiAliasing.NONE;
 
         /**
-         *  first parameter for number of random ray to cast for random beam anti aliasing
+         * first parameter for number of random ray to cast for random beam anti aliasing
          */
-        private int n ;
+        private int n;
 
         /**
-         *  first parameter for number of random ray to cast for random beam anti aliasing
+         * first parameter for number of random ray to cast for random beam anti aliasing
          */
-        private int m ;
+        private int m;
 
         /**
          * depth of recursion for adaptive anti-aliasing
          */
-        private int recurseDepth =2;
-
+        private int recurseDepth = 2;
 
 
         // depth of field functionality
@@ -198,7 +204,10 @@ public class Camera {
          */
         private double apertureRadius;
 
-
+        /**
+         * todo
+         */
+        private boolean useDOF = false;
 
         /**
          * constructor
@@ -264,6 +273,7 @@ public class Camera {
 
         /**
          * setter for first parameter of n*m used for random ray casting loop
+         *
          * @param num value of parameter
          * @return this {@link CameraBuilder} instance
          */
@@ -274,6 +284,7 @@ public class Camera {
 
         /**
          * setter for second parameter of n*m used for random ray casting loop
+         *
          * @param num value of parameter
          * @return this {@link CameraBuilder} instance
          */
@@ -284,6 +295,7 @@ public class Camera {
 
         /**
          * setter for recursive depth field
+         *
          * @param recurseDepth depth of recursion
          * @return value of depth of recursion wanted in adaptive anti-aliasing
          */
@@ -316,6 +328,7 @@ public class Camera {
 
         /**
          * set for dof field
+         *
          * @param dof depth of field focal point distance from camera
          * @return this {@link CameraBuilder} instance
          */
@@ -326,11 +339,23 @@ public class Camera {
 
         /**
          * set for apertureRadius field
+         *
          * @param apertureRadius radius of aperture of camera
          * @return this {@link CameraBuilder} instance
          */
         public CameraBuilder setApertureRadius(double apertureRadius) {
             this.apertureRadius = apertureRadius;
+            return this;
+        }
+
+        /**
+         * todo
+         *
+         * @param useDOF
+         * @return
+         */
+        public CameraBuilder setUseDOF(boolean useDOF) {
+            this.useDOF = useDOF;
             return this;
         }
 
@@ -350,6 +375,7 @@ public class Camera {
     //endregion
 
     //region Getters
+
     /**
      * getter for _p0 field
      *
@@ -425,26 +451,44 @@ public class Camera {
 
     /**
      * getter for n field
+     *
      * @return first parameter for n*m loop for random ray casting
      */
-    public int getN() { return n;}
+    public int getN() {
+        return n;
+    }
 
     /**
      * getter for m field
+     *
      * @return second parameter of n*m loop for random ray casting
      */
-    public int getM() {return m;}
+    public int getM() {
+        return m;
+    }
 
     /**
      * getter for recurseDepth field
+     *
      * @return depth of recursion for adaptive anti-aliasing
      */
-    public int getRecurseDepth() {return recurseDepth;
+    public int getRecurseDepth() {
+        return recurseDepth;
+    }
+
+    /**
+     * todo
+     *
+     * @return
+     */
+    public boolean isUseDOF() {
+        return useDOF;
     }
 
     //endregion
 
     //region Image Writing functionalities
+
     /**
      * crate a jpeg file, with scene "captured" by camera
      */
@@ -489,38 +533,45 @@ public class Camera {
         // for each pixel (i,j) , construct  ray/rays from camera through pixel,
         // functions use rayTracer object to get correct color, then use imageWriter to write pixel to the file
 
+        if (isUseDOF()) {
+            for (int i = 0; i < nY; i++)
+                for (int j = 0; j < nX; j++)
+                    castRayDOF(nX, nY, i, j, n, m);
+        }
         //cast ray according to Anti-Aliasing method set to Camera
-        switch (getAntiAliasing()) {
-            // no method used - cast single ray to center of pixel
-            case NONE -> {
-                for (int i = 0; i < nY; i++)
-                    for (int j = 0; j < nX; j++)
-                        castRay(nX, nY, i, j);
-                break;
-            }
-            // bean of random rays cast for each pixel besides the ray towards the center
-            case RANDOM -> {
-                for (int i = 0; i < nY; i++)
-                    for (int j = 0; j < nX; j++)
-                        castRayBeamRandom(nX, nY, i, j, n, m);
-                break;
+        else {
+            switch (getAntiAliasing()) {
+                // no method used - cast single ray to center of pixel
+                case NONE -> {
+                    for (int i = 0; i < nY; i++)
+                        for (int j = 0; j < nX; j++)
+                            castRay(nX, nY, i, j);
+                    break;
+                }
+                // bean of random rays cast for each pixel besides the ray towards the center
+                case RANDOM -> {
+                    for (int i = 0; i < nY; i++)
+                        for (int j = 0; j < nX; j++)
+                            castRayBeamRandom(nX, nY, i, j, n, m);
+                    break;
 
-            }
-            // four rays cast to four corners of pixel besides the ray towards the center
-            case CORNERS -> {
-                for (int i = 0; i < nY; i++)
-                    for (int j = 0; j < nX; j++)
-                        castRayBeamCorners(nX, nY, i, j);
-                break;
+                }
+                // four rays cast to four corners of pixel besides the ray towards the center
+                case CORNERS -> {
+                    for (int i = 0; i < nY; i++)
+                        for (int j = 0; j < nX; j++)
+                            castRayBeamCorners(nX, nY, i, j);
+                    break;
 
 
-            }
-            case ADAPTIVE -> {
-                int depth = getRecurseDepth();
-                for (int i = 0; i < nY; i++)
-                    for (int j = 0; j < nX; j++)
-                        castRayAdaptive(nX, nY, i, j,2,depth);
-                break;
+                }
+                case ADAPTIVE -> {
+                    int depth = getRecurseDepth();
+                    for (int i = 0; i < nY; i++)
+                        for (int j = 0; j < nX; j++)
+                            castRayAdaptive(nX, nY, i, j, 2, depth);
+                    break;
+                }
             }
         }
     }
@@ -530,8 +581,10 @@ public class Camera {
     //region Ray Casting + Anti-Aliasing
 
     //region No Anti-Aliasing
+
     /**
      * cast a ray from camera through pixel (i,j) in view plane and get color of pixel
+     *
      * @param Nx number of rows in view plane
      * @param Ny number of columns in view plane
      * @param j  column index of pixel
@@ -548,6 +601,7 @@ public class Camera {
 
     /**
      * construct ray from a {@link Camera} towards center of a pixel in a view plane
+     *
      * @param Nx number of rows in view plane
      * @param Ny number of columns in view plane
      * @param j  column index of pixel
@@ -593,14 +647,16 @@ public class Camera {
     //endregion
 
     //region Random Beam Casting
+
     /**
      * cast a beam of n*m random beams within a grid of a pixel (i,j)
+     *
      * @param Nx number of rows in view plane
      * @param Ny number of columns in view plane
      * @param j  column index of pixel
      * @param i  row index of pixel
-     * @param n first parameter to set number of random rays to cast
-     * @param m second parameter to set number of rays to cast
+     * @param n  first parameter to set number of random rays to cast
+     * @param m  second parameter to set number of rays to cast
      */
     private void castRayBeamRandom(int Nx, int Ny, int j, int i, int n, int m) {
         // construct ray through pixel
@@ -624,10 +680,11 @@ public class Camera {
 
     /**
      * given a pixel construct a beam of random rays within the grid of the pixel
-     * @param Nx number of rows in view plane
-     * @param Ny number of columns in view plane
-     * @param n first parameter to set number of random rays to cast
-     * @param m second parameter to set number of rays to cast
+     *
+     * @param Nx  number of rows in view plane
+     * @param Ny  number of columns in view plane
+     * @param n   first parameter to set number of random rays to cast
+     * @param m   second parameter to set number of rays to cast
      * @param ray ray towards the center of the pixel
      * @return list with m*n rays cast randomly within the grid of the pixel
      */
@@ -639,12 +696,14 @@ public class Camera {
         // create a grid of n rows * m columns in each pixel
         // construct a ray from camera to every cell in grid
         // each ray is constructed randomly precisely within the grid borders
-        for (int i = -n/2; i < n/2 ; i++)
-            for(int j = -m/2;j<m/2; j++)
-                temp.add(constructRandomRay(Nx, Ny, Pij,i,j,n,m));
+        for (int i = -n / 2; i < n / 2; i++)
+            for (int j = -m / 2; j < m / 2; j++)
+                temp.add(constructRandomRay(Nx, Ny, Pij, i, j, n, m));
 
         // remove from the list if a  ray was randomly constructed identical to ray to center
-        temp.removeIf((item)->{return item.equals(ray);});
+        temp.removeIf((item) -> {
+            return item.equals(ray);
+        });
         // add to list the ray to the center of the pixel
         temp.add(ray);
 
@@ -653,16 +712,17 @@ public class Camera {
 
     /**
      * given a pixel ,cast a ray to a randomly selected point within a cell in a sub-grid made on a pixel
-     * @param Nx number of rows in view plane
-     * @param Ny number of columns in view plane
-     * @param Pij center point of pixel (i,j)
-     * @param gridRow row index of the cell in  the sub-grid of pixel
+     *
+     * @param Nx         number of rows in view plane
+     * @param Ny         number of columns in view plane
+     * @param Pij        center point of pixel (i,j)
+     * @param gridRow    row index of the cell in  the sub-grid of pixel
      * @param gridColumn column index of the cell in  the sub-grid of pixel
-     * @param n number of rows in the grid
-     * @param m number of columns in the grid
+     * @param n          number of rows in the grid
+     * @param m          number of columns in the grid
      * @return {@link Ray} from camera to randomly selected point
      */
-    public Ray constructRandomRay(int Nx, int Ny, Point Pij,int gridRow ,int gridColumn , int n, int m) {
+    public Ray constructRandomRay(int Nx, int Ny, Point Pij, int gridRow, int gridColumn, int n, int m) {
 
         // calculate "size" of each pixel -
         // height per pixel = total "physical" height / number of rows
@@ -671,8 +731,8 @@ public class Camera {
         double Rx = (double) width / Nx;
 
         //calculate height and width of a cell from the sub-grid
-        double gridHeight = (double) Ry/n;
-        double gridWidth =  (double) Rx/m;
+        double gridHeight = (double) Ry / n;
+        double gridWidth = (double) Rx / m;
 
         Random r = new Random();
         // set a random value to scale vector on Y axis
@@ -686,14 +746,14 @@ public class Camera {
         // move result point from middle of pixel to column index in sub-grid
         // then add the random value to move left/right on X axis within the cell
         if (!isZero(xJ)) {
-            Pij = Pij.add(vRight.scale( gridWidth*gridColumn+xJ));
+            Pij = Pij.add(vRight.scale(gridWidth * gridColumn + xJ));
         }
 
         // if result of yI is > 0
         // move result point from middle of pixel to row index in sub-grid
         // then add the random value to move up/down on Y axis within the cell
         if (!isZero(yI)) {
-            Pij = Pij.add(vUp.scale(gridHeight*gridRow +yI));
+            Pij = Pij.add(vUp.scale(gridHeight * gridRow + yI));
         }
 
         // return ray cast from camera to randomly selected point within grid of pixel
@@ -704,36 +764,46 @@ public class Camera {
     //endregion
 
     //region Corner Ray Casting
-    private void castRayAdaptive(int Nx, int Ny, int j, int i,int size,int depth)
-    {
+    private void castRayAdaptive(int Nx, int Ny, int j, int i, int size, int depth) {
         // construct ray through pixel
         Ray ray = constructRay(Nx, Ny, j, i);
         Point center = ray.getPoint(distance);
-        var rayBeam = constructRayCorners(Nx, Ny, ray,size);
+        var rayBeam = constructRayCorners(Nx, Ny, ray, size);
 
         // calculate  color of pixel - add all the rays colors
         // ray towards center color
         Color color = rayTracer.traceRay(ray);
         int k = 0;
-        for (var r:rayBeam) {
+        for (var r : rayBeam) {
             Color cornerColor = rayTracer.traceRay(r);
-            if(color.equals(cornerColor))
+            if (color.equals(cornerColor))
                 color = color.add(cornerColor);
             else {
-                Point subPixelCenter = getSubPixelCenter(k,Nx,Ny,size*2,center);
-                color = color.add(constructRayAdaptiveRec(Nx,Ny,subPixelCenter,r,size*2,depth));
+                Point subPixelCenter = getSubPixelCenter(k, Nx, Ny, size * 2, center);
+                color = color.add(constructRayAdaptiveRec(Nx, Ny, subPixelCenter, r, size * 2, depth));
             }
-             k++;
+            k++;
         }
-        color = color.reduce(rayBeam.size()+1);
+        color = color.reduce(rayBeam.size() + 1);
 
         //write pixel
         imageWriter.writePixel(j, i, color);
     }
 
-    private Color constructRayAdaptiveRec(int Nx, int Ny, Point center,Ray rayToCorner, int size, int depth) {
+    /**
+     * todo
+     *
+     * @param Nx
+     * @param Ny
+     * @param center
+     * @param rayToCorner
+     * @param size
+     * @param depth
+     * @return
+     */
+    private Color constructRayAdaptiveRec(int Nx, int Ny, Point center, Ray rayToCorner, int size, int depth) {
 
-        if(size<=depth) {
+        if (size <= depth) {
             Vector camToSubPixel = center.subtract(p0);
             Ray ray = new Ray(p0, camToSubPixel);
             Color color = rayTracer.traceRay(ray);
@@ -743,31 +813,39 @@ public class Camera {
             // ray towards center color
 
             int k = 0;
-            for (var r: cornersBeam) {
+            for (var r : cornersBeam) {
                 Color cornerColor = rayTracer.traceRay(r);
                 if (color.equals(cornerColor))
                     color = color.add(cornerColor);
                 else {
-                    Point subPixelCenter = getSubPixelCenter(k, Nx, Ny, size*2, center);
-                    color = color.add(constructRayAdaptiveRec(Nx, Ny, subPixelCenter,r ,size * 2, depth));
+                    Point subPixelCenter = getSubPixelCenter(k, Nx, Ny, size * 2, center);
+                    color = color.add(constructRayAdaptiveRec(Nx, Ny, subPixelCenter, r, size * 2, depth));
                 }
                 k++;
             }
-            color = color.reduce(cornersBeam.size()+1);
+            color = color.reduce(cornersBeam.size() + 1);
             return color;
-        }
-        else
-        {
+        } else {
             return rayTracer.traceRay(rayToCorner);
         }
     }
 
-    private Point getSubPixelCenter(int k, int nx, int ny, int size,Point center) {
-        double Rx = alignZero( ((double)width/nx)/size);
-        double Ry = alignZero(((double) height / ny )/ size);
+    /**
+     * todo
+     *
+     * @param k
+     * @param nx
+     * @param ny
+     * @param size
+     * @param center
+     * @return
+     */
+    private Point getSubPixelCenter(int k, int nx, int ny, int size, Point center) {
+        double Rx = alignZero(((double) width / nx) / size);
+        double Ry = alignZero(((double) height / ny) / size);
         Point p = center;
 
-        switch(k){
+        switch (k) {
             case 0:
                 return p.add(vUp.scale(Ry)).add(vRight.scale(Rx));
             case 1:
@@ -782,6 +860,7 @@ public class Camera {
 
     /**
      * cast four rays to the four corners of a pixel(i,j)
+     *
      * @param Nx number of rows in view plane
      * @param Ny number of columns in view plane
      * @param j  column index of pixel
@@ -792,7 +871,7 @@ public class Camera {
         Ray ray = constructRay(Nx, Ny, j, i);
         Point center = ray.getPoint(distance);
         // construct the four rays to the corners
-        var rayBeam = constructRayCorners(Nx, Ny, ray,2);
+        var rayBeam = constructRayCorners(Nx, Ny, ray, 2);
 
         // calculate  color of pixel - add all the rays colors
         // ray towards center color
@@ -810,12 +889,13 @@ public class Camera {
 
     /**
      * given a pixel , construct four rays to the four corners of the pixel
-     * @param Nx number of rows in view plane
-     * @param Ny number of columns in view plane
+     *
+     * @param Nx  number of rows in view plane
+     * @param Ny  number of columns in view plane
      * @param ray ray towards center of the pixel
      * @return list with the four rays
      */
-    public List<Ray> constructRayCorners(int Nx, int Ny, Ray ray,int depth) {
+    public List<Ray> constructRayCorners(int Nx, int Ny, Ray ray, int depth) {
         //get the point of the center of the pixel
         Point Pij = ray.getPoint(distance);
 
@@ -849,8 +929,86 @@ public class Camera {
 
     //endregion
 
+
+    private void castRayDOF(int Nx, int Ny, int j, int i, int n, int m) {
+        // construct ray through pixel
+        Ray ray = constructRay(Nx, Ny, j, i);
+
+        // construct n*m random rays towards the pixel
+        var apertureBeam = constructGridRaysFromAperture(n, m, ray);
+        apertureBeam.add(ray);
+
+        // calculate color of the pixel using the average from all the rays in beam
+        Color color = Color.BLACK;
+        for (var r : apertureBeam) {
+            color = color.add(rayTracer.traceRay(r));
+        }
+        // reduce final color by total number of rays to get mean value of pixel color
+        color = color.reduce(apertureBeam.size());
+
+        //write pixel
+        imageWriter.writePixel(j, i, color);
+    }
+
+    /**
+     * todo
+     *
+     * @param n
+     * @param m
+     * @param ray
+     * @return
+     */
+    public List<Ray> constructGridRaysFromAperture(int n, int m, Ray ray) {
+        List<Ray> result = new LinkedList<>();
+
+        Point topCorner = p0.add(vRight.scale(-apertureRadius)).add(vUp.scale(apertureRadius));
+        Point focal = ray.getPoint(dof);
+        Point pixelCenter = ray.getPoint(distance);
+
+        double sizeRow = alignZero((apertureRadius * 2) / n);
+        double sizeCol = alignZero((apertureRadius * 2) / m);
+
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                Ray tmp = constructRayFromAperture(i, j, sizeRow, sizeCol, focal, topCorner);
+                if (!pixelCenter.equals(tmp.getP0())) {
+                    result.add(tmp);
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * todo
+     *
+     * @param i
+     * @param j
+     * @param sizeRow
+     * @param sizeCol
+     * @param focal
+     * @param topCorner
+     * @return
+     */
+    private Ray constructRayFromAperture(int i, int j, double sizeRow, double sizeCol, Point focal, Point topCorner) {
+        Point p = topCorner;
+        Vector v;
+        if (i != 0) {
+            p = p.add(vUp.scale(-sizeRow * i));
+        }
+        if (j != 0) {
+            p = p.add(vRight.scale(sizeCol * j));
+        }
+
+        v = focal.subtract(p);
+        return new Ray(p, v);
+
+    }
+
     /**
      * move a camera to a different position point (angel of camera does not change)
+     *
      * @param to    number coordinates to move on Z axis
      * @param up    number coordinates to move on Y axis
      * @param right number coordinates to move on X axis
@@ -868,7 +1026,6 @@ public class Camera {
             p0 = p0.add(vRight.scale(right));
 
     }
-
 
 
     /**
@@ -915,13 +1072,13 @@ public class Camera {
      * @return the camera after set the new position
      */
     /**
-    public Camera rotateCamera(double angle) {
-        if (angle == 0)
-            return this;
-        vUp = vUp.vectorRotate(vTo, angle);
-        vRight = vTo.crossProduct(vUp).normalize();
-        return this;
-    }
+     public Camera rotateCamera(double angle) {
+     if (angle == 0)
+     return this;
+     vUp = vUp.vectorRotate(vTo, angle);
+     vRight = vTo.crossProduct(vUp).normalize();
+     return this;
+     }
      **/
     /**
      * todo
@@ -931,20 +1088,20 @@ public class Camera {
      * @return
      */
     /**
-    public Camera cameraPosition(Point newPosition, Point target, double angle) {
-        p0 = newPosition;
-        vTo = target.subtract(newPosition).normalize();
-        try {
-            vUp = vTo.crossProduct(vRight).normalize();
-            vRight = vTo.crossProduct(Vector.axisY).normalize();
+     public Camera cameraPosition(Point newPosition, Point target, double angle) {
+     p0 = newPosition;
+     vTo = target.subtract(newPosition).normalize();
+     try {
+     vUp = vTo.crossProduct(vRight).normalize();
+     vRight = vTo.crossProduct(Vector.axisY).normalize();
 
-        } catch (IllegalArgumentException e) {
-            vUp = Vector.axisZ;
-            vRight = Vector.axisX;
-        }
-        rotateCamera(angle);
-        return this;
-    }
-**/
+     } catch (IllegalArgumentException e) {
+     vUp = Vector.axisZ;
+     vRight = Vector.axisX;
+     }
+     rotateCamera(angle);
+     return this;
+     }
+     **/
 
 }
