@@ -27,15 +27,15 @@ public class Table {
         Point tpSurfaceTop =position.add(dirHeight.scale(height*19/20));
         Point tpSurfaceBase=position.add(dirHeight.scale(height*15/20));
         surfaceTop =(Cylinder) new Cylinder(new Ray(tpSurfaceTop,dirHeight),radius,height/20).setEmission(color);
-        surfaceBase=(Cylinder) new Cylinder(new Ray(tpSurfaceBase,dirHeight),radius,height/20).setEmission(new Color(GRAY))
+        surfaceBase=(Cylinder) new Cylinder(new Ray(tpSurfaceBase,dirHeight),radius,height/20).setEmission(color)
                 .setMaterial(new Material().setkD(0.5).setkS(0.5).setnShininess(60));
 
         leg=(Cylinder) new Cylinder(new Ray(position.add(dirHeight.scale(height*2/20)),dirHeight),radius/7,height*13/20)
                 .setEmission(color);
         base=(Cylinder) new Cylinder(new Ray(position,dirHeight),radius/3,height*2/20).setEmission(color);
         elements=new Geometries(surfaceTop,leg,base,surfaceBase);
-        for (int i = 0; i < 16; i++) {
-            double angle = 360 / 16;
+        for (int i = 0; i < 4; i++) {
+            double angle = 360 / 4;
             cy1 = (Cylinder) new Cylinder(new Ray(tpSurfaceBase.add(dirMini.vectorRotate(dirHeight, i * angle)), dirHeight), radiusMini, height * 4 / 20)
                     .setEmission(color);
             elements.add(cy1);

@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.Random;
+import java.util.stream.IntStream;
 
 import static primitives.Util.alignZero;
 import static primitives.Util.isZero;
@@ -16,6 +17,12 @@ import static primitives.Util.isZero;
  * camera in 3D space with view plane
  */
 public class Camera {
+
+    private static final String RESOURCE_ERROR = "Renderer resource not set";
+    private static final String IMAGE_WRITER_COMPONENT = "Image writer";
+    private static final String CAMERA_CLASS = "Camera";
+    private static final String RAY_TRACER_COMPONENT = "Ray tracer";
+
     //region Fields
 
     // static data fields
@@ -95,6 +102,21 @@ public class Camera {
     boolean useDOF;
     //endregion
 
+    //region threads functionality
+    /**
+     * todo
+     */
+    private int threadsCount ;
+    /**
+     * Spare threads if trying to use all the cores
+     */
+    private static final int SPARE_THREADS = 2;
+    /**
+     *  print interval in seconds
+     */
+    private double printInterval ;
+    //endregion
+
     /**
      * constructor
      *
@@ -118,6 +140,8 @@ public class Camera {
         dof = camBuilder.dof;
         apertureRadius = camBuilder.apertureRadius;
         useDOF = camBuilder.useDOF;
+        threadsCount = camBuilder.threadsCount;
+        printInterval = camBuilder.printInterval;
     }
 
     //region Camera Builder
@@ -208,6 +232,24 @@ public class Camera {
          * todo
          */
         private boolean useDOF = false;
+
+        /**
+         * todo
+         */
+        private int threadsCount =0 ;
+        /**
+         * Spare threads if trying to use all the cores
+         */
+        private static final int SPARE_THREADS = 2;
+        /**
+         *  print interval in seconds
+         */
+        private double printInterval =0l ;
+
+
+
+
+
 
         /**
          * constructor
@@ -356,6 +398,36 @@ public class Camera {
          */
         public CameraBuilder setUseDOF(boolean useDOF) {
             this.useDOF = useDOF;
+            return this;
+        }
+
+        /**
+         * Set multi-threading <br>
+         * - if the parameter is 0 - number of cores less 2 is taken
+         *
+         * @param threads number of threads
+         * @return the Render object itself
+         */
+        public CameraBuilder setMultithreading(int threads) {
+            if (threads < -2)
+                throw new IllegalArgumentException("Multithreading parameter must be 0 or higher");
+            if (threads >= -1)
+                this.threadsCount = threads;
+            else {
+                int cores = Runtime.getRuntime().availableProcessors() - SPARE_THREADS;
+                this.threadsCount = cores <= 2 ? 1 : cores;
+            }
+            return this;
+        }
+
+        /**
+         * Set debug printing interval. If it's zero - there won't be printing at all
+         *
+         * @param interval printing interval in seconds
+         * @return the Render object itself
+         */
+        public CameraBuilder setDebugPrint(double interval) {
+            printInterval = interval;
             return this;
         }
 
@@ -516,6 +588,10 @@ public class Camera {
         }
     }
 
+
+
+
+
     /**
      * render image "captured" through view plane
      */
@@ -530,46 +606,145 @@ public class Camera {
         int nX = imageWriter.getNx();
         int nY = imageWriter.getNy();
 
+        //initialize thread progress reporter
+        Pixel.initialize(nY, nX, printInterval);
+
         // for each pixel (i,j) , construct  ray/rays from camera through pixel,
         // functions use rayTracer object to get correct color, then use imageWriter to write pixel to the file
 
         if (isUseDOF()) {
-            for (int i = 0; i < nY; i++)
-                for (int j = 0; j < nX; j++)
-                    castRayDOF(nX, nY, i, j, n, m);
+            if (threadsCount == 0) {
+                for (int i = 0; i < nY; ++i)
+                    for (int j = 0; j < nX; ++j) {
+                        castRayDOF(nX, nY, i, j, n, m);
+                        Pixel.pixelDone();
+                        Pixel.printPixel();
+                    }
+            } else if (threadsCount == -1) {
+                IntStream.range(0, nY).parallel().forEach(i -> IntStream.range(0, nX).parallel().forEach(j -> {
+                    castRayDOF(nX, nY, i, j, n, m);;
+                    Pixel.pixelDone();
+                    Pixel.printPixel();
+                }));
+            } else {
+                while (threadsCount-- > 0) {
+                    new Thread(() -> {
+                        for (Pixel pixel = new Pixel(); pixel.nextPixel(); Pixel.pixelDone())
+                            castRayDOF(nX, nY, pixel.col, pixel.row, n, m);
+                    }).start();
+                }
+                Pixel.waitToFinish();
+            }
         }
         //cast ray according to Anti-Aliasing method set to Camera
         else {
             switch (getAntiAliasing()) {
                 // no method used - cast single ray to center of pixel
                 case NONE -> {
-                    for (int i = 0; i < nY; i++)
-                        for (int j = 0; j < nX; j++)
-                            castRay(nX, nY, i, j);
+                    if (threadsCount == 0) {
+                        for (int i = 0; i < nY; ++i)
+                            for (int j = 0; j < nX; ++j) {
+                                castRay(nX, nY, j, i);
+                                Pixel.pixelDone();
+                                Pixel.printPixel();
+                            }
+                    } else if (threadsCount == -1) {
+                        IntStream.range(0, nY).parallel().forEach(i -> IntStream.range(0, nX).parallel().forEach(j -> {
+                            castRay(nX, nY, j, i);
+                            Pixel.pixelDone();
+                            Pixel.printPixel();
+                        }));
+                    } else {
+                        while (threadsCount-- > 0) {
+                            new Thread(() -> {
+                                for (Pixel pixel = new Pixel(); pixel.nextPixel(); Pixel.pixelDone())
+                                    castRay(nX, nY, pixel.col, pixel.row);
+                            }).start();
+                        }
+                        Pixel.waitToFinish();
+                    }
                     break;
                 }
                 // bean of random rays cast for each pixel besides the ray towards the center
                 case RANDOM -> {
-                    for (int i = 0; i < nY; i++)
-                        for (int j = 0; j < nX; j++)
+                    if (threadsCount == 0) {
+                        for (int i = 0; i < nY; ++i)
+                            for (int j = 0; j < nX; ++j) {
+                                castRayBeamRandom(nX, nY, i, j, n, m);
+                                Pixel.pixelDone();
+                                Pixel.printPixel();
+                            }
+                    } else if (threadsCount == -1) {
+                        IntStream.range(0, nY).parallel().forEach(i -> IntStream.range(0, nX).parallel().forEach(j -> {
                             castRayBeamRandom(nX, nY, i, j, n, m);
+                            Pixel.pixelDone();
+                            Pixel.printPixel();
+                        }));
+                    } else {
+                        while (threadsCount-- > 0) {
+                            new Thread(() -> {
+                                for (Pixel pixel = new Pixel(); pixel.nextPixel(); Pixel.pixelDone())
+                                    castRayBeamRandom(nX, nY, pixel.col, pixel.row, n, m);
+                            }).start();
+                        }
+                        Pixel.waitToFinish();
+                    }
+
                     break;
 
                 }
                 // four rays cast to four corners of pixel besides the ray towards the center
                 case CORNERS -> {
-                    for (int i = 0; i < nY; i++)
-                        for (int j = 0; j < nX; j++)
+                    if (threadsCount == 0) {
+                        for (int i = 0; i < nY; ++i)
+                            for (int j = 0; j < nX; ++j) {
+                                castRayBeamCorners(nX, nY, i, j);
+                                Pixel.pixelDone();
+                                Pixel.printPixel();
+                            }
+                    } else if (threadsCount == -1) {
+                        IntStream.range(0, nY).parallel().forEach(i -> IntStream.range(0, nX).parallel().forEach(j -> {
                             castRayBeamCorners(nX, nY, i, j);
+                            Pixel.pixelDone();
+                            Pixel.printPixel();
+                        }));
+                    } else {
+                        while (threadsCount-- > 0) {
+                            new Thread(() -> {
+                                for (Pixel pixel = new Pixel(); pixel.nextPixel(); Pixel.pixelDone())
+                                    castRayBeamCorners(nX, nY,pixel.col, pixel.row);
+                            }).start();
+                        }
+                        Pixel.waitToFinish();
+                    }
                     break;
 
 
                 }
                 case ADAPTIVE -> {
                     int depth = getRecurseDepth();
-                    for (int i = 0; i < nY; i++)
-                        for (int j = 0; j < nX; j++)
+                    if (threadsCount == 0) {
+                        for (int i = 0; i < nY; ++i)
+                            for (int j = 0; j < nX; ++j) {
+                                castRayAdaptive(nX, nY, i, j, 2, depth);
+                                Pixel.pixelDone();
+                                Pixel.printPixel();
+                            }
+                    } else if (threadsCount == -1) {
+                        IntStream.range(0, nY).parallel().forEach(i -> IntStream.range(0, nX).parallel().forEach(j -> {
                             castRayAdaptive(nX, nY, i, j, 2, depth);
+                            Pixel.pixelDone();
+                            Pixel.printPixel();
+                        }));
+                    } else {
+                        while (threadsCount-- > 0) {
+                            new Thread(() -> {
+                                for (Pixel pixel = new Pixel(); pixel.nextPixel(); Pixel.pixelDone())
+                                    castRayAdaptive(nX, nY, pixel.col, pixel.row, 2, depth);
+                            }).start();
+                        }
+                        Pixel.waitToFinish();
+                    }
                     break;
                 }
             }
