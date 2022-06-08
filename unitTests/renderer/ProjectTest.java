@@ -193,7 +193,7 @@ public class ProjectTest {
                 .setBackground(new Color(0, 102d, 102d))
                 .build();
 
-        ImageWriter imageWriter = new ImageWriter("ProjectTest3", 600, 600);
+        ImageWriter imageWriter = new ImageWriter("ProjectTest4", 600, 600);
         Camera camera = new Camera.CameraBuilder(new Point(0, 120, 1300), new Vector(0, -0.15, -1), new Vector(0, (double) 20 / 3, -1)) //
                 .setVPSize(600, 600)
                 .setVPDistance(1000)
