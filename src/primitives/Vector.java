@@ -6,17 +6,17 @@ import static primitives.Util.*;
 public class Vector extends Point{
 
     /**
-     * todo
+     * X Axis
      */
-    public static final Vector axisX = new Vector(1,0,0);
+    public static final Vector X_AXIS = new Vector(1,0,0);
     /**
-     * todo
+     * Y Axis
      */
-    public static final Vector axisY = new Vector(0,1,0);
+    public static final Vector Y_AXIS = new Vector(0,1,0);
     /**
-     * todo
+     * Z Axis
      */
-    public static final Vector axisZ = new Vector(0,0,1);
+    public static final Vector Z_AXIS = new Vector(0,0,1);
 
 
     /**
@@ -159,10 +159,11 @@ public class Vector extends Point{
     }
 
     /**
-     * todo
-     * @param axis
-     * @param theta
-     * @return
+     * rotate a vector by angle theta
+     * @param axis direction of  rotation
+     * @param theta angle of rotation
+     * @return the vector rotated by angle theta in the direction of the vector sent as parameter
+     * @author Yona Shmerla
      */
     public Vector vectorRotate(Vector axis, double theta) {
         double x = this.getX();

@@ -55,7 +55,7 @@ public class Table {
     public Table(int height, double radius, Color color, Point position, Vector dirHeight, Vector dirSurface){
 
         double radiusMini=radius/15;
-        Vector dirMini=dirSurface.scale(radius-radiusMini);
+        Vector dirMini=dirSurface.normalize().scale(radius-radiusMini);
         Point tpSurfaceTop =position.add(dirHeight.scale(height*19/20));
         Point tpSurfaceBase=position.add(dirHeight.scale(height*15/20));
 

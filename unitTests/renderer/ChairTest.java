@@ -28,10 +28,10 @@ public class ChairTest {
                 .setAmbientLight(new AmbientLight(new Color(229, 204, 255), new Double3(.15)))
                 .setGeometries(new Geometries(
                         new Chair(new Point(-50, -50, -500), 45d, 100d, 6d, 5d, 3d, 0.75d,
-                                new Vector(0, 0, -1), new Vector(1, 0, 0), new Color(164, 116, 73))
+                                new Vector(0, 0, -1), new Vector(1, 0, 0), new Color(164, 116, 73),true)
                                 .getGeometries()
                         , new Chair(new Point(50, -50, -500), 45d, 100d, 6d, 5d, 3d, 0.75d,
-                        new Vector(-1, 0, 0), new Vector(0, 0, -1), new Color(164, 116, 73))
+                        new Vector(-1, 0, 0), new Vector(0, 0, -1), new Color(164, 116, 73),false)
                         .getGeometries()
 
                 ))
@@ -42,13 +42,13 @@ public class ChairTest {
                 .build();
 
 
-        ImageWriter imageWriter = new ImageWriter("TestSeat9withGapAdaptive", 600, 600);
+        ImageWriter imageWriter = new ImageWriter("TestSeat9Flipped", 600, 600);
         Camera camera = new Camera.CameraBuilder(new Point(0, 0, 1000), new Vector(0, 0, -0.5), new Vector(0, 1, 0)) //
                 .setVPSize(200, 200)
                 .setVPDistance(1000)
                 .setImageWriter(imageWriter) //
                 .setRayTracer(new RayTracerBasic(scene))
-                .setAntiAliasing(AntiAliasing.ADAPTIVE).setRecurseDepth(16)
+                .setAntiAliasing(AntiAliasing.NONE)
                 .build();//
 
         camera.renderImage(); //

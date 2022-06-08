@@ -124,7 +124,7 @@ public class Chair {
      * @param color color of chair
      */
     public Chair(Point p, double seatLength, double height, double seatWidth, double backWidth,
-                 double legRadius, double barRadius, Vector forward, Vector right, Color color) {
+                 double legRadius, double barRadius, Vector forward, Vector right, Color color,boolean isUpsideDown) {
 
         //size of distance from center point to any corner on the top polygon of the seat
         double cornerScale = seatLength / 2;
@@ -138,10 +138,22 @@ public class Chair {
         double legHeight = height/2;
         //radius of pegs between seat and backrest
         double pegRadius = backWidth/2;
-        //orthogonal vector to forward and right vectors towards bottom of chair
-        Vector down = forward.crossProduct(right).normalize();
-        //orthogonal vector to forward and right vectors towards top of chair
-        Vector up = down.scale(-1);
+
+        Vector down=null;
+        Vector up=null;
+        if(!isUpsideDown) {
+            //orthogonal vector to forward and right vectors towards bottom of chair
+             down= forward.crossProduct(right).normalize();
+            //orthogonal vector to forward and right vectors towards top of chair
+             up= down.scale(-1);
+        }
+        else
+        {
+            //orthogonal vector to forward and right vectors towards bottom of chair
+            down= right.crossProduct(forward).normalize();
+            //orthogonal vector to forward and right vectors towards top of chair
+            up= down.scale(-1);
+        }
         //vector from top polygon of seat scaled to reach bottom polygon of seat
         Vector downScale = down.scale(seatWidth);
         // parallel point to center of seat on the bottom polygon

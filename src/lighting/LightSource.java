@@ -25,9 +25,12 @@ public interface LightSource {
     public Vector getL(Point p);
 
     /**
-     * todo
-     * @param p
-     * @return
+     * get a beam of rays from a point on a geometry towards a light,
+     * all the rays are constructed within the soft shadow radius boundary
+     *
+     * @param p point on the geometry
+     * @return {@link List}of rys from the geometry to the soft shadow radius
+     * @author Yona Shmerla
      */
     public List<Vector> getListL(Point p);
     /**

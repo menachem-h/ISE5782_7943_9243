@@ -18,10 +18,7 @@ import static primitives.Util.isZero;
  */
 public class Camera {
 
-    private static final String RESOURCE_ERROR = "Renderer resource not set";
-    private static final String IMAGE_WRITER_COMPONENT = "Image writer";
-    private static final String CAMERA_CLASS = "Camera";
-    private static final String RAY_TRACER_COMPONENT = "Ray tracer";
+
 
     //region Fields
 
@@ -97,14 +94,14 @@ public class Camera {
     private double apertureRadius;
 
     /**
-     * todo
+     * determine if DOF functionality is used in image rendering
      */
     boolean useDOF;
     //endregion
 
     //region threads functionality
     /**
-     * todo
+     * number of threads to use in image rendering
      */
     private int threadsCount ;
     /**
@@ -143,6 +140,7 @@ public class Camera {
         threadsCount = camBuilder.threadsCount;
         printInterval = camBuilder.printInterval;
     }
+
 
     //region Camera Builder
 
@@ -229,12 +227,12 @@ public class Camera {
         private double apertureRadius;
 
         /**
-         * todo
+         * determine if DOF functionality is used in image rendering
          */
         private boolean useDOF = false;
 
         /**
-         * todo
+         * number of threads to use in image rendering
          */
         private int threadsCount =0 ;
         /**
@@ -391,10 +389,10 @@ public class Camera {
         }
 
         /**
-         * todo
+         * setter for use DOF field
          *
-         * @param useDOF
-         * @return
+         * @param useDOF true if DOF is used , otherwise, false.
+         * @return this {@link CameraBuilder} instance
          */
         public CameraBuilder setUseDOF(boolean useDOF) {
             this.useDOF = useDOF;
@@ -438,8 +436,7 @@ public class Camera {
          * @return new {@link Camera} object
          */
         public Camera build() {
-            Camera cam = new Camera(this);
-            return cam;
+           return new Camera(this);
         }
 
 
@@ -549,9 +546,9 @@ public class Camera {
     }
 
     /**
-     * todo
+     * getter for useDOF field
      *
-     * @return
+     * @return whether DOF functionality is used
      */
     public boolean isUseDOF() {
         return useDOF;
@@ -622,7 +619,7 @@ public class Camera {
                     }
             } else if (threadsCount == -1) {
                 IntStream.range(0, nY).parallel().forEach(i -> IntStream.range(0, nX).parallel().forEach(j -> {
-                    castRayDOF(nX, nY, i, j, n, m);;
+                    castRayDOF(nX, nY, i, j, n, m);
                     Pixel.pixelDone();
                     Pixel.printPixel();
                 }));
@@ -663,7 +660,6 @@ public class Camera {
                         }
                         Pixel.waitToFinish();
                     }
-                    break;
                 }
                 // bean of random rays cast for each pixel besides the ray towards the center
                 case RANDOM -> {
@@ -690,8 +686,6 @@ public class Camera {
                         Pixel.waitToFinish();
                     }
 
-                    break;
-
                 }
                 // four rays cast to four corners of pixel besides the ray towards the center
                 case CORNERS -> {
@@ -717,8 +711,6 @@ public class Camera {
                         }
                         Pixel.waitToFinish();
                     }
-                    break;
-
 
                 }
                 case ADAPTIVE -> {
@@ -745,7 +737,6 @@ public class Camera {
                         }
                         Pixel.waitToFinish();
                     }
-                    break;
                 }
             }
         }
@@ -753,9 +744,7 @@ public class Camera {
 
     //endregion
 
-    //region Ray Casting + Anti-Aliasing
-
-    //region No Anti-Aliasing
+    //region default ray casting
 
     /**
      * cast a ray from camera through pixel (i,j) in view plane and get color of pixel
@@ -821,7 +810,7 @@ public class Camera {
     }
     //endregion
 
-    //region Random Beam Casting
+    //region ray casting with Anti-Aliasing using grid
 
     /**
      * cast a beam of n*m random beams within a grid of a pixel (i,j)
@@ -938,27 +927,45 @@ public class Camera {
     }
     //endregion
 
-    //region Corner Ray Casting
+    //region  ray casting with Anti-Aliasing using Adaptive Ray Casting
+
+    /**
+     * cast ray through pixel in the view plane, using adaptive Anti-Aliasing
+     * @param Nx number of rows in view plane
+     * @param Ny number of columns in view plane
+     * @param j  column index of pixel
+     * @param i  row index of pixel
+     * @param size size of division of pixel
+     * @param depth depth of division to end recursive call
+     */
     private void castRayAdaptive(int Nx, int Ny, int j, int i, int size, int depth) {
+
         // construct ray through pixel
         Ray ray = constructRay(Nx, Ny, j, i);
         Point center = ray.getPoint(distance);
+        //construct four rays to the corners of the pixel
+        //function returns list with rays sorted from top left corner to bottom left, clockwise.
         var rayBeam = constructRayCorners(Nx, Ny, ray, size);
 
-        // calculate  color of pixel - add all the rays colors
+        // calculate  color of pixel , if the corner color matches the center , add the color,
+        // else recursively  calculate the subpixel which corner color does not match
         // ray towards center color
         Color color = rayTracer.traceRay(ray);
-        int k = 0;
+        int k = 0; //index of ray in the list
         for (var r : rayBeam) {
             Color cornerColor = rayTracer.traceRay(r);
             if (color.equals(cornerColor))
                 color = color.add(cornerColor);
+            // corner color does not match
             else {
+                // get the center point of the subpixel
                 Point subPixelCenter = getSubPixelCenter(k, Nx, Ny, size * 2, center);
+                //call recursive function to calculate color of subpixel
                 color = color.add(constructRayAdaptiveRec(Nx, Ny, subPixelCenter, r, size * 2, depth));
             }
             k++;
         }
+        //get avg color of pixel between all the samples
         color = color.reduce(rayBeam.size() + 1);
 
         //write pixel
@@ -966,26 +973,28 @@ public class Camera {
     }
 
     /**
-     * todo
-     *
-     * @param Nx
-     * @param Ny
-     * @param center
-     * @param rayToCorner
-     * @param size
-     * @param depth
-     * @return
+     * recursive function to calculate color of a subpixel
+     * @param Nx number of rows in view plane
+     * @param Ny number of columns in view plane
+     * @param center center point of subpixel
+     * @param rayToCorner ray constructed from camera to one of corners of the pixel (depending on location of subpixel)
+     * @param size size of division of pixel at current level of recursion
+     * @param depth depth of division to end recursive call
+     * @return color of the subpixel
      */
     private Color constructRayAdaptiveRec(int Nx, int Ny, Point center, Ray rayToCorner, int size, int depth) {
 
+        //if division size is smaller or equal to recursion depth limit , continue to calculate subpixel color
         if (size <= depth) {
+            //ray from camera to center of subpixel
             Vector camToSubPixel = center.subtract(p0);
             Ray ray = new Ray(p0, camToSubPixel);
             Color color = rayTracer.traceRay(ray);
+            //construct four rays to the four corners of the subpixel
             var cornersBeam = constructRayCorners(Nx, Ny, ray, size);
 
-            // calculate  color of pixel - add all the rays colors
-            // ray towards center color
+            //if color of the corners matches , ad rhe color, otherwise ,recursively calculate
+            //the color of the mismatching corner subpixel
 
             int k = 0;
             for (var r : cornersBeam) {
@@ -993,41 +1002,48 @@ public class Camera {
                 if (color.equals(cornerColor))
                     color = color.add(cornerColor);
                 else {
+                    // get the center point of the sub pixel
                     Point subPixelCenter = getSubPixelCenter(k, Nx, Ny, size * 2, center);
+                    // recursively calculate color , doubling division of pixel by two for every level of recursive call
                     color = color.add(constructRayAdaptiveRec(Nx, Ny, subPixelCenter, r, size * 2, depth));
                 }
                 k++;
             }
+            //return the color of the subpixel
             color = color.reduce(cornersBeam.size() + 1);
             return color;
+
+        // recursion depth is reached , return the color of the corner of the subpixel
         } else {
             return rayTracer.traceRay(rayToCorner);
         }
     }
 
     /**
-     * todo
-     *
-     * @param k
-     * @param nx
-     * @param ny
-     * @param size
-     * @param center
-     * @return
+     * given a pixel and an index get the center point of  subpixel
+     * indexes run from top left corner to bottom left, clockwise
+     * @param k index of subpixel
+     * @param Nx number of rows in view plane
+     * @param Ny number of columns in view plane
+     * @param size size of division of pixel
+     * @param center center point of current pixel/subpixel
+     * @return center point of the subpixel
      */
-    private Point getSubPixelCenter(int k, int nx, int ny, int size, Point center) {
-        double Rx = alignZero(((double) width / nx) / size);
-        double Ry = alignZero(((double) height / ny) / size);
+    private Point getSubPixelCenter(int k, int Nx, int Ny, int size, Point center) {
+
+        //calculate scaling factors with division size parameter
+        double Rx = alignZero(((double) width / Nx) / size);
+        double Ry = alignZero(((double) height / Ny) / size);
         Point p = center;
 
         switch (k) {
-            case 0:
+            case 0: // top left corner subpixel
                 return p.add(vUp.scale(Ry)).add(vRight.scale(Rx));
-            case 1:
+            case 1: //top right corner subpixel
                 return p.add(vUp.scale(-Ry)).add(vRight.scale(Rx));
-            case 2:
+            case 2: // bottom right corner subpixel
                 return p.add(vUp.scale(-Ry)).add(vRight.scale(-Rx));
-            case 3:
+            case 3: // bottom left corner subpixel
                 return p.add(vUp.scale(Ry)).add(vRight.scale(-Rx));
         }
         return null;
@@ -1063,23 +1079,27 @@ public class Camera {
     }
 
     /**
-     * given a pixel , construct four rays to the four corners of the pixel
+     * given a pixel , construct four rays to the four corners of the pixel , or a subpixel
      *
      * @param Nx  number of rows in view plane
      * @param Ny  number of columns in view plane
-     * @param ray ray towards center of the pixel
+     * @param ray ray towards center of the pixel or subpixel
+     * @param size size of division of pixel
      * @return list with the four rays
      */
-    public List<Ray> constructRayCorners(int Nx, int Ny, Ray ray, int depth) {
+    public List<Ray> constructRayCorners(int Nx, int Ny, Ray ray, int size) {
         //get the point of the center of the pixel
         Point Pij = ray.getPoint(distance);
 
         // calculate "size" of each pixel -
         // height per pixel = total "physical" height / number of rows
         // width per pixel = total "physical" width / number of columns
-        // divide height and width values by two
-        double Ry = alignZero((double) height / Ny / depth);
-        double Rx = alignZero((double) width / Nx / depth);
+        // divide height and width values by size of pixel, size is set to two for original pixel
+        // moving from center point to the corners by dividing pixel size to two,
+        //for subpixel , the size of division is larger hence the movement from the center is smaller
+        // allowing to cast the rays to the corners of the specific subpixel
+        double Ry = alignZero((double) height / Ny / size);
+        double Rx = alignZero((double) width / Nx / size);
         Point p = Pij;
 
         //construct the four rays by scaling the required camera vectors in correct direction
@@ -1102,9 +1122,16 @@ public class Camera {
     }
     //endregion
 
-    //endregion
-
-
+    //region ray casting with DOF
+    /**
+     * cast ray from camera through pixels on view plane using DOF
+     * @param Nx number of rows in view plane
+     * @param Ny number of columns in view plane
+     * @param j  column index of pixel
+     * @param i  row index of pixel
+     * @param n  first parameter to set number of  rays to cast from aperture
+     * @param m  second parameter to set number of rays to cast from aperture
+     */
     private void castRayDOF(int Nx, int Ny, int j, int i, int n, int m) {
         // construct ray through pixel
         Ray ray = constructRay(Nx, Ny, j, i);
@@ -1126,24 +1153,30 @@ public class Camera {
     }
 
     /**
-     * todo
-     *
-     * @param n
-     * @param m
-     * @param ray
-     * @return
+     * construct n*m rays from a camera through a grid within an aperture around a pixel
+     * @param n  first parameter to set number of  rays to cast from aperture
+     * @param m  second parameter to set number of rays to cast from aperture
+     * @param ray ray from camera towards center of pixel where the aperture is used around
+     * @return List of n*m rays constructed from camera through the aperture
      */
     public List<Ray> constructGridRaysFromAperture(int n, int m, Ray ray) {
         List<Ray> result = new LinkedList<>();
 
+        //reach top left corner if aperture
         Point topCorner = p0.add(vRight.scale(-apertureRadius)).add(vUp.scale(apertureRadius));
+        //get the focal point
         Point focal = ray.getPoint(dof);
+        //get the point of center of the pixel (which is also the center of the aperture)
         Point pixelCenter = ray.getPoint(distance);
 
+        // length of a cell in the subgrid
         double sizeRow = alignZero((apertureRadius * 2) / n);
+        // width of a cell in the subgrid
         double sizeCol = alignZero((apertureRadius * 2) / m);
 
 
+        // loop through entire grid and construct a ray through every cell in subgrid
+        // end after constructing n*m rays
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
                 Ray tmp = constructRayFromAperture(i, j, sizeRow, sizeCol, focal, topCorner);
@@ -1156,19 +1189,22 @@ public class Camera {
     }
 
     /**
-     * todo
+     * construct a ray from  camera through a cell in the subgrid within an aperture around a pixel
      *
-     * @param i
-     * @param j
-     * @param sizeRow
-     * @param sizeCol
-     * @param focal
-     * @param topCorner
+     * @param i row index of call in subgrid
+     * @param j column index of cell in subgrid
+     * @param sizeRow subgrid row length
+     * @param sizeCol subgrid column length
+     * @param focal focal point
+     * @param topCorner top left corner of aperture
      * @return
      */
     private Ray constructRayFromAperture(int i, int j, double sizeRow, double sizeCol, Point focal, Point topCorner) {
+
         Point p = topCorner;
         Vector v;
+
+        // move point from top corner to required cell in subgrid
         if (i != 0) {
             p = p.add(vUp.scale(-sizeRow * i));
         }
@@ -1176,11 +1212,16 @@ public class Camera {
             p = p.add(vRight.scale(sizeCol * j));
         }
 
+        // create vector from camera to the point in the cell
         v = focal.subtract(p);
+
+        //construct ray from camera to the point
         return new Ray(p, v);
 
     }
+    //endregion
 
+    //region move and rotate camera
     /**
      * move a camera to a different position point (angel of camera does not change)
      *
@@ -1217,11 +1258,11 @@ public class Camera {
     public Camera(Point location, Point target, double angle) {
         vTo = target.subtract(location).normalize();
         try {
-            vRight = vTo.crossProduct(Vector.axisY).normalize();
+            vRight = vTo.crossProduct(Vector.Y_AXIS).normalize();
             vUp = vRight.crossProduct(vTo).normalize();
         } catch (IllegalArgumentException e) {
             // vTo is co-lined with Y axis
-            vUp = Vector.axisZ;
+            vUp = Vector.Z_AXIS;
             vRight = vTo.crossProduct(vUp).normalize();
         }
 
@@ -1246,7 +1287,7 @@ public class Camera {
      * @param angle - the angle of rotation (degree)
      * @return the camera after set the new position
      */
-    /**
+
      public Camera rotateCamera(double angle) {
      if (angle == 0)
      return this;
@@ -1254,29 +1295,31 @@ public class Camera {
      vRight = vTo.crossProduct(vUp).normalize();
      return this;
      }
-     **/
+
     /**
-     * todo
-     * @param newPosition
-     * @param target
-     * @param angle
-     * @return
+     * move camera to new position using origin point and target view point to set direction of camera
+     * allows also to rotate the camera
+     * @param newPosition new origin position point of camera
+     * @param target new target viewing point for direction of camera
+     * @param angle angle to rotate camere by
+     * @return the camera after it is set o its new position and rotated
      */
-    /**
+
      public Camera cameraPosition(Point newPosition, Point target, double angle) {
      p0 = newPosition;
      vTo = target.subtract(newPosition).normalize();
      try {
      vUp = vTo.crossProduct(vRight).normalize();
-     vRight = vTo.crossProduct(Vector.axisY).normalize();
+     vRight = vTo.crossProduct(Vector.Y_AXIS).normalize();
 
      } catch (IllegalArgumentException e) {
-     vUp = Vector.axisZ;
-     vRight = Vector.axisX;
+     vUp = Vector.Z_AXIS;
+     vRight = Vector.X_AXIS;
      }
      rotateCamera(angle);
      return this;
      }
-     **/
+     //endregion
+
 
 }

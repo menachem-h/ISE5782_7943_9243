@@ -1,8 +1,6 @@
 package renderer;
 
-import geometries.Geometries;
 import geometries.Geometry;
-import geometries.Intersectable;
 import lighting.LightSource;
 import primitives.*;
 import scene.Scene;
@@ -33,7 +31,9 @@ public class RayTracerBasic extends RayTracer {
      */
     private static final Double3 INITIAL_K = Double3.ONE;
 
-    //todo
+    /**
+     * determine if to use soft shadow functionality
+     */
     private boolean softShadow = false;
 
     /**
@@ -45,10 +45,19 @@ public class RayTracerBasic extends RayTracer {
         super(scene);
     }
 
+    /**
+     * getter for soft shadow field
+     * @return true  if soft shadow functionality is used, otherwise, false
+     */
     public boolean isSoftShadow() {
         return softShadow;
     }
 
+    /**
+     * setter for soft shadow field
+     * @param softShadow boolean value to determine if to use soft shadow functionality
+     * @return this instance of the ray tracer
+     */
     public RayTracerBasic setSoftShadow(boolean softShadow) {
         this.softShadow = softShadow;
         return this;
@@ -105,7 +114,7 @@ public class RayTracerBasic extends RayTracer {
         // local effects (basic color)
         Color color =
                 // Ie
-                p.geometry.getEmission()
+                geometry.getEmission()
                         // Kd * |l.dorProduct(n)| * +Ks * max(0 ,(-v).dotProduct(r)) ** nShinines * Il
                         .add(calcLocalEffects(p, ray, k));
 
@@ -231,8 +240,8 @@ public class RayTracerBasic extends RayTracer {
         Color color = Color.BLACK;
         // loop through all light sources in scene
 
+        var lights = scene.getLights();
         if (softShadow) {
-            var lights = scene.getLights();
             for (var lightSource : lights) {
                 Color colorBeam = Color.BLACK;
                 var vectors = lightSource.getListL(intersection.point);
@@ -257,7 +266,6 @@ public class RayTracerBasic extends RayTracer {
             }
         }
         else {
-            var lights = scene.getLights();
             for (var lightSource : lights) {
                 // l
                 Vector l = lightSource.getL(intersection.point);
