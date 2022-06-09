@@ -3,6 +3,7 @@ package renderer;
 import geometries.Geometries;
 import geometries.Polygon;
 import primitives.Color;
+import primitives.Material;
 import primitives.Point;
 import primitives.Vector;
 
@@ -27,7 +28,7 @@ public class FloorSquare {
      * @param sumLength number of tiles per column
      * @param sumWidth number of tiles per row
      */
-    FloorSquare(Point start, Vector len, Vector wid, Color color1, Color color2, double length, double width, int sumLength, int sumWidth) {
+    FloorSquare(Point start, Vector len, Vector wid, Color color1, Color color2, double length, double width, int sumLength, int sumWidth, Material mt) {
 
         elements = new Geometries();
 
@@ -67,10 +68,10 @@ public class FloorSquare {
 
                 //alternate color of tiles
                 if ((i+j)%2==0){
-                    elements.add(new Polygon(p1, p2, p3,p4).setEmission(color1));
+                    elements.add(new Polygon(p1, p2, p3,p4).setEmission(color1).setMaterial(mt));
                 }
                 else{
-                    elements.add(new Polygon(p1, p2, p3,p4).setEmission(color2));
+                    elements.add(new Polygon(p1, p2, p3,p4).setEmission(color2).setMaterial(mt));
                 }
             }
         }

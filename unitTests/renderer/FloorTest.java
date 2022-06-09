@@ -30,7 +30,7 @@ public class FloorTest {
                 .setAmbientLight(new AmbientLight(new Color(229, 204, 255), new Double3(.15)))
                 .setGeometries(new Geometries(
                         new FloorSquare(new Point(100, 10, -100), new Vector(0, 0, 1), new Vector(-1, 0, 0),
-                        new Color(176,131,78), new Color(129,102,70), 100, 100, 10, 10).getElements()))
+                        new Color(176,131,78), new Color(129,102,70), 100, 100, 10, 10,new Material()).getElements()))
                 .setLights(lights)
                 .setBackground(new Color(0, 102d, 102d))
                 .build();
