@@ -106,8 +106,8 @@ public class ProjectTest {
     public void imageTest01() {
 
         List<LightSource> lights = new LinkedList<>();
-        lights.add(new SpotLight(new Color(255, 253, 208), new Point(0, 85, 100), new Vector(0, -0.2, 1)).setkL(0.0004).setkQ(0.000000006));
-        lights.add(new SpotLight(new Color(255, 197, 143), new Point(25, 230, 950), new Vector(-0.2, -0.1, -0.5).normalize()).setkL(0.0004).setkQ(0.0000000006));
+        lights.add(new SpotLight(new Color(255, 253, 208), new Point(0, 85, 100), new Vector(0, -0.2, 1)).setkL(0.0004).setkQ(0.000000006).setRadius(15d));
+        lights.add(new SpotLight(new Color(255, 197, 143), new Point(25, 230, 950), new Vector(-0.2, -0.1, -0.5).normalize()).setkL(0.0004).setkQ(0.0000000006).setRadius(15d));
 
         Polygon rightWall = (Polygon) new Polygon(new Point(-250, -50, 200), new Point(-250, 450, 200),
                 new Point(-250, 450, 1000), new Point(-250, -50, 1000)).setEmission(new Color(101, 107, 101));
@@ -228,12 +228,11 @@ public class ProjectTest {
                 .setBackground(new Color(0, 102d, 102d))
                 .build();
 
-        ImageWriter imageWriter = new ImageWriter("ProjectTest", 1400, 1400);
+        ImageWriter imageWriter = new ImageWriter("ProjectTest12", 1400, 1400);
         Camera camera = new Camera.CameraBuilder(new Point(150, 130, 1400), new Vector(-0.2, -0.15, -1), new Vector(0, (double) 20 / 3, -1)) //
                 .setVPSize(600, 600)
                 .setVPDistance(1000)
                 .setImageWriter(imageWriter) //
-                .setRayTracer(new RayTracerBasic(scene))
                 .setAntiAliasing(AntiAliasing.NONE)
                 .setMultithreading(3)
                 .setDebugPrint(0.1)

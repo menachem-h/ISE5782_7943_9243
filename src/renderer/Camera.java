@@ -1197,7 +1197,7 @@ public class Camera {
      * @param sizeCol subgrid column length
      * @param focal focal point
      * @param topCorner top left corner of aperture
-     * @return
+     * @return {@link Ray} constructed from camera through aperture
      */
     private Ray constructRayFromAperture(int i, int j, double sizeRow, double sizeCol, Point focal, Point topCorner) {
 
@@ -1248,12 +1248,12 @@ public class Camera {
      * Camera constructor by photographer location and target view point<br/>
      * the camera is always horizontal although may be directed a bit up or
      * down.<br/>
-     * However if the camera is directed upwards or downwards, it's top will be with
+     * However, if the camera is directed upwards or downwards, it's top will be with
      * the Z axis
-     *
      * @param location camera location
      * @param target   point the camera is directed to
      * @param angle    clockwise rotation angle by vTo axis - in degrees
+     * @author Dan Zilbershtein
      */
     public Camera(Point location, Point target, double angle) {
         vTo = target.subtract(location).normalize();
@@ -1286,6 +1286,7 @@ public class Camera {
      *
      * @param angle - the angle of rotation (degree)
      * @return the camera after set the new position
+     * @author Dan Zilbershtein
      */
 
      public Camera rotateCamera(double angle) {
@@ -1301,8 +1302,9 @@ public class Camera {
      * allows also to rotate the camera
      * @param newPosition new origin position point of camera
      * @param target new target viewing point for direction of camera
-     * @param angle angle to rotate camere by
+     * @param angle angle to rotate camera by
      * @return the camera after it is set o its new position and rotated
+     * @author Dan Zilbershtein
      */
 
      public Camera cameraPosition(Point newPosition, Point target, double angle) {
