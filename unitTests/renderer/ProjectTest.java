@@ -11,6 +11,7 @@ import java.util.List;
 
 import static java.awt.Color.*;
 
+
 public class ProjectTest {
 
 
@@ -193,7 +194,7 @@ public class ProjectTest {
 
         Scene scene = new Scene.SceneBuilder("Test Scene")
                 .setAmbientLight(new AmbientLight(new Color(229, 204, 255), new Double3(.15)))
-                .setGeometries(new Geometries(
+               /** .setGeometries(new Geometries(
                         rightWall,
                         leftWall,
                         backWallTop,
@@ -224,20 +225,21 @@ public class ProjectTest {
                         backChair.getGeometries(),
                         table.getElements()
                 ))
+                **/
                 .setLights(lights)
                 .setBackground(new Color(0, 102d, 102d))
                 .build();
 
-        ImageWriter imageWriter = new ImageWriter("ProjectTest12", 1400, 1400);
+        ImageWriter imageWriter = new ImageWriter("ProjectTest12", 600,600);
         Camera camera = new Camera.CameraBuilder(new Point(150, 130, 1400), new Vector(-0.2, -0.15, -1), new Vector(0, (double) 20 / 3, -1)) //
                 .setVPSize(600, 600)
                 .setVPDistance(1000)
                 .setImageWriter(imageWriter) //
+                .setRayTracer(new RayTracerBasic(scene))
                 .setAntiAliasing(AntiAliasing.NONE)
                 .setMultithreading(3)
                 .setDebugPrint(0.1)
                 .build();//
-
         camera.renderImage(); //
         camera.writeToImage();
     }
