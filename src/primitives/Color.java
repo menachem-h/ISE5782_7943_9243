@@ -1,5 +1,7 @@
 package primitives;
 
+import java.util.Objects;
+
 /**
  * Wrapper class for java.jwt.Color The constructors operate with any
  * non-negative RGB values. The colors are maintained without upper limit of
@@ -40,6 +42,17 @@ public class Color {
 			throw new IllegalArgumentException("Negative color component is illegal");
 		rgb = new Double3(r, g, b);
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Color)) return false;
+		Color color = (Color) o;
+		return Math.abs(this.rgb.d1-color.rgb.d1)<10
+				&&Math.abs(this.rgb.d2-color.rgb.d2)<10
+				&&Math.abs(this.rgb.d3-color.rgb.d3)<10;
+	}
+
 
 
 	/**

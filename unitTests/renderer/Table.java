@@ -88,7 +88,7 @@ public class Table {
      * get a Table object as a list of geometries
      * @return {@link Geometries} objects containing all geometries used to construct the tabler
      */
-    public Geometries getElements() {
+    public Geometries getGeometries() {
         return new Geometries(surfaceTop,leg,base,surfaceBase,cy1,cy2,cy3,cy4);
     }
 

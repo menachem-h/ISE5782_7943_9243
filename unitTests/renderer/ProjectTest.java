@@ -80,7 +80,7 @@ public class ProjectTest {
                         rightChair.getGeometries(),
                         frontChair.getGeometries(),
                         backChair.getGeometries(),
-                        table.getElements(),
+                        table.getGeometries(),
                         centerLight))
                 .setLights(lights)
                 .setBackground(new Color(0, 102d, 102d))
@@ -194,50 +194,49 @@ public class ProjectTest {
 
         Scene scene = new Scene.SceneBuilder("Test Scene")
                 .setAmbientLight(new AmbientLight(new Color(229, 204, 255), new Double3(.15)))
-               /** .setGeometries(new Geometries(
-                        rightWall,
-                        leftWall,
-                        backWallTop,
-                        backWallBottom,
-                        backWallLeft,
-                        backWallRight,
-                        solidFloor,
+               .setGeometries(new Geometries(
+                       // rightWall,
+                       // leftWall,
+                       // backWallTop,
+                      //  backWallBottom,
+                      //  backWallLeft,
+                      //  backWallRight,
+                      //  solidFloor,
                         //floor.elements,
-                        window,
-                        frameHorizontalTop,
-                        frameHorizontalBottom,
-                        frameVerticalMiddle,
-                        frameHorizontalMiddleTop,
-                        frameHorizontalMiddleBottom,
-                        frameLeft,
-                        frameRight,
-                        frameMiddleFront,
-                        frameMiddleRight,
-                        frameMiddleLeft,
-                        sky,
+                       // window,
+                       // frameHorizontalTop,
+                       // frameHorizontalBottom,
+                      //  frameVerticalMiddle,
+                       // frameHorizontalMiddleTop,
+                       // frameHorizontalMiddleBottom,
+                       // frameLeft,
+                       // frameRight,
+                      //  frameMiddleFront,
+                     //   frameMiddleRight,
+                      //  frameMiddleLeft,
+                      //  sky,
                         leftChair.getGeometries(),
                         rightChair.getGeometries(),
                         frontChair.getGeometries(),
-                        platter.getElements(),
+                        platter.getGeometries(),
                         orange1,
                         orange2,
                         orange3,
-                        backChair.getGeometries(),
-                        table.getElements()
+                   backChair.getGeometries(),
+                        table.getGeometries()
                 ))
-                **/
                 .setLights(lights)
                 .setBackground(new Color(0, 102d, 102d))
                 .build();
 
-        ImageWriter imageWriter = new ImageWriter("ProjectTest12", 600,600);
+        ImageWriter imageWriter = new ImageWriter("ProjectTest14", 600,600);
         Camera camera = new Camera.CameraBuilder(new Point(150, 130, 1400), new Vector(-0.2, -0.15, -1), new Vector(0, (double) 20 / 3, -1)) //
                 .setVPSize(600, 600)
                 .setVPDistance(1000)
                 .setImageWriter(imageWriter) //
                 .setRayTracer(new RayTracerBasic(scene))
-                .setAntiAliasing(AntiAliasing.NONE)
-                .setMultithreading(3)
+                .setAntiAliasing(AntiAliasing.ADAPTIVE).setRecurseDepth(4)
+                .setMultithreading(4)
                 .setDebugPrint(0.1)
                 .build();//
         camera.renderImage(); //

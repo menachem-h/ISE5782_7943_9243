@@ -610,135 +610,187 @@ public class Camera {
         // functions use rayTracer object to get correct color, then use imageWriter to write pixel to the file
 
         if (isUseDOF()) {
-            if (threadsCount == 0) {
-                for (int i = 0; i < nY; ++i)
-                    for (int j = 0; j < nX; ++j) {
-                        castRayDOF(nX, nY, i, j, n, m);
-                        Pixel.pixelDone();
-                        Pixel.printPixel();
-                    }
-            } else if (threadsCount == -1) {
-                IntStream.range(0, nY).parallel().forEach(i -> IntStream.range(0, nX).parallel().forEach(j -> {
-                    castRayDOF(nX, nY, i, j, n, m);
-                    Pixel.pixelDone();
-                    Pixel.printPixel();
-                }));
-            } else {
-                while (threadsCount-- > 0) {
-                    new Thread(() -> {
-                        for (Pixel pixel = new Pixel(); pixel.nextPixel(); Pixel.pixelDone())
-                            castRayDOF(nX, nY, pixel.col, pixel.row, n, m);
-                    }).start();
-                }
-                Pixel.waitToFinish();
-            }
+           renderImageDOF(nX,nY);
         }
         //cast ray according to Anti-Aliasing method set to Camera
         else {
             switch (getAntiAliasing()) {
                 // no method used - cast single ray to center of pixel
                 case NONE -> {
-                    if (threadsCount == 0) {
-                        for (int i = 0; i < nY; ++i)
-                            for (int j = 0; j < nX; ++j) {
-                                castRay(nX, nY, j, i);
-                                Pixel.pixelDone();
-                                Pixel.printPixel();
-                            }
-                    } else if (threadsCount == -1) {
-                        IntStream.range(0, nY).parallel().forEach(i -> IntStream.range(0, nX).parallel().forEach(j -> {
-                            castRay(nX, nY, j, i);
-                            Pixel.pixelDone();
-                            Pixel.printPixel();
-                        }));
-                    } else {
-                        while (threadsCount-- > 0) {
-                            new Thread(() -> {
-                                for (Pixel pixel = new Pixel(); pixel.nextPixel(); Pixel.pixelDone())
-                                    castRay(nX, nY, pixel.col, pixel.row);
-                            }).start();
-                        }
-                        Pixel.waitToFinish();
-                    }
+                    renderImageAntiAliasingNone(nX,nY);
                 }
                 // bean of random rays cast for each pixel besides the ray towards the center
                 case RANDOM -> {
-                    if (threadsCount == 0) {
-                        for (int i = 0; i < nY; ++i)
-                            for (int j = 0; j < nX; ++j) {
-                                castRayBeamRandom(nX, nY, i, j, n, m);
-                                Pixel.pixelDone();
-                                Pixel.printPixel();
-                            }
-                    } else if (threadsCount == -1) {
-                        IntStream.range(0, nY).parallel().forEach(i -> IntStream.range(0, nX).parallel().forEach(j -> {
-                            castRayBeamRandom(nX, nY, i, j, n, m);
-                            Pixel.pixelDone();
-                            Pixel.printPixel();
-                        }));
-                    } else {
-                        while (threadsCount-- > 0) {
-                            new Thread(() -> {
-                                for (Pixel pixel = new Pixel(); pixel.nextPixel(); Pixel.pixelDone())
-                                    castRayBeamRandom(nX, nY, pixel.col, pixel.row, n, m);
-                            }).start();
-                        }
-                        Pixel.waitToFinish();
-                    }
-
+                    renderImageAntiAliasingRandom(nX,nY);
                 }
                 // four rays cast to four corners of pixel besides the ray towards the center
                 case CORNERS -> {
-                    if (threadsCount == 0) {
-                        for (int i = 0; i < nY; ++i)
-                            for (int j = 0; j < nX; ++j) {
-                                castRayBeamCorners(nX, nY, i, j);
-                                Pixel.pixelDone();
-                                Pixel.printPixel();
-                            }
-                    } else if (threadsCount == -1) {
-                        IntStream.range(0, nY).parallel().forEach(i -> IntStream.range(0, nX).parallel().forEach(j -> {
-                            castRayBeamCorners(nX, nY, i, j);
-                            Pixel.pixelDone();
-                            Pixel.printPixel();
-                        }));
-                    } else {
-                        while (threadsCount-- > 0) {
-                            new Thread(() -> {
-                                for (Pixel pixel = new Pixel(); pixel.nextPixel(); Pixel.pixelDone())
-                                    castRayBeamCorners(nX, nY,pixel.col, pixel.row);
-                            }).start();
-                        }
-                        Pixel.waitToFinish();
-                    }
-
+                    renderImageAntiAliasingCorners(nX,nY);
                 }
                 case ADAPTIVE -> {
-                    int depth = getRecurseDepth();
-                    if (threadsCount == 0) {
-                        for (int i = 0; i < nY; ++i)
-                            for (int j = 0; j < nX; ++j) {
-                                castRayAdaptive(nX, nY, i, j, 2, depth);
-                                Pixel.pixelDone();
-                                Pixel.printPixel();
-                            }
-                    } else if (threadsCount == -1) {
-                        IntStream.range(0, nY).parallel().forEach(i -> IntStream.range(0, nX).parallel().forEach(j -> {
-                            castRayAdaptive(nX, nY, i, j, 2, depth);
-                            Pixel.pixelDone();
-                            Pixel.printPixel();
-                        }));
-                    } else {
-                        while (threadsCount-- > 0) {
-                            new Thread(() -> {
-                                for (Pixel pixel = new Pixel(); pixel.nextPixel(); Pixel.pixelDone())
-                                    castRayAdaptive(nX, nY, pixel.col, pixel.row, 2, depth);
-                            }).start();
-                        }
-                        Pixel.waitToFinish();
-                    }
+                    renderImageAntiAliasingAdaptive(nX,nY);
                 }
             }
+        }
+    }
+
+    /**
+     * render image using DOF improvement with support of multi threading
+     * @param nX number of rows in the view Plane
+     * @param nY number of columns in the view plane
+     */
+    private void renderImageDOF(int nX,int nY)
+    {
+        if (threadsCount == 0) {
+            for (int i = 0; i < nY; ++i)
+                for (int j = 0; j < nX; ++j) {
+                    castRayDOF(nX, nY, i, j, n, m);
+                    Pixel.pixelDone();
+                    Pixel.printPixel();
+                }
+        } else if (threadsCount == -1) {
+            IntStream.range(0, nY).parallel().forEach(i -> IntStream.range(0, nX).parallel().forEach(j -> {
+                castRayDOF(nX, nY, i, j, n, m);
+                Pixel.pixelDone();
+                Pixel.printPixel();
+            }));
+        } else {
+            while (threadsCount-- > 0) {
+                new Thread(() -> {
+                    for (Pixel pixel = new Pixel(); pixel.nextPixel(); Pixel.pixelDone())
+                        castRayDOF(nX, nY, pixel.col, pixel.row, n, m);
+                }).start();
+            }
+            Pixel.waitToFinish();
+        }
+    }
+    /**
+     * render image using No improvement with support of multi threading
+     * (the fastest runtime - image has the lowest resolution)
+     * @param nX number of rows in the view Plane
+     * @param nY number of columns in the view plane
+     */
+    private void renderImageAntiAliasingNone(int nX, int nY)
+    {
+        if (threadsCount == 0) {
+            for (int i = 0; i < nY; ++i)
+                for (int j = 0; j < nX; ++j) {
+                    castRay(nX, nY, j, i);
+                    Pixel.pixelDone();
+                    Pixel.printPixel();
+                }
+        } else if (threadsCount == -1) {
+            IntStream.range(0, nY).parallel().forEach(i -> IntStream.range(0, nX).parallel().forEach(j -> {
+                castRay(nX, nY, j, i);
+                Pixel.pixelDone();
+                Pixel.printPixel();
+            }));
+        } else {
+            while (threadsCount-- > 0) {
+                new Thread(() -> {
+                    for (Pixel pixel = new Pixel(); pixel.nextPixel(); Pixel.pixelDone())
+                        castRay(nX, nY, pixel.col, pixel.row);
+                }).start();
+            }
+            Pixel.waitToFinish();
+        }
+    }
+
+    /**
+     * render image using Random method Anti aliasing improvement with support of multi threading
+     * (the slowest runtime - image has high resolution)
+     * @param nX number of rows in the view Plane
+     * @param nY number of columns in the view plane
+     */
+    private void renderImageAntiAliasingRandom(int nX,int nY)
+    {
+        if (threadsCount == 0) {
+            for (int i = 0; i < nY; ++i)
+                for (int j = 0; j < nX; ++j) {
+                    castRayBeamRandom(nX, nY, i, j, n, m);
+                    Pixel.pixelDone();
+                    Pixel.printPixel();
+                }
+        } else if (threadsCount == -1) {
+            IntStream.range(0, nY).parallel().forEach(i -> IntStream.range(0, nX).parallel().forEach(j -> {
+                castRayBeamRandom(nX, nY, i, j, n, m);
+                Pixel.pixelDone();
+                Pixel.printPixel();
+            }));
+        } else {
+            while (threadsCount-- > 0) {
+                new Thread(() -> {
+                    for (Pixel pixel = new Pixel(); pixel.nextPixel(); Pixel.pixelDone())
+                        castRayBeamRandom(nX, nY, pixel.col, pixel.row, n, m);
+                }).start();
+            }
+            Pixel.waitToFinish();
+        }
+
+    }
+
+    /**
+     * render image using Corner method Anti aliasing improvement with support of multi threading
+     * (medium runtime - image has medium resolution)
+     * @param nX number of rows in the view Plane
+     * @param nY number of columns in the view plane
+     */
+    private void renderImageAntiAliasingCorners(int nX, int nY)
+    {
+        if (threadsCount == 0) {
+            for (int i = 0; i < nY; ++i)
+                for (int j = 0; j < nX; ++j) {
+                    castRayBeamCorners(nX, nY, i, j);
+                    Pixel.pixelDone();
+                    Pixel.printPixel();
+                }
+        } else if (threadsCount == -1) {
+            IntStream.range(0, nY).parallel().forEach(i -> IntStream.range(0, nX).parallel().forEach(j -> {
+                castRayBeamCorners(nX, nY, i, j);
+                Pixel.pixelDone();
+                Pixel.printPixel();
+            }));
+        } else {
+            while (threadsCount-- > 0) {
+                new Thread(() -> {
+                    for (Pixel pixel = new Pixel(); pixel.nextPixel(); Pixel.pixelDone())
+                        castRayBeamCorners(nX, nY,pixel.col, pixel.row);
+                }).start();
+            }
+            Pixel.waitToFinish();
+        }
+    }
+
+    /**
+     * render image using Adaptive Anti-Aliasing method improvement with support of multi threading
+     * ( most optimal runtime for high resolution - image has high resolution)
+     * @param nX number of rows in the view Plane
+     * @param nY number of columns in the view plane
+     */
+    private void renderImageAntiAliasingAdaptive(int nX, int nY)
+    {
+        int depth = getRecurseDepth();
+        if (threadsCount == 0) {
+            for (int i = 0; i < nY; ++i)
+                for (int j = 0; j < nX; ++j) {
+                    castRayAdaptive(nX, nY, i, j, 2, depth);
+                    Pixel.pixelDone();
+                    Pixel.printPixel();
+                }
+        } else if (threadsCount == -1) {
+            IntStream.range(0, nY).parallel().forEach(i -> IntStream.range(0, nX).parallel().forEach(j -> {
+                castRayAdaptive(nX, nY, i, j, 2, depth);
+                Pixel.pixelDone();
+                Pixel.printPixel();
+            }));
+        } else {
+            while (threadsCount-- > 0) {
+                new Thread(() -> {
+                    for (Pixel pixel = new Pixel(); pixel.nextPixel(); Pixel.pixelDone())
+                        castRayAdaptive(nX, nY, pixel.col, pixel.row, 2, depth);
+                }).start();
+            }
+            Pixel.waitToFinish();
         }
     }
 
