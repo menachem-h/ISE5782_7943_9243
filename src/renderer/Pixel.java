@@ -26,7 +26,13 @@ class Pixel {
     private static Object mutexNext = new Object();
     private static Object mutexPixels = new Object();
 
+    /**
+     * row index of pixel
+     */
     int row;
+    /**
+     * column index of pixel
+     */
     int col;
 
     /**

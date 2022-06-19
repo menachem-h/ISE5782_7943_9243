@@ -101,6 +101,7 @@ public class RayTracerBasic extends RayTracer {
      *
      * @param p   {@link GeoPoint} to calculate color at
      * @param ray {@link  Ray} from camera to the point
+     * @param k     coefficient for transparency and reflectiveness
      * @return {@link Color} of the shape at the point
      */
     private Color calcColor(GeoPoint p, Ray ray, int level, Double3 k) {
@@ -132,7 +133,7 @@ public class RayTracerBasic extends RayTracer {
      * @param gp    {@link GeoPoint} to calculate effects at
      * @param ray   light direction ray
      * @param level level of recursion
-     * @param k     coefficient of transparency and reflectiveness
+     * @param k     coefficient for transparency and reflectiveness
      * @return {@link Color} of point with transparency and reflectiveness
      */
     private Color calcGlobalEffects(GeoPoint gp, Ray ray, int level, Double3 k) {
@@ -214,6 +215,7 @@ public class RayTracerBasic extends RayTracer {
      *
      * @param intersection {@link GeoPoint} to calculate color at
      * @param ray          {@link  Ray} from camera to the point
+     * @param k     coefficient for transparency and reflectiveness
      * @return {@link Color} of the shape at the point
      */
     private Color calcLocalEffects(GeoPoint intersection, Ray ray, Double3 k) {

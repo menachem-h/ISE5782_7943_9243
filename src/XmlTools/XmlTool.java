@@ -32,7 +32,10 @@ import java.util.stream.Collectors;
  */
 public class XmlTool {
 
-    // field holds username of pc to allow path to operate on different devices
+    /**
+     * field holds username of pc to allow path to operate on different devices
+     */
+
     String userName = System.getProperty("user.name");
     /**
      * path to file location in device

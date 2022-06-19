@@ -19,6 +19,9 @@ public class Polygon extends Geometry {
 	 * Associated plane in which the polygon lays
 	 */
 	protected Plane plane;
+	/**
+	 * number of vertices of the polygon
+	 */
 	private int size;
 
 	/**
