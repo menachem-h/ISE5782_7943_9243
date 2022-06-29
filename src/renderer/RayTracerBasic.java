@@ -102,6 +102,7 @@ public class RayTracerBasic extends RayTracer {
      * @param p   {@link GeoPoint} to calculate color at
      * @param ray {@link  Ray} from camera to the point
      * @param k     coefficient for transparency and reflectiveness
+     * @param level level of recursion for color calculation
      * @return {@link Color} of the shape at the point
      */
     private Color calcColor(GeoPoint p, Ray ray, int level, Double3 k) {
