@@ -1003,10 +1003,11 @@ public class Camera {
         // else recursively  calculate the subpixel which corner color does not match
         // ray towards center color
         Color color = rayTracer.traceRay(ray);
+        Color matchColor = color;
         int k = 0; //index of ray in the list
         for (var r : rayBeam) {
             Color cornerColor = rayTracer.traceRay(r);
-            if (color.equals(cornerColor))
+            if (color.equals(matchColor))
                 color = color.add(cornerColor);
             // corner color does not match
             else {
@@ -1042,6 +1043,7 @@ public class Camera {
             Vector camToSubPixel = center.subtract(p0);
             Ray ray = new Ray(p0, camToSubPixel);
             Color color = rayTracer.traceRay(ray);
+            Color matchColor = color;
             //construct four rays to the four corners of the subpixel
             var cornersBeam = constructRayCorners(Nx, Ny, ray, size);
 
@@ -1051,7 +1053,7 @@ public class Camera {
             int k = 0;
             for (var r : cornersBeam) {
                 Color cornerColor = rayTracer.traceRay(r);
-                if (color.equals(cornerColor))
+                if (color.equals(matchColor))
                     color = color.add(cornerColor);
                 else {
                     // get the center point of the sub pixel
